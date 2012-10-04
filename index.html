@@ -36,253 +36,6 @@
 </head>
 
 <body>
-	<div id="SignIn" 
-		data-title="TokenTap"
-		data-role="page">
-
-		<div class="SignIn-Dashboard-Header" data-role="header">
-			<img class="BlueMan" src="images/blueman_pointing_left_arm.png" alt=""/>
-			<div class="AppTitle">
-				token tap
-				<span class="trademark">&trade;</span>
-			</div>
-			
-			<span id="SignInTitle">Administrator Sign In</span>
-
-			<span class="BetaTag">Beta</span>
-
-			<span class="AlphaTag">Alpha</span>
-			<div class="AlphaZoom">
-				<span class="zoomState 240">240</span>
-				<span class="zoomState 320">320</span>
-				<span class="zoomState 360">360</span>
-				<span class="zoomState 420">420</span>
-				<span class="zoomState 480">480</span>
-				<span class="zoomState 540">540</span>
-				<span class="zoomState 800">800</span>
-			</div>
-		</div>
-
-		<div id="SignIn-contents" data-role="content">
-			<form method="POST" autocomplete="on" class="bottomMargin" 
-				onSubmit="return false" data-ajax="false">
-				<label for="txtUser">Email Address:</label>
-				<input type="email" name="email" id="txtUser" autocomplete="on" x-autocompletetype="email" value="" />
-				<br />
-				<label for="txtPassword">Password:</label>
-				<input type="password" name="password" id="txtPassword" value="" />
-
-			</form>
-			<button type="submit" 
-				id="btnSignIn" 
-				data-role="button" 
-				data-theme="b" 
-				data-icon="check" 
-				data-inline="true" 
-				disabled>Sign In</button>
-					
-			<input type="checkbox" name="checkbox-1" id="chkSavePassword" data-inline="true" disabled />
-			<label for="chkSavePassword">Save</label>
-
-			<hr />
-			<div class="center">
-				Check "Save" to save password.
-				<br />
-				<a id="LostPassHelp" href="#">Lost Password?</a>
-			</div>
-
-			<br />
-			<div style="position:relative;">
-				<a href="#NewAccount" 
-					data-theme="b"
-					data-role="button"
-					data-inline="false"
-				>Start New Reward Program</a>
-				<!--<img id="imgFree" src="images/FreeRotated.png" alt="" />-->
-			</div>
-		</div>
-
-		<div class="SignIn-Dashboard-Footer"
-			data-role="footer" 
-			data-theme="b">
-			<span class="copyright">&copy; <span class="currentYear"></span> Token Rewards</span>
-			<a class="footer-phone" data-theme="b" href="tel:+1-800-926-9194">(800) 926-9194</a>
-		</div>
-
-	</div>
-
-	<div id="NewAccount"
-		data-title="TokenTap"
-		data-role="page">
-		
-		<div data-role="header">
-			<a class="backButton ui-btn-left"
-				data-role="button"
-				data-rel="back"
-				data-icon="arrow-l">Back</a>
-			<h1>New Reward Program</h1>
-		</div>
-
-		<div data-role="content">
-			<div id="ContactInfo">
-
-				Enter Your Name:<br />
-				<input class="UserData UserName" type="text"/>
-
-				<div class="WrapEmail">
-					<span class="user_data_label">E-Mail Address:</span>
-					<br />
-					<input class="UserEmail" type="email" />
-					<span class="invalid note">invalid</span>
-					<span class="valid note">
-						<img src="images/Check-Mark.png" alt=""/>
-						valid
-					</span>
-					<span class="verified note">
-						<img src="images/Check-Mark.png" alt="" />
-						<span>verified</span>
-					</span>
-
-				</div>
-
-
-				<br />
-
-				<a class="SendConfirmCode ui-disabled"
-					data-role="button"
-					data-icon="email"
-					data-theme="b"
-				>Send Confirmation Code</a>
-
-				<br />
-				<div class="center">
-					Enter the confirmation code here:
-					<input class="ConfirmCode" type="text" maxlength="4" />
-				</div>
-			
-				<br />
-				<a class="CheckConfirmCode ui-disabled"
-					data-role="button"
-					data-icon="check"
-					data-theme="b"
-				>Confirm Code & Continue</a>
-
-			</div>
-
-			<div id="ProgramInfo" class="noDisplay">
-
-				<div class="ui-br bottomMargin">
-					<label for="NewProgramName">Program or Organization Name:</label>
-					<input id="NewProgramName" class="" type="text" maxlength="100" />
-					<div class="signUpNote">
-						Examples: Smith Family Rewards, Lincoln Middle School, Smiles Orthodontics, Super Tutors!, etc.
-					</div>
-
-				</div>
-
-				<div class="ui-br bottomMargin">
-					<label for="NewTokenUnit">Your program uses:</label>
-					<select id="NewTokenUnit">
-						<option value="Token">Tokens</option>
-						<option value="Point">Points</option>
-						<option value="Star">Stars</option>
-						<option value="Credit">Credits</option>
-					</select>
-				</div>
-
-				<div class="ui-br bottomMargin">
-					<label for="NewParticipantAlias"><span class="TokenUnit"></span>s will be awarded to:</label>
-					<select id="NewParticipantAlias">
-						<option value="Student">Students</option>
-						<option value="Patient">Patients</option>
-						<option value="Member">Members</option>
-						<option value="Player">Players</option>
-						<option value="Participant">Participants</option>
-					</select>
-				</div>
-
-				<div class="bottomMargin">
-					<label for="NewTokenRate">
-						How many <span class="TokenUnit lowercase"></span>s equal $1?<br />
-					</label>
-					<input id="NewTokenRate" data-inline="true" type="number" />
-					(1 <span class="TokenUnit lowercase"></span> ~= <span class="DollarsPerToken"></span>)
-					<div class="signUpNote">
-						Needed for Shop.TokenRewards.com, where your 
-						<span class="ParticipantAlias lowercase"></span>s
-						will be spending their <span class="TokenUnit lowercase"></span>s.
-						Must be at least 1 <span class="TokenUnit lowercase"></span> per dollar.
-					</div>
-
-				</div>
-			
-
-				<a class="GetPassword ui-disabled"
-					data-role="button"
-					data-icon="arrow-r"
-					data-iconpos="right"
-					data-theme="b"
-				>Continue...</a>
-
-			</div>
-
-			<div id="SetPassword" class="noDisplay">
-				Enter a Password:<br />
-				<input class="Password1" type="password" />
-				<div style="font-size:80%; font-style:italic; margin-bottom:1em; margin-left:1em;">
-					The password must contain at least four characters and no spaces.
-				</div>
-				Enter Your Password Again:<br />
-				<input class="Password2" type="password" />
-				<br />
-				<span class="flipswitchlabel">Save Password?</span>
-				<select class="NewPasswordSave"
-					data-role="slider"
-					data-inline="true">
-					<option value="no">No</option>
-					<option value="yes">Yes</option>
-				</select>
-				<div style="font-size:80%; font-style:italic; margin-top:.5em; margin-left:1em;">
-					Select "Yes" to automatically sign in on this device.
-					If you share this device with your <span class="ParticipantAlias lowercase"></span>s,
-					choose "No".
-				</div>
-
-
-				<br />
-				<a id="CreateAccount"
-					class="ui-disabled"
-					data-role="button"
-					data-theme="b"
-					data-icon="check"
-					data-iconpos="left"
-				>Okay, Create My Account!</a>
-
-
-			</div>
-
-			<!-- OptionalInfo
-			<div class="OptionalInfo"
-				data-role="collapsible" 
-				data-theme="b"
-				data-mini="true"
-				data-collapsed="true"
-				data-content-theme="c">
-				<h4>Optional Contact Info</h4>
-				<div>
-					Title/Position:
-					<input class="UserData UserTitle" type="text"/>
-					<br />
-					Phone/Messaging Number:
-					<input class="UserData UserPhone" type="text"/>
-				</div>
-
-			</div>
-		-->
-		</div>
-
-	</div>
-
 
 	<div id="Dashboard" 
 		data-title="TokenTap"
@@ -295,6 +48,7 @@
 				<span class="trademark">&trade;</span>
 			</div>
 			<div id="ProviderName" class="SignedIn">Account Name</div>
+			<span id="SignInTitle" class="NotSignedIn">Administrator Sign In</span>
 			
 			<br />
 			
@@ -315,6 +69,47 @@
 		</div>
 
 		<div id="DashboardContents" data-role="content">
+
+			<div id="WrapSignIn" class="NotSignedIn">
+				<form method="POST" autocomplete="on" class="bottomMargin" 
+					onSubmit="return false" data-ajax="false">
+					<label for="txtUser">Email Address:</label>
+					<input type="email" name="email" id="txtUser" autocomplete="on" x-autocompletetype="email" value="" />
+					<br />
+					<label for="txtPassword">Password:</label>
+					<input type="password" name="password" id="txtPassword" value="" />
+
+				</form>
+				<button type="submit" 
+					id="btnSignIn" 
+					data-role="button" 
+					data-theme="b" 
+					data-icon="check" 
+					data-inline="true" 
+					disabled>Sign In</button>
+					
+				<input type="checkbox" name="checkbox-1" id="chkSavePassword" data-inline="true" disabled />
+				<label for="chkSavePassword">Save</label>
+
+				<hr />
+				<div class="center">
+					Check "Save" to save password.
+					<br />
+					<a id="LostPassHelp" href="#">Lost Password?</a>
+				</div>
+
+				<br />
+				<div style="position:relative;">
+					<a href="#NewAccount" 
+						data-theme="b"
+						data-role="button"
+						data-inline="false"
+					>Start New Reward Program</a>
+					<!--<img id="imgFree" src="images/FreeRotated.png" alt="" />-->
+				</div>
+			</div>
+
+
 
 			<div id="wrapSignedIn" class="SignedIn">
 
@@ -523,6 +318,8 @@
 
 				<div style="height:3em;"></div>
 			</div>
+
+
 		</div>
 
 		<div class="SignIn-Dashboard-Footer"
@@ -532,6 +329,178 @@
 			<a class="footer-phone" data-theme="b" href="tel:+1-800-926-9194">(800) 926-9194</a>
 		</div>
 
+
+	</div>
+
+	<div id="NewAccount"
+		data-title="TokenTap"
+		data-role="page">
+		
+		<div data-role="header">
+			<a class="backButton ui-btn-left"
+				data-role="button"
+				data-rel="back"
+				data-icon="arrow-l">Back</a>
+			<h1>New Reward Program</h1>
+		</div>
+
+		<div data-role="content">
+			<div id="ContactInfo">
+
+				Enter Your Name:<br />
+				<input class="UserData UserName" type="text"/>
+
+				<div class="WrapEmail">
+					<span class="user_data_label">E-Mail Address:</span>
+					<br />
+					<input class="UserEmail" type="email" />
+					<span class="invalid note">invalid</span>
+					<span class="valid note">
+						<img src="images/Check-Mark.png" alt=""/>
+						valid
+					</span>
+					<span class="verified note">
+						<img src="images/Check-Mark.png" alt="" />
+						<span>verified</span>
+					</span>
+
+				</div>
+
+
+				<br />
+
+				<a class="SendConfirmCode ui-disabled"
+					data-role="button"
+					data-icon="email"
+					data-theme="b"
+				>Send Confirmation Code</a>
+
+				<br />
+				<div class="center">
+					Enter the confirmation code here:
+					<input class="ConfirmCode" type="text" maxlength="4" />
+				</div>
+			
+				<br />
+				<a class="CheckConfirmCode ui-disabled"
+					data-role="button"
+					data-icon="check"
+					data-theme="b"
+				>Confirm Code & Continue</a>
+
+			</div>
+
+			<div id="ProgramInfo" class="noDisplay">
+
+				<div class="ui-br bottomMargin">
+					<label for="NewProgramName">Program or Organization Name:</label>
+					<input id="NewProgramName" class="" type="text" maxlength="100" />
+					<div class="signUpNote">
+						Examples: Smith Family Rewards, Lincoln Middle School, Smiles Orthodontics, Super Tutors!, etc.
+					</div>
+
+				</div>
+
+				<div class="ui-br bottomMargin">
+					<label for="NewTokenUnit">Your program uses:</label>
+					<select id="NewTokenUnit">
+						<option value="Token">Tokens</option>
+						<option value="Point">Points</option>
+						<option value="Star">Stars</option>
+						<option value="Credit">Credits</option>
+					</select>
+				</div>
+
+				<div class="ui-br bottomMargin">
+					<label for="NewParticipantAlias"><span class="TokenUnit"></span>s will be awarded to:</label>
+					<select id="NewParticipantAlias">
+						<option value="Student">Students</option>
+						<option value="Patient">Patients</option>
+						<option value="Member">Members</option>
+						<option value="Player">Players</option>
+						<option value="Participant">Participants</option>
+					</select>
+				</div>
+
+				<div class="bottomMargin">
+					<label for="NewTokenRate">
+						How many <span class="TokenUnit lowercase"></span>s equal $1?<br />
+					</label>
+					<input id="NewTokenRate" data-inline="true" type="number" />
+					(1 <span class="TokenUnit lowercase"></span> ~= <span class="DollarsPerToken"></span>)
+					<div class="signUpNote">
+						Needed for Shop.TokenRewards.com, where your 
+						<span class="ParticipantAlias lowercase"></span>s
+						will be spending their <span class="TokenUnit lowercase"></span>s.
+						Must be at least 1 <span class="TokenUnit lowercase"></span> per dollar.
+					</div>
+
+				</div>
+			
+
+				<a class="GetPassword ui-disabled"
+					data-role="button"
+					data-icon="arrow-r"
+					data-iconpos="right"
+					data-theme="b"
+				>Continue...</a>
+
+			</div>
+
+			<div id="SetPassword" class="noDisplay">
+				Enter a Password:<br />
+				<input class="Password1" type="password" />
+				<div style="font-size:80%; font-style:italic; margin-bottom:1em; margin-left:1em;">
+					The password must contain at least four characters and no spaces.
+				</div>
+				Enter Your Password Again:<br />
+				<input class="Password2" type="password" />
+				<br />
+				<span class="flipswitchlabel">Save Password?</span>
+				<select class="NewPasswordSave"
+					data-role="slider"
+					data-inline="true">
+					<option value="no">No</option>
+					<option value="yes">Yes</option>
+				</select>
+				<div style="font-size:80%; font-style:italic; margin-top:.5em; margin-left:1em;">
+					Select "Yes" to automatically sign in on this device.
+					If you share this device with your <span class="ParticipantAlias lowercase"></span>s,
+					choose "No".
+				</div>
+
+
+				<br />
+				<a id="CreateAccount"
+					class="ui-disabled"
+					data-role="button"
+					data-theme="b"
+					data-icon="check"
+					data-iconpos="left"
+				>Okay, Create My Account!</a>
+
+
+			</div>
+
+			<!-- OptionalInfo
+			<div class="OptionalInfo"
+				data-role="collapsible" 
+				data-theme="b"
+				data-mini="true"
+				data-collapsed="true"
+				data-content-theme="c">
+				<h4>Optional Contact Info</h4>
+				<div>
+					Title/Position:
+					<input class="UserData UserTitle" type="text"/>
+					<br />
+					Phone/Messaging Number:
+					<input class="UserData UserPhone" type="text"/>
+				</div>
+
+			</div>
+		-->
+		</div>
 
 	</div>
 
@@ -597,6 +566,27 @@
 		</div>
 
 		<div data-role="content">
+
+			<div class="UserDataLabel">E-Mail Address (Sign In With):</div>
+			<div class="UserData UserEmail"></div>
+			<br />
+			<a href="#ChangeEmail"
+				data-role="button"
+				data-theme="b"
+				data-icon="arrow-r"
+				data-iconpos="right"
+			>Change E-Mail Address</a>
+			
+			<a href="#ChangePassword"
+				data-role="button"
+				data-theme="b"
+				data-icon="arrow-r"
+				data-iconpos="right"
+			>Change Password</a>
+
+			<br />
+			<hr />
+
 			<div data-role="fieldcontain">
 				<div class="UserDataLabel">User Name:</div>
 				<div class="UserData UserName"></div>
@@ -616,24 +606,6 @@
 				data-iconpos="right"
 			>Edit Your Profile</a>
 
-			<br /><br />
-			<div class="UserDataLabel">E-Mail Address (Sign In):</div>
-			<div class="UserData UserEmail"></div>
-			<br />
-			<a href="#ChangeEmail"
-				data-role="button"
-				data-theme="b"
-				data-icon="arrow-r"
-				data-iconpos="right"
-			>Change E-Mail Address</a>
-
-			<br />
-			<a href="#ChangePassword"
-				data-role="button"
-				data-theme="b"
-				data-icon="arrow-r"
-				data-iconpos="right"
-			>Change Password</a>
 
 		</div>
 
@@ -698,7 +670,7 @@
 		</div>
 		<div data-role="content">
 			We need to confirm your new e-mail address before continuing.
-			<br />
+			<br /><br />
 			<div>
 				<div class="WrapEmail">
 					<span class="user_data_label">New E-Mail Address:</span>
@@ -798,7 +770,7 @@
 		<div data-role="content">
 
 			<div class="ui-br bottomMargin">
-				<label for="EditProgramName">Reward Provider/Program Name:</label>
+				<label for="EditProgramName">Program or Organization Name:</label>
 				<input id="EditProgramName" class="" type="text" maxlength="100" />
 			</div>
 
@@ -831,8 +803,12 @@
 					<input id="EditTokenRate" data-inline="true" type="number" />
 					(1 <span class="TokenUnit lowercase"></span> ~= <span class="DollarsPerToken"></span>)
 					<br />
-					<span style="font-size:80%;font-style:italic;">Minimum rate: 1 
-					<span class="TokenUnit lowercase"></span> per dollar.</span>
+					<div class="signUpNote">
+						Needed for Shop.TokenRewards.com, where your 
+						<span class="ParticipantAlias lowercase"></span>s
+						will be spending their <span class="TokenUnit lowercase"></span>s.
+						Must be at least 1 <span class="TokenUnit lowercase"></span> per dollar.
+					</div>
 				</div>
 			</div>
 

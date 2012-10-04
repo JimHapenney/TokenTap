@@ -438,11 +438,6 @@ Application = {
 
 		$(document).bind('pagechange', function (event, data) {
 
-			setTimeout(function () {
-				//$("body").removeAttr("style");
-			}, 500);
-
-
 			var sHash = (typeof data.toPage == 'string')
 				? $.mobile.path.parseUrl(data.toPage).hash
 				: "#" + data.toPage.attr("id");
@@ -457,7 +452,7 @@ Application = {
 			}
 		});
 
-		window.location.hash = "#SignIn";
+		window.location.hash = "#Dashboard";
 
 	},
 
@@ -467,16 +462,15 @@ Application = {
 				: "#" + data.toPage.attr("id");
 
 		if (!sToHash
-				|| sToHash == "#SignIn"
+				|| sToHash == "#Dashboard"
 				|| sToHash == "#NewAccount"
-				|| sToHash == "#dlgMessage"
 				|| sToHash == "#dlgLostPassword"
 				|| sToHash == "#dlgTransactOptions") return;
 
 		//console.log(data, sToHash, data.options.fromPage[0].id);
 		if (!Application.oUser.CUSTOMER_ID) {
 			event.preventDefault();
-			$.mobile.changePage($("#SignIn"), {
+			$.mobile.changePage($("#Dashboard"), {
 				changeHash: true,
 				showLoadMsg: false
 			});
@@ -496,6 +490,384 @@ Application = {
 
 
 	}
+};
+
+Dashboard = {
+	aoClasses: [],
+	oTotals: {},
+	bRefresh: false,
+	bAutoSignedIn: false,
+	bFirstTimeMessageShown: false,
+
+	init: function () {
+		var jPage = $("#Dashboard");
+		$(".currentYear", jPage).text((new Date()).getFullYear());
+
+		$(".AlphaTag, .BetaTag", jPage).bind('click', function () {
+			Application.supportInfo();
+			return;
+		});
+
+		$("#btnSignIn", jPage).bind('click', function () {
+			Dashboard.manualLogin();
+		});
+		$("a#LostPassHelp", jPage).click(function () {
+			Application.lostPassword.open();
+		});
+		$("#WrapSignIn input", jPage).keyup(function () {
+			var jPage = $("#WrapSignIn");
+			var sUser = $("#txtUser", jPage).val();
+			var sPass = $("#txtPassword", jPage).val();
+
+			if (sUser && sPass) {
+				$("#btnSignIn", jPage).button("enable");
+				$("#chkSavePassword", jPage).checkboxradio('enable');
+			}
+			else {
+				$("#btnSignIn", jPage).button("disable");
+				$("#chkSavePassword", jPage).checkboxradio('disable');
+			}
+		}).keyup();
+
+
+
+
+		$("a.DepositSession", jPage).click(function () {
+			TokenSession.saveDialog.open();
+		});
+
+		$("#btnSignOut", jPage).click(function () {
+			Dashboard.signOut();
+		});
+
+		$("a.ResetSession", jPage).click(function () {
+			TokenSession.clear();
+		});
+
+		$("li#AllParties", jPage).click(function () {
+			Participants.oClass = $.extend({}, {
+				CLASS_NAME: "All " + Application.oUser.PARTICIPANT_ALIAS + "s",
+				ID: "-1"
+			},
+			Dashboard.oTotals);
+
+			if (Participants.lastClassFetched != Participants.oClass.ID) {
+				$("#Participants #partyList").empty();
+			}
+		});
+		$("a#NewParty", jPage).bind('click', function () {
+			PartyProfile.insert();
+		});
+
+		$(".SessionTokenTotal", jPage).detach().appendTo($(".WrapSessionSummary h4 a", jPage));
+
+		$("#CollapsibleClasses", jPage).bind('collapse', function () {
+			Application.oPrefs.oCollapsibles.sClasses = "collapse";
+			Application.savePrefs();
+		})
+		.bind('expand', function () {
+			Application.oPrefs.oCollapsibles.sClasses = "expand";
+			Application.savePrefs();
+		});
+
+		$("#WrapUserInfo", jPage).bind('collapse', function () {
+			Application.oPrefs.oCollapsibles.sUser = "collapse";
+			Application.savePrefs();
+		})
+		.bind('expand', function () {
+			Application.oPrefs.oCollapsibles.sUser = "expand";
+			Application.savePrefs();
+		});
+
+
+		$("a#NewClass", jPage).click(function () { ClassGroup.insert(); });
+
+		jPage.bind('swipeleft', function (event) {
+			event.preventDefault();
+			event.stopPropagation();
+			if (Application.oUser.CUSTOMER_ID) {
+
+				Participants.oClass = $.extend({}, {
+					CLASS_NAME: "All " + Application.oUser.PARTICIPANT_ALIAS + "s",
+					ID: "-1"
+				}, Dashboard.oTotals);
+				$.mobile.changePage($("#Participants"));
+			}
+		});
+
+	},
+	refresh: function (fnCallback) {
+
+		if (!Application.oUser.CUSTOMER_ID) {
+			this.refreshSignIn();
+			return;
+		}
+
+		var jPage = $("#Dashboard");
+		$(".NotSignedIn", jPage).hide();
+		$(".SignedIn", jPage).show();
+
+
+		$("span.TokenUnit").text(Application.oUser.TOKENUNIT);
+		$("span.ParticipantAlias").text(Application.oUser.PARTICIPANT_ALIAS);
+
+		if (!this.bRefresh) { return; }
+		this.bRefresh = false;
+
+		TokenSession.refresh();
+
+		new execQuery(
+			"select count(*) as PARTICIPANTS,\n" +
+			"  sum(a.ACTIVATED) as ACTIVE_PARTICIPANTS,\n" +
+			"	sum(iif(a.ACTIVATED=1,a.BALANCE,0)) as balance,\n" +
+			"	sum(iif(a.ACTIVATED=1,a.EARNED,0)) as earned,\n" +
+			"	sum(iif(a.ACTIVATED=1,a.SPENT,0)) as spent,\n" +
+			"	sum(iif(a.ACTIVATED=1,a.PENDING,0)) as pending\n" +
+			"  from ADM$PARTICIPANTS(" + Application.oUser.CUSTOMER_ID.prepSQL() + ", null, -1, -1, null) a;\n" +
+			"select * from adm$classes(" +
+				Application.oUser.CUSTOMER_ID.prepSQL() + "," +
+				Application.oUser.USER_ID.prepSQL() +
+			");" +
+			"select * from adm$reusable_transactions(" + Application.oUser.CUSTOMER_ID.prepSQL() + ") order by 3 desc;",
+		function (data) {
+
+			Dashboard.oTotals = $.extend({}, data[0][0]);
+			Dashboard.aoClasses = $.extend([], data[1]);
+			Dashboard.aoClasses.sortColumn('ID', 1);
+			LedgerEntry.aoRemembered = $.extend([], data[2]);
+
+			Participants.total = data[0][0].COUNT;
+			var aoClasses = data[1];
+
+			var jPage = $("#Dashboard");
+
+			var jUl = $("ul#WrapAllParties", jPage).toggleClass("invisible", Dashboard.oTotals.ACTIVE_PARTICIPANTS == 0);
+			var jLi = $("li#AllParties", jUl);
+
+			$("span.ActiveCount", jLi).text(Dashboard.oTotals.ACTIVE_PARTICIPANTS);
+			$("span.InactiveCount", jLi).text("/" + Dashboard.oTotals.PARTICIPANTS.toNumber());
+			$("span.Balance", jLi).text(Dashboard.oTotals.BALANCE);
+
+			$("#WrapUserInfo", jPage).trigger(Application.oPrefs.oCollapsibles.sUser);
+
+			var jWrap = $("#WrapDashboardClasses", jPage);
+			if (aoClasses.length == 0) {
+				// move to bottom of dashboard
+				jWrap.detach();
+				$("#WrapNewParty").after(jWrap);
+				$(".ui-collapsible", jWrap).hide();
+			}
+			else {
+				// move to top (under user info) of dashboard
+				$(".ui-collapsible", jWrap).show();
+
+				jWrap.detach();
+				$("#WrapAllParties").before(jWrap);
+
+				$("#CollapsibleClasses", jWrap).trigger(Application.oPrefs.oCollapsibles.sClasses);
+				jUl = $("ul#DashboardClasses", jWrap);
+				$("li.Class", jUl).remove();
+
+				for (var nX = 0; nX < aoClasses.length; nX++) {
+					jUl.append(Dashboard.newClassLi(aoClasses[nX]));
+				}
+
+
+				jUl.trigger("create").listview("refresh");
+				jUl.trigger('updatelayout');
+
+			}
+
+
+			$(".InactiveCount, .InactiveCountNote", jPage).toggle(Application.oPrefs.oGeneral.bShowInactives);
+
+			if (fnCallback) { fnCallback(); }
+			else {
+				ui.elap.off();
+
+				setTimeout(function () {
+					if (SignIn.bAutoSignedIn) {
+						ui.popupMessage("Automatically signed in<br/>using saved password.");
+						SignIn.bAutoSignedIn = false;
+					}
+				}, 500);
+				Application.hideAddressBar();
+			}
+		});
+	},
+
+	refreshSignIn: function () {
+		var jPage = $("#Dashboard");
+
+		$(".SignedIn", jPage).hide();
+		$(".NotSignedIn", jPage).show();
+
+		var oData = Application.oPrefs.oSignIn;
+
+		$("#txtUser", jPage).val(oData.sUser).keyup().focus();
+
+		if (oData.sUser && oData.sPassword) {
+			ui.elap.on("Signing In...");
+			new execQuery(
+				"select * from adm$login(" + oData.sUser.prepSQL() + "," + oData.sPassword.prepSQL() + ", null);",
+				function (aRow) {
+					ui.elap.off();
+					Dashboard.bAutoSignedIn = true;
+					if (Dashboard.validateUser(aRow[0])) {
+						return;
+					}
+					else {
+						ui.showMessage({
+							sTitle: "Not Signed In",
+							sMessage: "Unable to sign in with using the saved e-mail and password."
+						});
+					}
+
+				}
+			);
+		}
+
+
+		ui.elap.off();
+
+	},
+
+	manualLogin: function () {
+		ui.elap.on("Signing In...");
+		var sUser = $("#txtUser").val();
+		var sPass = $("#txtPassword").val();
+
+		Application.oPrefs.oSignIn.sUser = sUser;
+		Application.savePrefs();
+
+		new execQuery(
+			"select * from adm$login(" + sUser.prepSQL() + "," + sPass.prepSQL() + ",null);",
+			function (aRow) {
+				ui.elap.off();
+
+				if (!Dashboard.validateUser(aRow[0])) {
+					ui.showMessage({
+						sTitle: "Not Signed In",
+						sMessage:
+						'<p>' +
+							'Sorry, but you could not be signed in with the e-mail and password combination entered.' +
+							'<br /><br />' +
+							'Please try again or contact us for assistance.' +
+						'</p>' +
+						'<div class="center">' +
+							'Email: <a href="mailto:help@tokenrewards.com">help@tokenrewards.com</a>' +
+							'<br />or<br />' +
+							'Call: <a href="tel:+1-800-926-9194">(800) 926-9194</a><br/>(9 to 5 p.m. Central)' +
+						'</div>'
+
+					});
+					return;
+				}
+
+
+				if ($("#chkSavePassword").is(":checked")) {
+					Application.oPrefs.oSignIn.sPassword = sPass;
+					Application.savePrefs();
+				}
+			}
+		);
+
+	},
+	validateUser: function (oUser) {
+		if (!oUser || oUser.CUSTOMER_ID == undefined || oUser.CUSTOMER_ID == '') {
+			return false;
+		}
+		Dashboard.userValidated(oUser);
+		return true;
+	},
+	userValidated: function (oUser) {
+		Application.oUser = oUser;
+
+		var jPage = $("#Dashboard");
+		$("#ProviderName", jPage).html(oUser.PROVIDER_NAME.replace(" ", "&nbsp;"));
+		$(".UserName", jPage).html(oUser.USER_NAME.replace(" ", "&nbsp;"));
+
+		sLastSignIn = (oUser.USER_LAST_LOGIN) ?
+			oUser.USER_LAST_LOGIN.toDateFormat("shortDateTime")
+			: "Initial Sign In";
+		$("#LastSignIn", jPage).text(sLastSignIn);
+
+
+		$("span.TokenUnit").text(Application.oUser.TOKENUNIT);
+		$("span.ParticipantAlias").text(Application.oUser.PARTICIPANT_ALIAS);
+
+		var sDescript = Application.oPrefs.oWithdrawal.sDescription;
+		Application.oPrefs.oWithdrawal.sDescription =
+			(sDescript) ? sDescript : Application.oUser.TOKENUNIT.toProperCase() + "s Redeemed";
+
+		Dashboard.bRefresh = true;
+		this.refresh(function () {
+
+			if (Application.oUser.TEMP_PASS_USED) {
+				ui.showMessage({
+					sTitle: "Temporary Sign In",
+					sMessage:
+						'You were successfully signed in using a temporary password.  ' +
+						'<br/><br/>' +
+						'Tap/click "Your User Profile" to change ' +
+						'your existing password.',
+					fnCallback: function () {
+						$("#Dashboard #WrapUserInfo").trigger("expand");
+					}
+				});
+			}
+			if (Application.oUser.USER_LAST_LOGIN == "" && !Dashboard.bFirstTimeMessageShown) {
+				Dashboard.bFirstTimeMessageShown = true;
+				ui.showMessage({
+					sTitle: "Getting Started",
+					sMessage: 'Get started by clicking the "New&nbsp;' +
+								Application.oUser.PARTICIPANT_ALIAS + '" button. <br/><br/>' +
+								'Once you have entered one or more ' +
+								Application.oUser.PARTICIPANT_ALIAS.toLowerCase() + 's, click ' +
+								'"View All ' + Application.oUser.PARTICIPANT_ALIAS + 's" to begin awarding ' +
+								Application.oUser.TOKENUNIT.toLowerCase() + 's!'
+				});
+			}
+
+		});
+	},
+
+	newClassLi: function (oClass) {
+		var jLi = $("ul#liPrototypes li.Class").clone().removeClass("prototype").data('oClass', oClass);
+
+		$("span.ClassName", jLi).text(oClass.CLASS_NAME);
+		$("span.ActiveCount", jLi).text(oClass.ACTIVE_PARTICIPANTS.toNumber());
+		$("span.InactiveCount", jLi).text("/" + oClass.PARTICIPANTS.toNumber());
+		$("span.Balance", jLi).text(oClass.BALANCE);
+		jLi.click(function () {
+			var jThis = $(this);
+			Participants.oClass = jThis.data('oClass');
+			if (Participants.lastClassFetched != Participants.oClass.ID) {
+				$("#Participants #partyList").empty();
+			}
+		});
+		return jLi;
+	},
+
+	signOut: function () {
+		LogEntry("Sign Out clicked");
+		ui.showConfirm({
+			sTitle: "Sign Out?",
+			sMessage: 'Click "Okay" to clear your password and sign out.',
+			fnConfirmCallback: function () {
+
+				Application.oPrefs.oSignIn.sPassword = "";
+				Application.savePrefs();
+				$("#txtPassword").val("");
+				for (var sX in Application.oUser) {
+					Application.oUser[sX] = "";
+				}
+				window.location.hash = "#SignIn";
+				window.location.reload();
+			}
+		});
+	}
+
 };
 
 TokenSession = {
@@ -846,171 +1218,6 @@ TokenSession = {
 
 };
 
-SignIn = {
-	bAutoSignedIn: false,
-	init: function () {
-		var jPage = $("#SignIn");
-		$(".currentYear", jPage).text((new Date()).getFullYear());
-
-		$(".AlphaTag, .BetaTag", jPage).bind('click', function () {
-			Application.supportInfo();
-			return;
-		});
-
-		$("#btnSignIn", jPage).bind('click', function () {
-			SignIn.manualLogin();
-		});
-		$("a#LostPassHelp", jPage).click(function () {
-			Application.lostPassword.open();
-		});
-		$("#btnNewAccount", jPage).click(function () {
-			ui.showMessage({
-				sTitle: 'New Account',
-				sMessage: 'Please visit TokenRewards.com or call' +
-				'<div style="font-size:1.2em; font-weight: bold; margin:.5em 0">' +
-					'<a href="tel:+1-800-926-9194">(800) 926-9194</a>' +
-				'</div>' +
-				'to start a new reward program account.'
-			});
-		});
-		$("input", jPage).keyup(function () {
-			var jPage = $("#SignIn");
-			var sUser = $("#txtUser", jPage).val();
-			var sPass = $("#txtPassword", jPage).val();
-
-			if (sUser && sPass) {
-				$("#btnSignIn", jPage).button("enable");
-				$("#chkSavePassword", jPage).checkboxradio('enable');
-			}
-			else {
-				$("#btnSignIn").button("disable");
-				$("#chkSavePassword").checkboxradio('disable');
-			}
-		}).keyup();
-
-	},
-	refresh: function () {
-		var jPage = $("#SignIn");
-		var oData = Application.oPrefs.oSignIn;
-
-		// && (Application.oUser.CUSTOMER_ID == undefined || Application.oUser.CUSTOMER_ID == '')
-		$("#txtUser", jPage).val(oData.sUser).keyup().focus();
-		//$("#txtPassword", jPage).val(oData.sPassword);
-
-		if (oData.sUser && oData.sPassword) {
-			ui.elap.on("Signing In...");
-			new execQuery(
-				"select * from adm$login(" + oData.sUser.prepSQL() + "," + oData.sPassword.prepSQL() + ", null);",
-				function (aRow) {
-					ui.elap.off();
-					SignIn.bAutoSignedIn = true;
-					if (SignIn.validateUser(aRow[0])) {
-						return;
-					}
-					else {
-						ui.showMessage({
-							sTitle: "Not Signed In",
-							sMessage: "Unable to sign in with using the saved e-mail and password."
-						});
-					}
-
-				}
-			);
-		}
-
-
-		ui.elap.off();
-
-		Application.hideAddressBar();
-	},
-	manualLogin: function () {
-		ui.elap.on("Signing In...");
-		var sUser = $("#txtUser").val();
-		var sPass = $("#txtPassword").val();
-
-		Application.oPrefs.oSignIn.sUser = sUser;
-		Application.savePrefs();
-
-		new execQuery(
-			"select * from adm$login(" + sUser.prepSQL() + "," + sPass.prepSQL() + ",null);",
-			function (aRow) {
-				ui.elap.off();
-
-				if (!SignIn.validateUser(aRow[0])) {
-					ui.showMessage({
-						sTitle: "Not Signed In",
-						sMessage:
-						'<p>' +
-							'Sorry, but you could not be signed in with the e-mail and password combination entered.' +
-							'<br /><br />' +
-							'Please try again or contact us for assistance.' +
-						'</p>' +
-						'<div class="center">' +
-							'Email: <a href="mailto:help@tokenrewards.com">help@tokenrewards.com</a>' +
-							'<br />or<br />' +
-							'Call: <a href="tel:+1-800-926-9194">(800) 926-9194</a><br/>(9 to 5 p.m. Central)' +
-						'</div>'
-
-					});
-					return;
-				}
-
-
-				if ($("#chkSavePassword").is(":checked")) {
-					Application.oPrefs.oSignIn.sPassword = sPass;
-					Application.savePrefs();
-				}
-			}
-		);
-
-	},
-	validateUser: function (oUser) {
-		if (!oUser || oUser.CUSTOMER_ID == undefined || oUser.CUSTOMER_ID == '') {
-			return false;
-		}
-		SignIn.userValidated(oUser);
-		return true;
-	},
-	userValidated: function (oUser) {
-		Application.oUser = oUser;
-
-		var jPage = $("#Dashboard");
-		$("#ProviderName", jPage).html(oUser.PROVIDER_NAME.replace(" ", "&nbsp;"));
-		$(".UserName", jPage).html(oUser.USER_NAME.replace(" ", "&nbsp;"));
-
-		sLastSignIn = (oUser.USER_LAST_LOGIN) ?
-			oUser.USER_LAST_LOGIN.toDateFormat("shortDateTime")
-			: "Initial Sign In";
-		$("#LastSignIn", jPage).text(sLastSignIn);
-
-	
-		$("span.TokenUnit").text(Application.oUser.TOKENUNIT);
-		$("span.ParticipantAlias").text(Application.oUser.PARTICIPANT_ALIAS);
-
-		var sDescript = Application.oPrefs.oWithdrawal.sDescription;
-		Application.oPrefs.oWithdrawal.sDescription =
-			(sDescript) ? sDescript : Application.oUser.TOKENUNIT.toProperCase() + "s Redeemed";
-
-		Dashboard.bRefresh = true;
-		$.mobile.changePage($("#Dashboard"));
-
-		if (Application.oUser.TEMP_PASS_USED) {
-			ui.showMessage({
-				sTitle: "Temporary Sign In",
-				sMessage:
-						'You were successfully signed in using a temporary password.  ' +
-						'<br/><br/>' +
-						'Tap/click "Your User Profile" to change ' +
-						'your existing password.',
-				fnCallback: function () {
-					$("#Dashboard #WrapUserInfo").trigger("expand");
-				}
-			});
-		}
-	}
-
-}
-
 NewAccount = {
 	sEmailCode: '',
 
@@ -1162,7 +1369,6 @@ NewAccount = {
 				ui.elap.off();
 				if (!bSuccess) { alert("Error Sending E-Mail."); return; }
 
-				Application.oPrefs.oGeneral.sChangeEmail = oEmail.to_address;
 				Application.savePrefs();
 				var sMessage = "You have been sent an e-mail containing the " +
 							"four character confirmation code.  <br/><br/>Please check your inbox, " +
@@ -1213,7 +1419,7 @@ NewAccount = {
 		var oName = $('input.UserName', jPage).val().trim().parseName();
 
 		var sProgramName = Application.oPrefs.oNewAccount.sProgramName
-			|| ((oName.last) ? oName.last : "My") + " Reward Program";
+			|| ((oName.last) ? oName.last : oName.first) + " Rewards";
 
 		$("#NewProgramName", jPage).val(sProgramName.trim());
 
@@ -1240,6 +1446,7 @@ NewAccount = {
 	},
 
 	createAccount: function () {
+		ui.elap.on("Creating Account...");
 		var jPage = $("#NewAccount");
 		var oAccount = Application.oPrefs.oNewAccount;
 		var sPassword = $(".Password1", jPage).val().trim();
@@ -1262,11 +1469,15 @@ NewAccount = {
 			oAccount.nTokenRate.prepSQL() + "," +
 			oAccount.sParticipantAlias.prepSQL() + ");",
 		function () {
+			ui.elap.off();
 			ui.showMessage({
 				sTitle: "Account Created!",
 				sMessage:
 					'Your new account for Token Tap and Admin.TokenRewards.com has been created!',
-				fnCallback: function () { $.mobile.changePage("#SignIn"); }
+				fnCallback: function () {
+					window.location.hash = "#Dashboard";
+					//$.mobile.changePage("#Dashboard"); 
+				}
 			});
 
 		});
@@ -1282,225 +1493,6 @@ NewAccount = {
 		*/
 
 	}
-};
-
-Dashboard = {
-	aoClasses: [],
-	oTotals: {},
-	bRefresh: false,
-	bFirstTimeMessageShown: false,
-
-	init: function () {
-		var jPage = $("#Dashboard");
-		$(".currentYear", jPage).text((new Date()).getFullYear());
-
-		$(".AlphaTag, .BetaTag", jPage).bind('click', function () {
-			Application.supportInfo();
-			return;
-		});
-
-		$("a.DepositSession", jPage).click(function () {
-			TokenSession.saveDialog.open();
-		});
-
-		$("#btnSignOut", jPage).click(function () {
-			Dashboard.signOut();
-		});
-
-		$("a.ResetSession", jPage).click(function () {
-			TokenSession.clear();
-		});
-
-		$("li#AllParties", jPage).click(function () {
-			Participants.oClass = $.extend({}, {
-				CLASS_NAME: "All " + Application.oUser.PARTICIPANT_ALIAS + "s",
-				ID: "-1"
-			},
-			Dashboard.oTotals);
-
-			if (Participants.lastClassFetched != Participants.oClass.ID) {
-				$("#Participants #partyList").empty();
-			}
-		});
-		$("a#NewParty", jPage).bind('click', function () {
-			PartyProfile.insert();
-		});
-
-		$(".SessionTokenTotal", jPage).detach().appendTo($(".WrapSessionSummary h4 a", jPage));
-
-		$("#CollapsibleClasses", jPage).bind('collapse', function () {
-			Application.oPrefs.oCollapsibles.sClasses = "collapse";
-			Application.savePrefs();
-		})
-		.bind('expand', function () {
-			Application.oPrefs.oCollapsibles.sClasses = "expand";
-			Application.savePrefs();
-		});
-
-		$("#WrapUserInfo", jPage).bind('collapse', function () {
-			Application.oPrefs.oCollapsibles.sUser = "collapse";
-			Application.savePrefs();
-		})
-		.bind('expand', function () {
-			Application.oPrefs.oCollapsibles.sUser = "expand";
-			Application.savePrefs();
-		});
-
-
-		$("a#NewClass", jPage).click(function () { ClassGroup.insert(); });
-
-		jPage.bind('swipeleft', function (event) {
-			event.preventDefault();
-			event.stopPropagation();
-			if (Application.oUser.CUSTOMER_ID) {
-
-				Participants.oClass = $.extend({}, {
-					CLASS_NAME: "All " + Application.oUser.PARTICIPANT_ALIAS + "s",
-					ID: "-1"
-				}, Dashboard.oTotals);
-				$.mobile.changePage($("#Participants"));
-			}
-		});
-
-	},
-	refresh: function (fnCallback) {
-
-		$("span.TokenUnit").text(Application.oUser.TOKENUNIT);
-		$("span.ParticipantAlias").text(Application.oUser.PARTICIPANT_ALIAS);
-
-		if (!this.bRefresh) { return; }
-		this.bRefresh = false;
-
-		TokenSession.refresh();
-
-		new execQuery(
-			"select count(*) as PARTICIPANTS,\n" +
-			"  sum(a.ACTIVATED) as ACTIVE_PARTICIPANTS,\n" +
-			"	sum(iif(a.ACTIVATED=1,a.BALANCE,0)) as balance,\n" +
-			"	sum(iif(a.ACTIVATED=1,a.EARNED,0)) as earned,\n" +
-			"	sum(iif(a.ACTIVATED=1,a.SPENT,0)) as spent,\n" +
-			"	sum(iif(a.ACTIVATED=1,a.PENDING,0)) as pending\n" +
-			"  from ADM$PARTICIPANTS(" + Application.oUser.CUSTOMER_ID.prepSQL() + ", null, -1, -1, null) a;\n" +
-			"select * from adm$classes(" +
-				Application.oUser.CUSTOMER_ID.prepSQL() + "," +
-				Application.oUser.USER_ID.prepSQL() +
-			");" +
-			"select * from adm$reusable_transactions(" + Application.oUser.CUSTOMER_ID.prepSQL() + ") order by 3 desc;",
-		function (data) {
-
-			Dashboard.oTotals = $.extend({}, data[0][0]);
-			Dashboard.aoClasses = $.extend([], data[1]);
-			Dashboard.aoClasses.sortColumn('ID', 1);
-			LedgerEntry.aoRemembered = $.extend([], data[2]);
-
-			Participants.total = data[0][0].COUNT;
-			var aoClasses = data[1];
-
-			var jPage = $("#Dashboard");
-
-			var jUl = $("ul#WrapAllParties", jPage).toggleClass("invisible", Dashboard.oTotals.ACTIVE_PARTICIPANTS == 0);
-			var jLi = $("li#AllParties", jUl);
-
-			$("span.ActiveCount", jLi).text(Dashboard.oTotals.ACTIVE_PARTICIPANTS);
-			$("span.InactiveCount", jLi).text("/" + Dashboard.oTotals.PARTICIPANTS.toNumber());
-			$("span.Balance", jLi).text(Dashboard.oTotals.BALANCE);
-
-			$("#WrapUserInfo", jPage).trigger(Application.oPrefs.oCollapsibles.sUser);
-
-			var jWrap = $("#WrapDashboardClasses", jPage);
-			if (aoClasses.length == 0) {
-				// move to bottom of dashboard
-				jWrap.detach();
-				$("#WrapNewParty").after(jWrap);
-				$(".ui-collapsible", jWrap).hide();
-			}
-			else {
-				// move to top (under user info) of dashboard
-				$(".ui-collapsible", jWrap).show();
-
-				jWrap.detach();
-				$("#WrapAllParties").before(jWrap);
-
-				$("#CollapsibleClasses", jWrap).trigger(Application.oPrefs.oCollapsibles.sClasses);
-				jUl = $("ul#DashboardClasses", jWrap);
-				$("li.Class", jUl).remove();
-
-				for (var nX = 0; nX < aoClasses.length; nX++) {
-					jUl.append(Dashboard.newClassLi(aoClasses[nX]));
-				}
-
-
-				jUl.trigger("create").listview("refresh");
-				jUl.trigger('updatelayout');
-
-			}
-
-
-			$(".InactiveCount, .InactiveCountNote", jPage).toggle(Application.oPrefs.oGeneral.bShowInactives);
-
-			if (fnCallback) { fnCallback(); }
-			else {
-				ui.elap.off();
-
-				setTimeout(function () {
-					if (SignIn.bAutoSignedIn) {
-						ui.popupMessage("Automatically signed in<br/>using saved password.");
-						SignIn.bAutoSignedIn = false;
-					}
-					if (Application.oUser.USER_LAST_LOGIN == "" && !this.bFirstTimeMessageShown) {
-						this.bFirstTimeMessageShown = true;
-						ui.showMessage({
-							sTitle: "Getting Started",
-							sMessage: 'Get started by clicking the "New&nbsp;' +
-								Application.oUser.PARTICIPANT_ALIAS + '" button. <br/><br/>' +
-								'Once you have entered one or more ' +
-								Application.oUser.PARTICIPANT_ALIAS.toLowerCase() + 's, click ' +
-								'"View All ' + Application.oUser.PARTICIPANT_ALIAS + 's" to begin awarding ' +
-								Application.oUser.TOKENUNIT.toLowerCase() + 's!'
-						});
-					}
-				}, 500);
-				Application.hideAddressBar();
-			}
-		});
-	},
-
-	newClassLi: function (oClass) {
-		var jLi = $("ul#liPrototypes li.Class").clone().removeClass("prototype").data('oClass', oClass);
-
-		$("span.ClassName", jLi).text(oClass.CLASS_NAME);
-		$("span.ActiveCount", jLi).text(oClass.ACTIVE_PARTICIPANTS.toNumber());
-		$("span.InactiveCount", jLi).text("/" + oClass.PARTICIPANTS.toNumber());
-		$("span.Balance", jLi).text(oClass.BALANCE);
-		jLi.click(function () {
-			var jThis = $(this);
-			Participants.oClass = jThis.data('oClass');
-			if (Participants.lastClassFetched != Participants.oClass.ID) {
-				$("#Participants #partyList").empty();
-			}
-		});
-		return jLi;
-	},
-
-	signOut: function () {
-		LogEntry("Sign Out clicked");
-		ui.showConfirm({
-			sTitle: "Sign Out?",
-			sMessage: 'Click "Okay" to clear your password and sign out.',
-			fnConfirmCallback: function () {
-
-				Application.oPrefs.oSignIn.sPassword = "";
-				Application.savePrefs();
-				$("#txtPassword").val("");
-				for (var sX in Application.oUser) {
-					Application.oUser[sX] = "";
-				}
-				window.location.hash = "#SignIn";
-				window.location.reload();
-			}
-		});
-	}
-
 };
 
 Preferences = {
