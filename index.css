@@ -599,9 +599,11 @@ div.ui-slider-switch .ui-slider-handle {
 
 /* #endregion */
 
-/* #region  SignIn  */
 
-#SignIn {}
+
+/* #region  Dashboard */
+
+#Dashboard {}
 
 /* #region  header */
 .SignIn-Dashboard-Header {
@@ -678,15 +680,15 @@ div.ui-slider-switch .ui-slider-handle {
 /* #endregion */
 
 /* #region  contents */
-#SignIn-contents {
+#WrapSignIn {
 	text-align:center;
 }
 
-#SignIn-contents hr {
+#WrapSignIn hr {
 	margin-top:1em;
 }
 
-#SignIn-contents .ui-checkbox {
+#WrapSignIn .ui-checkbox {
 	display:inline-block;
 }
 
@@ -697,43 +699,6 @@ div.ui-slider-switch .ui-slider-handle {
 	width:5em;
 	z-index:2;
 }
-
-/* #endregion */
-
-/* #region  footer */
-
-.SignIn-Dashboard-Footer {
-	font-size:75%;
-	margin-top:2em;
-	position:absolute;
-	bottom:0px;
-	width:100%;
-	height:3em;
-}
-
-
-.copyright {
-	position:relative;
-	top:1.1em;
-	left:.5em;
-}
-.SignIn-Dashboard-Footer a.footer-phone {
-	float:right;
-	font-size:1em;
-	margin:.5em;
-}
-
-/* #endregion */
-
-
-/* #endregion */
-
-
-/* #region  Dashboard */
-
-#Dashboard {}
-
-/* #region  contents */
 
 
 #Dashboard .UserName {
@@ -891,6 +856,31 @@ table#PartyStats td.lastRow {
 
 /* #endregion */
 
+/* #region  footer */
+
+.SignIn-Dashboard-Footer {
+	font-size:75%;
+	margin-top:2em;
+	position:absolute;
+	bottom:0px;
+	width:100%;
+	height:3em;
+}
+
+
+.copyright {
+	position:relative;
+	top:1.1em;
+	left:.5em;
+}
+.SignIn-Dashboard-Footer a.footer-phone {
+	float:right;
+	font-size:1em;
+	margin:.5em;
+}
+
+/* #endregion */
+
 
 #dlgSaveSessionTokens .amount {
 	font-weight:bold;
@@ -903,6 +893,8 @@ table#PartyStats td.lastRow {
 }
 
 /* #endregion */
+
+
 
 /* #region  Preferences */
 
@@ -917,12 +909,13 @@ table#PartyStats td.lastRow {
 
 #UserProfile .UserDataLabel {
 	font-size:80%;
+	color:#555;
 }
 
 #UserProfile .UserData {
 	font-weight:bold;
-	font-size:110%;
-	height:.8em;
+	font-size:120%;
+	margin-top:.3em;
 }
 #UserProfile div.UserContact {
 	padding:.4em;
