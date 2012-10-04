@@ -1,0 +1,157 @@
+<html>
+<body bottommargin="0" topmargin="0" leftmargin="auto" rightmargin="auto" bgcolor="#FFFFFF" 
+	style="text-align: center; 
+	background-color: #FFFFFF; 
+	font-family: Tahoma, Sans-Serif; 
+	padding:0; margin:0 auto;">
+
+	<table id="emailContents" width="300" cellpadding="0" cellspacing="0" align="center" 
+		style="margin-right: auto; margin-bottom: 0; margin-left: auto; margin-top: 10px;
+			border: none; border-collapse: collapse; width:300px;
+			font-family: Tahoma, Sans-Serif; text-align: left;">
+		<tbody>
+		<tr>
+			<td width="500" style="background-color: #FFFFFF; padding:0; width:320px;">
+				<a href="http://__current_domain__tokenrewards.com" target="_blank">
+					<img src="cid:logo" alt="Token Rewards" width="200" height="50" 
+					style="width:200px; height:50px; border:0;" />
+				</a>
+				<hr />
+			</td>
+		</tr>
+		<tr>
+			<td bgcolor="#FFFFFF" valign="top" width="320" 
+				style="padding:0 20px; color: #000000; font-family: Tahoma, Sans-Serif; font-size: 14px;">
+				__message_body__
+			</td>
+		</tr>
+		<tr id="emailFooter">
+			<td width="320" align="center" colspan="2" style="font-size: 8px; padding-top:10px; width:100%">
+				<hr />
+				To view message in your browser or unsubscribe this address, click or visit:
+				<br />
+				<a href="http://__current_domain__TokenRewards.com/?code=__email_code__#ViewMail" target="_blank">http://jupiter.TokenRewards.com/?code=__email_code__#ViewMail</a>
+				<br /><br />
+				&copy;&nbsp;__year__ Token Reward Systems.
+				&nbsp;&nbsp;
+				Waco, TX 76705
+				&nbsp;&nbsp;
+				(800) 926-9194
+
+			</td>
+		</tr>
+		</tbody>
+	</table>
+
+	TEMPLATES_BEGIN
+
+
+	<div id="admin_lost_password">
+		<pre subject_line>
+			TokenTap Lost Password Help
+		</pre>
+		Hello __first_name__,
+		<p>
+			You have requested a temporary password 
+			to sign into the Token Tap mobile app or 
+			the Admin.TokenRewards.com web app.
+			<br />
+			<br />
+			The following temporary password is valid for 
+			24 hours.  After signing in, set a new
+			password by clicking "Your Account".
+		</p>
+		<div style="text-align: center;margin-top:2em; margin-bottom:2em">
+			<b>Temporary Sign In Code:</b>
+			<br /><br />
+			<span style="border:1px solid black;
+				margin-left:.1em;
+				padding:0.1em 0.3em 0em 0.5em;
+				font-size: 35px; font-weight:bold;
+				font-family:Courier, Monospace;
+				letter-spacing:.2em;"
+				>__email_code_short__</span>
+		</div>
+	</div>
+
+	<div id="admin_confirm_email">
+		<pre subject_line>
+			Confirm Your E-Mail for Token Tap
+		</pre>
+		Hello __first_name__,
+		<p>
+			To confirm your new e-mail address for 
+			Token Tap and Admin.TokenRewards,
+			enter the four character code
+			below where prompted.
+		</p>
+		<div style="text-align: center;margin-top:2em; margin-bottom:2em">
+			<b>E-Mail Confirmation Code:</b>
+			<br /><br />
+			<span style="border:1px solid black;
+				margin-left:.1em;
+				padding:0.1em 0.3em 0em 0.5em;
+				font-size: 35px; font-weight:bold;
+				font-family:Courier, Monospace;
+				letter-spacing:.2em;"
+				>__email_code_short__</span>
+		</div>
+	</div>
+
+	<div id="admin_password_changed">
+		<pre subject_line>
+			Your Token Tap & Token Rewards Password Has Been Changed
+		</pre>
+		Hello __first_name__,
+		<p>
+			This message is notify you that your 
+			password for Token Tap and 
+			Admin.TokenRewards.com has been changed.
+			<br /><br />
+			If you were not the one who changed your 
+			password, either contact Token Rewards at
+			(800) 926-9194 or use the "Lost Password"
+			link when signing in to change it back.
+		</p>
+	</div>
+
+
+
+	<div id="admin_party_deposit">
+		Great Job, __party_nick_name__!
+		<br />
+		<br />
+		<table cellpadding="0" cellspacing="0" border="0">
+			<tr>
+				<td width="120" align="center">
+					<img src="cid:ribbon" alt="Ribbon" width="80" height="130" style="width:80px; height:130px; border:0;" />
+				</td>
+				<td width="380" style="font-weight: bold; font-size:22px; text-align:left;font-family: Tahoma, Sans-Serif;">
+					__provider_name__ has just awarded you __amount_tokens__!
+				</td>
+			</tr>
+		</table>
+		<br />
+		<div>
+			Your account balance is now at <b>__balance_tokens__.</b>
+			<br /><br />
+			Go to 
+			<a href="http://jupiter.shop.tokenrewards.com/#AutoLogin___email_code__" target="_blank">
+				Shop.TokenRewards.com
+			</a>
+			to redeem your __token_name__s. The link will automatically log you in.
+			<br /><br />
+			<div style="font-size:.8em;">
+				If you cannot click the above link, direct your browser to:
+				<br />
+				http://jupiter.shop.tokenrewards.com/#AutoLogin___email_code__
+			</div>
+		</div>
+		<br />
+	</div>
+	<span style="font-size: 16px; font-weight: bold">__deposit_reason__ </span>
+
+	TEMPLATES_END
+
+</body>
+</html>

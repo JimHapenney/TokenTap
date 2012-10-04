@@ -1,0 +1,1678 @@
+<!DOCTYPE html> 
+<html> 
+<head>
+	<meta charset="utf-8" />
+	<meta name="apple-mobile-web-app-capable" content="yes" />
+	<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+
+	<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+	
+	<!--
+	<meta name="viewport" 
+		content="width=device-width, 
+					initial-scale=1, 
+					maximum-scale=1, 
+					minimum-scale=1, 
+					user-scalable=no, 
+					target-densityDpi=device-dpi" />
+	-->
+
+	<title>Token Tap</title>
+	
+	<link rel="shortcut icon" href="images/favicon.png?02.27.12.3" />
+	<link rel="stylesheet" href="libs/jquery.mobile-1.2.0-rc.2.css" />
+	<link href="libs/jqm-icon-pack-2.0-original.css" rel="stylesheet" type="text/css" />
+
+	<link href="libs/animate.css" rel="stylesheet" type="text/css" />
+	<link rel="stylesheet" href="index.css" type="text/css" />
+
+	<script src="libs/jquery-1.8.1.js" type="text/javascript"></script>
+
+	<script type="text/javascript" src="index.js"></script>
+	<script type="text/javascript" src="libs/jquery.mobile-1.2.0-rc.2.js"></script>
+
+</head>
+
+<body>
+	<div id="SignIn" 
+		data-title="TokenTap"
+		data-role="page">
+
+		<div class="SignIn-Dashboard-Header" data-role="header">
+			<img class="BlueMan" src="images/blueman_pointing_left_arm.png" alt=""/>
+			<div class="AppTitle">
+				token tap
+				<span class="trademark">&trade;</span>
+			</div>
+			
+			<span id="SignInTitle">Administrator Sign In</span>
+
+			<span class="BetaTag">Beta</span>
+
+			<span class="AlphaTag">Alpha</span>
+			<div class="AlphaZoom">
+				<span class="zoomState 240">240</span>
+				<span class="zoomState 320">320</span>
+				<span class="zoomState 360">360</span>
+				<span class="zoomState 420">420</span>
+				<span class="zoomState 480">480</span>
+				<span class="zoomState 540">540</span>
+				<span class="zoomState 800">800</span>
+			</div>
+		</div>
+
+		<div id="SignIn-contents" data-role="content">
+			<form method="POST" autocomplete="on" class="bottomMargin" 
+				onSubmit="return false" data-ajax="false">
+				<label for="txtUser">Email Address:</label>
+				<input type="email" name="email" id="txtUser" autocomplete="on" x-autocompletetype="email" value="" />
+				<br />
+				<label for="txtPassword">Password:</label>
+				<input type="password" name="password" id="txtPassword" value="" />
+
+			</form>
+			<button type="submit" 
+				id="btnSignIn" 
+				data-role="button" 
+				data-theme="b" 
+				data-icon="check" 
+				data-inline="true" 
+				disabled>Sign In</button>
+					
+			<input type="checkbox" name="checkbox-1" id="chkSavePassword" data-inline="true" disabled />
+			<label for="chkSavePassword">Save</label>
+
+			<hr />
+			<div class="center">
+				Check "Save" to save password.
+				<br />
+				<a id="LostPassHelp" href="#">Lost Password?</a>
+			</div>
+
+			<br />
+			<div style="position:relative;">
+				<a href="#NewAccount" 
+					data-theme="b"
+					data-role="button"
+					data-inline="false"
+				>Start New Reward Program</a>
+				<!--<img id="imgFree" src="images/FreeRotated.png" alt="" />-->
+			</div>
+		</div>
+
+		<div class="SignIn-Dashboard-Footer"
+			data-role="footer" 
+			data-theme="b">
+			<span class="copyright">&copy; <span class="currentYear"></span> Token Rewards</span>
+			<a class="footer-phone" data-theme="b" href="tel:+1-800-926-9194">(800) 926-9194</a>
+		</div>
+
+	</div>
+
+	<div id="NewAccount"
+		data-title="TokenTap"
+		data-role="page">
+		
+		<div data-role="header">
+			<a class="backButton ui-btn-left"
+				data-role="button"
+				data-rel="back"
+				data-icon="arrow-l">Back</a>
+			<h1>New Reward Program</h1>
+		</div>
+
+		<div data-role="content">
+			<div id="ContactInfo">
+
+				Enter Your Name:<br />
+				<input class="UserData UserName" type="text"/>
+
+				<div class="WrapEmail">
+					<span class="user_data_label">E-Mail Address:</span>
+					<br />
+					<input class="UserEmail" type="email" />
+					<span class="invalid note">invalid</span>
+					<span class="valid note">
+						<img src="images/Check-Mark.png" alt=""/>
+						valid
+					</span>
+					<span class="verified note">
+						<img src="images/Check-Mark.png" alt="" />
+						<span>verified</span>
+					</span>
+
+				</div>
+
+
+				<br />
+
+				<a class="SendConfirmCode ui-disabled"
+					data-role="button"
+					data-icon="email"
+					data-theme="b"
+				>Send Confirmation Code</a>
+
+				<br />
+				<div class="center">
+					Enter the confirmation code here:
+					<input class="ConfirmCode" type="text" maxlength="4" />
+				</div>
+			
+				<br />
+				<a class="CheckConfirmCode ui-disabled"
+					data-role="button"
+					data-icon="check"
+					data-theme="b"
+				>Confirm Code & Continue</a>
+
+			</div>
+
+			<div id="ProgramInfo" class="noDisplay">
+
+				<div class="ui-br bottomMargin">
+					<label for="NewProgramName">Program or Organization Name:</label>
+					<input id="NewProgramName" class="" type="text" maxlength="100" />
+					<div class="signUpNote">
+						Examples: Smith Family Rewards, Lincoln Middle School, Smiles Orthodontics, Super Tutors!, etc.
+					</div>
+
+				</div>
+
+				<div class="ui-br bottomMargin">
+					<label for="NewTokenUnit">Your program uses:</label>
+					<select id="NewTokenUnit">
+						<option value="Token">Tokens</option>
+						<option value="Point">Points</option>
+						<option value="Star">Stars</option>
+						<option value="Credit">Credits</option>
+					</select>
+				</div>
+
+				<div class="ui-br bottomMargin">
+					<label for="NewParticipantAlias"><span class="TokenUnit"></span>s will be awarded to:</label>
+					<select id="NewParticipantAlias">
+						<option value="Student">Students</option>
+						<option value="Patient">Patients</option>
+						<option value="Member">Members</option>
+						<option value="Player">Players</option>
+						<option value="Participant">Participants</option>
+					</select>
+				</div>
+
+				<div class="bottomMargin">
+					<label for="NewTokenRate">
+						How many <span class="TokenUnit lowercase"></span>s equal $1?<br />
+					</label>
+					<input id="NewTokenRate" data-inline="true" type="number" />
+					(1 <span class="TokenUnit lowercase"></span> ~= <span class="DollarsPerToken"></span>)
+					<div class="signUpNote">
+						Needed for Shop.TokenRewards.com, where your 
+						<span class="ParticipantAlias lowercase"></span>s
+						will be spending their <span class="TokenUnit lowercase"></span>s.
+						Must be at least 1 <span class="TokenUnit lowercase"></span> per dollar.
+					</div>
+
+				</div>
+			
+
+				<a class="GetPassword ui-disabled"
+					data-role="button"
+					data-icon="arrow-r"
+					data-iconpos="right"
+					data-theme="b"
+				>Continue...</a>
+
+			</div>
+
+			<div id="SetPassword" class="noDisplay">
+				Enter a Password:<br />
+				<input class="Password1" type="password" />
+				<div style="font-size:80%; font-style:italic; margin-bottom:1em; margin-left:1em;">
+					The password must contain at least four characters and no spaces.
+				</div>
+				Enter Your Password Again:<br />
+				<input class="Password2" type="password" />
+				<br />
+				<span class="flipswitchlabel">Save Password?</span>
+				<select class="NewPasswordSave"
+					data-role="slider"
+					data-inline="true">
+					<option value="no">No</option>
+					<option value="yes">Yes</option>
+				</select>
+				<div style="font-size:80%; font-style:italic; margin-top:.5em; margin-left:1em;">
+					Select "Yes" to automatically sign in on this device.
+					If you share this device with your <span class="ParticipantAlias lowercase"></span>s,
+					choose "No".
+				</div>
+
+
+				<br />
+				<a id="CreateAccount"
+					class="ui-disabled"
+					data-role="button"
+					data-theme="b"
+					data-icon="check"
+					data-iconpos="left"
+				>Okay, Create My Account!</a>
+
+
+			</div>
+
+			<!-- OptionalInfo
+			<div class="OptionalInfo"
+				data-role="collapsible" 
+				data-theme="b"
+				data-mini="true"
+				data-collapsed="true"
+				data-content-theme="c">
+				<h4>Optional Contact Info</h4>
+				<div>
+					Title/Position:
+					<input class="UserData UserTitle" type="text"/>
+					<br />
+					Phone/Messaging Number:
+					<input class="UserData UserPhone" type="text"/>
+				</div>
+
+			</div>
+		-->
+		</div>
+
+	</div>
+
+
+	<div id="Dashboard" 
+		data-title="TokenTap"
+		data-role="page">
+		<div class="SignIn-Dashboard-Header" 
+			data-role="header">
+			<img class="BlueMan" src="images/blueman_pointing_left_arm.png" alt=""/>
+			<div class="AppTitle">
+				token tap
+				<span class="trademark">&trade;</span>
+			</div>
+			<div id="ProviderName" class="SignedIn">Account Name</div>
+			
+			<br />
+			
+			<span class="BetaTag">Beta</span>
+
+			<span class="AlphaTag">Alpha</span>
+			<div class="AlphaZoom">
+				<span class="zoomState 240">240</span>
+				<span class="zoomState 320">320</span>
+				<span class="zoomState 360">360</span>
+				<span class="zoomState 420">420</span>
+				<span class="zoomState 480">480</span>
+				<span class="zoomState 540">540</span>
+				<span class="zoomState 800">800</span>
+			</div>
+
+
+		</div>
+
+		<div id="DashboardContents" data-role="content">
+
+			<div id="wrapSignedIn" class="SignedIn">
+
+				<div id="WrapUserInfo" class="slide"
+					data-role="collapsible"
+					data-collapsed-icon="arrow-d"
+					data-expanded-icon="arrow-u"
+					data-theme="c" 
+					data-content-theme="c"
+				>
+					<h1>
+						<span style="font-weight:normal; font-size:.6em; position:absolute; top:-1.0em;">
+							Signed In Administrator:
+						</span>
+						<span class="UserName"></span>
+					</h1>
+				
+				
+					<ul id="UserInfo"
+						data-role="listview"
+						data-theme="c">
+						<li data-icon="false">
+							<div>
+								<a id="btnSignOut"
+									data-icon="delete"
+									data-iconpos="right"
+									data-rel="dialog"
+									data-inline="true" 
+									data-role="button"
+									data-theme="b"
+									data-mini="true">Sign Out</a>
+								Last Signed In:
+								<br />
+								<span id="LastSignIn"></span>
+							</div>
+						</li>
+						<li data-icon="false">
+							<div id="UserInfoCommands">
+								<a href="#Preferences"
+									data-role="button"
+									data-inline="false" 
+									data-theme="b"
+									data-icon="arrow-r"
+									data-mini="false"
+									data-iconpos="right"
+									data-ajax="false"
+									>Token Tap Preferences</a>
+
+								<a href="#UserProfile"
+									data-role="button"
+									data-rel="page"
+									data-inline="false" 
+									data-theme="b"
+									data-icon="arrow-r"
+									data-mini="false"
+									data-iconpos="right"
+									data-ajax="false"
+									>Your User Profile</a>
+
+								<a href="#RewardProgramSettings"
+									data-role="button"
+									data-rel="dialog"
+									data-inline="false" 
+									data-theme="b"
+									data-icon="arrow-r"
+									data-mini="false"
+									data-iconpos="right"
+									data-ajax="false"
+									>Your Reward Program</a>
+							</div>
+						</li>
+					</ul>
+				</div>
+
+				<div class="WrapSessionSummary"
+						data-role="collapsible"
+						data-iconpos="left"
+						data-collapsed-icon="arrow-d"
+						data-expanded-icon="arrow-u"
+						data-theme="b" 
+						data-content-theme="b"
+				>
+
+					<h4>
+						<span style="">Session <span class="TokenUnit"></span>s</span>
+					</h4>
+					<span class="SessionTokenTotal"></span>
+
+					<ul class="SessionSummary"
+						data-role="listview"
+						>
+						<li data-icon="false">
+							<div>
+								<a class="DepositSession"
+									data-icon="check"
+									data-role="button"
+									data-theme="b"
+								>Save (Deposit <span class="TokenUnit"></span>s)</a>
+							</div>
+						</li>
+						<li data-icon="false">
+							<div class="TokenSessionMore"
+									data-role="collapsible"
+									data-collapsed-icon="arrow-d"
+									data-expanded-icon="arrow-u"
+									data-mini="true"
+									data-theme="c" 
+									data-content-theme="c">
+								<h1>Summary</h1>
+								<div style="text-align:left; font-size:.9em">
+									<span class="ParticipantAlias"></span>s w/ <span class="TokenUnit lowercase"></span>s:
+									<span class="SessionParties"></span>
+								</div>
+								<div style="font-size:.8em; margin:.5em 0 .5em 0; font-weight:normal; text-align:left">
+									First <span class="TokenUnit"></span> Awarded To:<br />
+									<span class="SessionFirst" style="padding-left:1em; font-weight:bold"></span>
+									<div style="margin-top:.5em"></div>
+									Latest <span class="TokenUnit"></span> Awarded To:<br />
+									<span class="SessionLast" style="padding-left:1em; font-weight:bold"></span>
+								</div>
+
+								<div style="margin-top:1em; height:auto; overflow:auto;">
+									<a class="ResetSession"
+										data-icon="delete"
+										data-iconpos="left"
+										data-rel="dialog"
+										data-inline="true" 
+										data-role="button"
+										data-theme="b"
+										data-mini="true">Cancel <span class="TokenUnit"></span>s</a>
+								</div>
+							</div>
+						</li>
+					</ul>
+				</div>
+
+				<div id="WrapDashboardClasses">
+					<div id="CollapsibleClasses"
+						data-role="collapsible"
+						data-collapsed-icon="arrow-d"
+						data-expanded-icon="arrow-u"
+						data-theme="c" data-content-theme="c"
+						>
+						<h4>Your Groups &amp; Classes</h4>
+						<ul id="DashboardClasses"
+							data-role="listview" 
+						>
+							<li class="InactiveCountNote">
+								Inactive <span class="ParticipantAlias"></span>s Included
+								(Active/Total)
+							</li>
+						</ul>
+					</div>
+					<div class="center">
+						<a id="NewClass"
+							data-role="button"
+							data-theme="b"
+							data-icon="plus"
+							data-inline="true"
+							>New Group or Class</a>
+					</div>
+				</div>
+
+				<!--
+				<a href="#Participants"
+					data-role="button"
+					data-theme="b"
+					data-icon="arrow-r"
+					data-iconpos="right"
+				>
+					<span id="">View All <span class="ParticipantAlias">Student</span>s</span>
+					<div class="ClassStats ui-li-count">
+						<span class="ActiveCount"></span>
+						<span class="InactiveCount"></span>
+					</div>
+				</a>
+				-->
+
+				<ul id="WrapAllParties"
+					data-role="listview" 
+					data-inset="true" 
+					data-theme="c">
+					<li id="AllParties">
+						<a href="#Participants">
+							<span id="AllPartyTitle">View All <span class="ParticipantAlias">Student</span>s</span>
+							<div class="ClassStats ui-li-count">
+								<span class="ActiveCount"></span>
+								<span class="InactiveCount"></span>
+							</div>
+						</a>
+						<div class="InactiveCountNote">
+							Inactive <span class="ParticipantAlias"></span>s
+							Included (Active/Total)
+						</div>
+					</li>
+				</ul>
+
+				<div id="WrapNewParty" class="center">
+					<a id="NewParty" href="#"
+						data-role="button"
+						data-theme="b"
+						data-icon="plus"
+						data-inline="true"
+						>New <span class="ParticipantAlias">Student</span></a>
+				</div>
+
+				<div style="height:3em;"></div>
+			</div>
+		</div>
+
+		<div class="SignIn-Dashboard-Footer"
+			data-role="footer" 
+			data-theme="b">
+			<span class="copyright">&copy; <span class="currentYear"></span> Token Rewards</span>
+			<a class="footer-phone" data-theme="b" href="tel:+1-800-926-9194">(800) 926-9194</a>
+		</div>
+
+
+	</div>
+
+	<div id="Preferences" 
+		data-title="TokenTap Preferences"
+		data-role="page">
+		
+		<div data-role="header">
+			<a class="backButton ui-btn-left"
+				data-role="button"
+				data-rel="back"
+				data-icon="arrow-l">Back</a>
+			<h1 class="twoLine">Token Tap<br />Preferences</h1>
+		</div>
+
+		<div data-role="content">
+			<div data-role="fieldcontain">
+				<span class="flipswitchlabel">Play Sounds?</span>
+				<br />
+				<select id="AudioOnOff"
+					data-role="slider"
+					data-inline="true">
+					<option value="off">No</option>
+					<option value="on">Yes</option>
+				</select>
+			</div>
+			<br />
+			<div data-role="fieldcontain">
+				<span class="flipswitchlabel">Show Inactive <span class="ParticipantAlias"></span>s?</span>
+				<br />
+				<select id="ShowInactives"
+					data-role="slider">
+					<option value="hide">No</option>
+					<option value="show">Yes</option>
+				</select>
+			</div>
+			<br />
+			<div>
+				<label for="SortParties" class="select">Show <span class="ParticipantAlias"></span>s Sorted By:</label>
+				<select id="SortParties"
+					data-native-menu="true">
+					<option value="">First Last Name</option>
+					<option value="1">Last, First Name</option>
+					<option value="2">Balance, High to Low</option>
+					<option value="3">Balance, Low to High</option>
+				</select>
+			</div>
+
+		</div>
+
+	</div>
+
+	<div id="UserProfile"
+		data-title="TokenTap Account Settings"
+		data-role="page">
+		
+		<div data-role="header">
+			<a class="backButton ui-btn-left"
+				data-role="button"
+				data-rel="back"
+				data-icon="arrow-l">Back</a>
+			<h1>Your User Profile</h1>
+		</div>
+
+		<div data-role="content">
+			<div data-role="fieldcontain">
+				<div class="UserDataLabel">User Name:</div>
+				<div class="UserData UserName"></div>
+			</div>
+			<div data-role="fieldcontain">
+				<div class="UserDataLabel">Title/Position:</div>
+				<div class="UserData UserTitle"></div>
+			</div>
+			<div data-role="fieldcontain">
+				<div class="UserDataLabel">Phone/Messaging Number:</div>
+				<div class="UserData UserPhone"></div>
+			</div>
+			<a href="#ChangeUserProfile"
+				data-role="button"
+				data-theme="b"
+				data-icon="arrow-r"
+				data-iconpos="right"
+			>Edit Your Profile</a>
+
+			<br /><br />
+			<div class="UserDataLabel">E-Mail Address (Sign In):</div>
+			<div class="UserData UserEmail"></div>
+			<br />
+			<a href="#ChangeEmail"
+				data-role="button"
+				data-theme="b"
+				data-icon="arrow-r"
+				data-iconpos="right"
+			>Change E-Mail Address</a>
+
+			<br />
+			<a href="#ChangePassword"
+				data-role="button"
+				data-theme="b"
+				data-icon="arrow-r"
+				data-iconpos="right"
+			>Change Password</a>
+
+		</div>
+
+	</div>
+
+	<div id="ChangeUserProfile"
+		data-title="TokenTap"
+		data-role="page">
+		
+		<div data-role="header">
+			<a class="backButton ui-btn-left"
+				data-role="button"
+				data-rel="back"
+				data-icon="arrow-l">Back</a>
+			<a class="saveButton ui-btn-right ui-disabled" 
+				data-role="button" 
+				data-icon="check"
+				>Save</a>
+
+			<h1 class="twoLine">Edit Your<br />User Profile</h1>
+		</div>
+
+		<div data-role="content">
+			User/Administrator Name:<br />
+			<input class="UserData UserName" type="text"/>
+			<br />
+			Title/Position:
+			<input class="UserData UserTitle" type="text"/>
+			<br />
+			Phone/Messaging Number:
+			<input class="UserData UserPhone" type="text"/>
+
+			<br />
+			<a id="SaveNamePhone" href="#"
+				class="ui-disabled"
+				data-role="button"
+				data-theme="b"
+				data-icon="check"
+				data-iconpos="left"
+			>Save Changes</a>
+
+			<br />
+			<div style="font-size:90%; font-style:italic;">
+				<div style="float:left; margin:0 .5em 2em">Note:</div>
+				Your user/administrator name is required.  The title and phone number are optional.
+			</div>
+
+
+		</div>
+
+	</div>
+	
+	<div id="ChangeEmail" 
+		data-title="TokenTap"
+		data-role="page">
+		<div data-role="header">
+			<a class="backButton ui-btn-left"
+				data-role="button"
+				data-rel="back"
+				data-icon="arrow-l">Back</a>
+			<h1>Change E-Mail</h1>
+		</div>
+		<div data-role="content">
+			We need to confirm your new e-mail address before continuing.
+			<br />
+			<div>
+				<div class="WrapEmail">
+					<span class="user_data_label">New E-Mail Address:</span>
+					<br />
+					<input class="UserEmail" type="email" />
+					<span class="invalid note">invalid</span>
+					<span class="valid note">
+						<img src="images/Check-Mark.png" alt=""/>
+						valid
+					</span>
+					<span class="verified note">
+						<img src="images/Check-Mark.png" alt="" />
+						<span>verified</span>
+					</span>
+
+				</div>
+				<br />
+				
+				<a class="SendConfirmCode ui-disabled"
+					data-role="button"
+					data-icon="email"
+					data-theme="b"
+				>Send Confirmation Code</a>
+			</div>
+
+			<div class="center">
+				<br />
+				Enter the confirmation code here:
+				<input class="ConfirmCode" type="text" maxlength="4" />
+				<br />
+				<a class="CheckConfirmCode ui-disabled"
+					data-role="button"
+					data-icon="check"
+					data-theme="b"
+				>Confirm Code & Save</a>
+			</div>
+
+		</div>
+	</div>
+
+	<div id="ChangePassword"
+		data-title="TokenTap"
+		data-role="page">
+		
+		<div data-role="header">
+			<a class="backButton ui-btn-left"
+				data-role="button"
+				data-rel="back"
+				data-icon="arrow-l">Back</a>
+			<h1>Change Password</h1>
+		</div>
+
+		<div data-role="content">
+			Enter New Password:<br />
+			<input class="Password1" type="password" />
+			<br />
+			Enter New Password Again:<br />
+			<input class="Password2" type="password" />
+			<br />
+
+			<a id="SaveNewPassword" href="#"
+				class="ui-disabled"
+				data-role="button"
+				data-theme="b"
+				data-icon="check"
+				data-iconpos="left"
+			>Save New Password</a>
+
+			<br />
+			<div style="font-size:90%; font-style:italic;">
+				<div style="float:left; margin:0 .5em 2em">Note:</div>
+				Your password must contain at least four characters and no spaces.
+			</div>
+		</div>
+
+	</div>
+
+	
+	<div id="RewardProgramSettings"
+		data-title="TokenTap"
+		data-record="true"
+		data-role="page">
+		
+		<div data-role="header" data-position="fixed">
+			<a class="backButton ui-btn-left"
+				data-role="button"
+				data-rel="back"
+				data-icon="arrow-l">Back</a>
+			<a class="saveButton ui-btn-right ui-disabled" 
+				data-role="button" 
+				data-icon="check"
+				>Save</a>
+
+			<h1 class="twoLine">Program<br />Settings</h1>
+		</div>
+
+		<div data-role="content">
+
+			<div class="ui-br bottomMargin">
+				<label for="EditProgramName">Reward Provider/Program Name:</label>
+				<input id="EditProgramName" class="" type="text" maxlength="100" />
+			</div>
+
+			<div class="ui-br bottomMargin">
+				<label for="EditTokenUnit">Your program uses:</label>
+				<select id="EditTokenUnit">
+					<option value="Token">Tokens</option>
+					<option value="Point">Points</option>
+					<option value="Star">Stars</option>
+					<option value="Credit">Credits</option>
+				</select>
+			</div>
+
+			<div class="ui-br bottomMargin">
+				<label for="EditParticipantAlias"><span class="TokenUnit"></span>s are awarded to:</label>
+				<select id="EditParticipantAlias">
+					<option value="Student">Students</option>
+					<option value="Patient">Patients</option>
+					<option value="Member">Members</option>
+					<option value="Player">Players</option>
+					<option value="Participant">Participants</option>
+				</select>
+			</div>
+
+			<div class="ui-br bottomMargin">
+				<label for="EditTokenRate">
+					How many <span class="TokenUnit lowercase"></span>s equal $1?<br />
+				</label>
+				<div class="">
+					<input id="EditTokenRate" data-inline="true" type="number" />
+					(1 <span class="TokenUnit lowercase"></span> ~= <span class="DollarsPerToken"></span>)
+					<br />
+					<span style="font-size:80%;font-style:italic;">Minimum rate: 1 
+					<span class="TokenUnit lowercase"></span> per dollar.</span>
+				</div>
+			</div>
+
+			<br />
+
+		</div>
+
+	</div>
+
+
+	<div id="Participants" 
+		data-title="TokenTap Participants"		
+		data-role="page">
+
+		<div data-role="header" data-position="fixed">
+			<a class="backButton ui-btn-left" 
+				data-role="button" 
+				data-rel="back"
+				data-icon="arrow-l">Back</a>
+			<h1>
+				<span class="ClassName"></span>
+				<span class="SubHeader"></span>
+			</h1>
+		</div>
+
+		<div data-role="content">
+			<div id="NoParties_Class" class="ui-body ui-body-e ui-corner-all">
+				There are no <span class="ParticipantAlias lowercase"></span>s in this class.
+				<br /><br />
+				Create a new <span class="ParticipantAlias lowercase"></span> for this class
+				by clicking the the button below.
+				<br /><br />
+				You can assign existing <span class="ParticipantAlias lowercase"></span>s 
+				to this class by editing their profiles.
+			</div>
+			<div id="NoParties" class="ui-body ui-body-e ui-corner-all">
+				There are no <span class="ParticipantAlias lowercase"></span>s to display.
+				<br /><br />
+				Create a new <span class="ParticipantAlias lowercase"></span> record by clicking
+				the button below. 
+			</div>
+			<div id="MaxParties" class="ui-body ui-body-e ui-corner-all">
+				There are too many <span class="ParticipantAlias lowercase"></span>s to display 
+				on this device (max. 200).
+				<br /><br />
+				Group your <span class="ParticipantAlias lowercase"></span>s into smaller classes
+				so they may be displayed.
+			</div>
+
+
+			<ul id="partyList" 
+				data-role="listview" 
+				data-filter="true" 
+				data-filter-placeholder="Search Participants...">
+			</ul>
+
+
+		</div>
+
+		<div data-role="footer">
+
+			<table id="wrapPartySummary">
+				<tr>
+					<td rowspan="2" style="border-right:1px solid #044062; padding-right:0; text-align:center;">
+						<span class="TokenUnit"></span>s
+					</td>
+					<td>Earned</td>
+					<td>Spent</td>
+					<td>Balance</td>
+				</tr>
+				<tr>
+					<td class="deposited">9999</td>
+					<td class="withdrawn">9999</td>
+					<td class="balance">9999</td>
+				</tr>
+			</table>
+
+			<div class="buttons">
+				<a class="NewParty ui-btn-left" 
+					data-role="button"
+					data-mini="true"
+					data-icon="plus"
+				>New <span class="ParticipantAlias"></span></a>
+				<a class="EditClass ui-btn-right" 
+					data-role="button" 
+					data-mini="true"
+					data-icon="arrow-r"
+					data-iconpos="right"
+				>Edit Class</a>
+			</div>
+
+		</div>
+
+	</div>
+
+	<div id="Participant" 
+		data-title="TokenTap Participant Profile"
+		data-role="page">
+		<div id="Participant_header" data-role="header">
+			<a class="backButton ui-btn-left" 
+				data-role="button" 
+				data-rel="back"
+				data-icon="arrow-l">Back</a>
+
+			<a id="EditProfile"
+				data-role="button"
+				data-iconpos="right" 
+				data-icon="arrow-r">Edit <span class="ParticipantAlias"></span></a>
+
+		</div>
+
+		<div data-role="content">
+
+			<ul id="PartyInfo"
+				data-role="listview"
+				data-inset="true"
+				data-theme="c">
+				<li data-icon="false">
+					<div class="PartyName">Name</div>
+					<div class="Inactive">Inactive</div>
+				</li>
+
+				<li id="wrapViewPartyEmail" data-icon="false">
+					<div class="WrapEmail">
+						<span class="user_data_label">E-Mail Address:</span>
+						<br />
+						<span id="partyEmail" class="user_data"></span>
+						<span class="invalid note">invalid</span>
+						<span class="valid note">
+							<img src="images/Check-Mark.png" alt=""/>
+							valid <span style="color:#888; font-weight:normal;">(not verified)</span>
+						</span>
+						<span class="verified note">
+							<img src="images/Check-Mark.png" alt="" />
+							<span>verified</span>
+						</span>
+
+					</div>
+				</li>
+
+				<li id="wrapViewPartyClasses">
+					<span class="user_data_label">Classes:</span>
+					<div id="partyClasses" class="user_data"></div>
+				</li>
+
+				<li data-icon="false">
+						<span class="user_data_label">Shop Login Code:</span>
+						<span id="partyCode" class="user_data"></span>
+				</li>
+
+			</ul>	
+
+			<div class="WrapSessionSummary"
+					data-role="collapsible"
+					data-iconpos="left"
+					data-collapsed-icon="arrow-d"
+					data-expanded-icon="arrow-u"
+					data-theme="b" 
+					data-content-theme="b"
+			>
+				<h4>
+					<span style="">Session <span class="TokenUnit"></span>s</span>
+				</h4>
+
+				<div class="WrapSessionTokenTotal">
+					<span class="SessionTokenTotal"></span>
+				</div>
+				<ul class="SessionSummary"
+					data-role="listview"
+					>
+					<li data-icon="false">
+						<div>
+							<a class="DepositSession"
+								data-icon="check"
+								data-role="button"
+								data-theme="b"
+							>Save (Deposit <span class="TokenUnit"></span>s)</a>
+
+							<a class="AdjustSession"
+								data-icon="minus"
+								data-role="button"
+								data-theme="b"
+							>Edit Session <span class="TokenUnit"></span>s</a>
+
+						</div>
+					</li>
+				</ul>
+			</div>
+
+
+			<div id="WrapPartyBalances"
+					data-role="collapsible"
+					data-iconpos="left"
+					data-collapsed-icon="arrow-d"
+					data-expanded-icon="arrow-u"
+					data-theme="c" 
+					data-content-theme="b"
+			>
+				<h1>
+					<span class="TokenUnit"></span> Balance
+					<span class="partyBalance">0</span>
+				</h1>
+				
+				<div class="ui-grid-a">
+					<div class="ui-block-a">
+							<span>Deposits:</span>
+				
+					</div>
+					<div class="ui-block-b">
+						<span id="partyEarned">0</span>
+					</div>	   
+				</div>	
+
+				<div class="ui-grid-a">
+					<div class="ui-block-a">
+						<span>Withdrawals:</span>
+					</div>
+					<div class="ui-block-b">
+						<span id="partySpent">0</span>
+					</div>	   
+				</div>	
+
+				<div class="ui-grid-a">
+					<div class="ui-block-a">
+						<span>Pending Withdrawals:</span>
+					</div>
+					<div class="ui-block-b">
+						<span id="partyPending">0</span>
+					</div>	   
+				</div>	
+
+				<a href="#PartyTransactions"
+					data-role="button"
+					data-icon="arrow-r"
+					data-iconpos="right"
+					data-theme="c"
+					style="margin-top:1em;"
+				>View Transactions</a>
+
+			</div>
+
+			<a class="btnDeposit" 
+				data-role="button" 
+				data-theme="b" 
+			>New Deposit</a>
+			<a class="btnWithdraw" 
+				data-role="button" 
+				data-theme="b" 
+			>New Withdrawal</a>
+
+
+		</div>
+
+	</div>
+
+	<div id="PartyTransactions" 
+		data-title="TokenTap Particpant Transactions"
+		data-role="page">
+		<div data-role="header" data-position="fixed">
+			<a class="backButton ui-btn-left" 
+				data-role="button" 
+				data-rel="back"
+				data-icon="arrow-l">Back</a>
+			<h1>
+				<span class="PartyName">Name</span>
+				<span class="SubHeader">
+					<span class="ParticipantAlias"></span> Transactions
+				</span>
+			</h1>
+		</div>
+			
+		<div data-role="content">
+			<ul data-role="listview"></ul>
+		</div>
+
+		<div data-role="footer">
+			
+		</div>
+
+	</div>
+
+	<div id="PartyProfile" 
+		data-record="true"
+		data-title="TokenTap Edit Profile"
+		data-role="page">
+		<div data-role="header" data-position="fixed">
+			<a class="backButton ui-btn-left" 
+				data-rel="back"
+				data-role="button" 
+				data-icon="arrow-l"
+				>Back</a>
+			<a class="saveButton ui-btn-right ui-disabled" 
+				data-role="button" 
+				data-icon="check"
+				>Save</a>
+			<h1></h1>
+		</div>
+	
+		<div data-role="content">
+			
+			<div id="wrapPartyName">
+				<label for="PartyName" class="label inline">Name&nbsp;(Required):</label>
+				<input id="PartyName" type="text" maxlength="100" />
+			</div>
+
+			<div id="wrapPartyEmail" class="WrapEmail">
+				<label for="PartyEmail" class="label inline">
+					E-Mail: 
+					<span class="invalid note">invalid</span>
+					<span class="valid note">
+						<img src="images/Check-Mark.png" style="width:1.2em; opacity:.2;" alt=""/>
+						valid <span style="color:#888; font-weight:normal;">(not verified)</span>
+					</span>
+					<span class="verified note">
+						<img src="images/Check-Mark.png" style="width:1.2em" alt="" />
+						<span>verified</span>
+					</span>
+				</label>
+				<input id="PartyEmail" type="email" maxlength="150" />
+				<div id="VerifiedEmailNote">
+					<div style="float:left; font-weight:bold; margin:0 .5em 2em 0">Note:</div>
+					Only the <span class="ParticipantAlias lowercase"></span> can change his or her
+					<b>verified</b> e-mail address at Shop.TokenRewards.com.
+				</div>
+			</div>
+
+
+			<div id="wrapPartyStatus" data-role="fieldcontain" style="padding-top:0">
+				<span style="position:relative; top:-.5em; margin-right:1em;">Status:</span>
+				<select id="selPartyStatus" data-role="slider">
+					<option value="0">Inactive</option>
+					<option value="1">Active</option>
+				</select>
+			</div>
+
+			<div id="WrapPartyClasses">
+				<div id="WrapAssignedClassList"
+					data-role="collapsible" 
+					data-theme="b"
+					data-collapsed-icon="arrow-d"
+					data-expanded-icon="arrow-u"
+					data-collapsed="false"
+					data-content-theme="c">
+					<h2>
+						Assigned Classes
+					</h2>
+				
+					<ul id="AssignedClassList" data-role="listview" ></ul>
+					<div class="legend" style="display:none;">
+						<span class="PartyClassHomeIcon Home Legend ui-icon .ui-icon-shadow ui-icon-tag ui-icon-inline"></span>
+						 Home button selects the <span class="ParticipantAlias lowercase"></span>'s "Delivery" home class.
+						 <br />
+						 See Help for more info.
+					</div>
+				</div>
+
+				<div id="WrapUnassignedClasses" 
+					data-role="collapsible" 
+					data-theme="b"
+					data-collapsed-icon="arrow-d"
+					data-expanded-icon="arrow-u"
+					data-collapsed="true"
+					data-content-theme="c">
+					<h3>
+						Other Classes
+					</h3>
+					<!--<select id="PartyEditClasses" multiple="multiple" data-native-menu="false"></select>-->
+					<ul id="UnassignedClassList" data-role="listview" ></ul>
+				</div>
+
+			</div>
+
+			<ul id="LiClasses" class="prototype">
+				<li class="AssignedClass prototype">
+					<span class="PartyClassHomeIcon ui-icon ui-icon-shadow ui-icon-inline"></span>
+					<span class="ClassName"></span>
+					<button class="RemoveClass"
+						data-icon="arrow-d" 
+						data-iconpos="notext" 
+						data-mini="true" 
+						data-enhance="false"
+						data-inline="true">Delete</button>
+				</li>
+				<li class="UnassignedClass prototype">
+					<span class="ClassName"></span>
+					<button class="AssignClass"
+						data-icon="arrow-u" 
+						data-iconpos="notext" 
+						data-mini="true" 
+						data-enhance="false"
+						data-inline="true">Add</button>
+				</li>
+			</ul>
+
+
+			<div id="wrapOptional" 
+				data-role="collapsible" 
+				data-theme="b"
+				data-mini="true"
+				data-collapsed="true"
+				data-content-theme="c">
+				<h4>Optional Info</h4>
+
+				<div id="wrapExtraNames">
+					<div>
+						<label for="txtSortName">Sort Name (Last Name, First)</label>
+						<input id="txtSortName" type="text" tabindex="-1" />
+					</div>
+					<div>
+						<label for="txtNickName">First Name Preference (Nick Name)</label>
+						<input id="txtNickName" type="text" tabindex="-1" />
+					</div>
+				</div>
+				
+				
+				<!--
+				<div id="wrapGenderBirth">
+					<span class="label inline">Gender:</span>
+					<select id="selPartyGender">
+						<option value=""></option>
+						<option value="M">Male</option>
+						<option value="F">Female</option>
+					</select>
+					<div style="">
+						<span class="label">Birth&nbsp;Year:</span>
+						<select id="selPartyBirthYear">
+							<option value=""></option>
+						</select>
+					</div>
+				</div>
+				-->
+			</div>
+
+<!--
+				<div style="text-align:center;">
+					<button style="margin:0 auto;"
+						data-icon="plus" 
+						data-mini="true" 
+						data-inline="true">Create a New Class</button>
+				</div>
+-->
+
+
+		</div>
+	</div>
+
+	<div id="LedgerEntry" 
+		data-record="true"
+		data-title="TokenTap Ledger Entry"
+		data-role="page">
+		<div data-role="header" data-position="fixed">
+			<a class="backButton ui-btn-left" 
+				data-rel="back"
+				data-role="button" 
+				data-icon="arrow-l"
+				>Back</a>
+			<a class="saveButton ui-btn-right" 
+				data-role="button" 
+				data-icon="check"
+				>Save</a>
+			<h1></h1>
+			<div id="wrapTransactBalances">
+				<div id="balanceBefore">Current Balance: <span class="amount"></span></div>
+				<div id="balanceAfter">Balance After Save: <span class="amount"></span></div>
+			</div>
+
+		</div>
+	
+		<div data-role="content">
+			<div class="PartyName"></div>
+			<hr />
+
+			<label for="txtAmount" style="display:inline">Tokens To Deposit:</label>
+			<br />
+			<input type="number" name="number" pattern="[0-9]*" 
+				id="txtAmount" class="TokenAmount" value="1"/>
+		
+
+			<div id="QuickButtonSet"
+				data-role="controlgroup"  
+				data-type="horizontal" 
+				data-mini="false" >
+				<a id="QuickButton1" class="QuickButton"
+					data-role="button" 
+					data-theme="b">1</a>
+				<a id="QuickButton2" class="QuickButton"
+					data-role="button"
+					data-theme="b">5</a>
+				<a id="QuickButton3" class="QuickButton"
+					data-role="button"
+					data-theme="b">10</a>
+				<a id="ConfigQuickTokens"
+					data-role="button"
+					data-icon="gear"
+					data-iconpos="notext"
+					data-theme="b"></a>
+			</div>
+
+			<!--<input type="range" name="slider" id="txtAmount" value="1" min="1" max="100" data-highlight="true"  />-->
+
+		
+			<div style="clear:both; overflow:auto;">
+	         <label for="txtTransactDescript">Reason for Award:</label>
+	         <input type="text" id="txtTransactDescript" value="" />
+				<div style="float:right">
+					<label data-inline="true" data-mini="true">
+						<input id="chkAddToAutoComplete" type="checkbox" checked />Make Reusable</label>
+				</div>
+			</div>
+			<hr />
+			<div style="clear:both; margin-top:1em;">
+				<!--multiple="multiple"-->
+				<label for="selRememberedDeposits">Or select a "Reusable <span>Transaction</span>":</label>
+				<select id="selRememberedDeposits" 
+					data-theme="b" 
+					data-native-menu="true">
+				</select>
+			</div>
+			<br /><br />
+		</div>
+
+		<div data-role="footer" data-position="fixed">
+
+			<!--
+			<div data-role="navbar">
+				<ul>
+					<li><a id="cmdSaveTransact" href="#" data-icon="check">Save</a></li>
+					<li><a href="#" data-icon="delete" data-rel="back">Cancel</a></li>
+				</ul>
+			</div>
+			-->
+
+		</div>
+	</div>
+	<div id="dlgTransactOptions" 
+		class="SaveCancelDialog"
+		data-title="TokenTap"
+		data-role="dialog">
+		<div data-role="header">
+			<h1>Configure Deposits</h1>
+		</div>
+		<div data-role="content">	
+			Set the amount of <span class="TokenUnit lowercase"></span>s to be
+			entered when the shortcut button is clicked.
+			<br /><br />
+			<div class="ui-grid-b">
+				<div class="ui-block-a">
+					<label>Button 1<br /><input type="number" id="QuickButton1-Value" class="TokenAmount" pattern="[0-9]+"/></label>
+				</div>
+				<div class="ui-block-b">
+					<label>Button 2<br /><input type="number" id="QuickButton2-Value" class="TokenAmount" pattern="[0-9]+"/></label>
+				</div>
+				<div class="ui-block-c">
+					<label>Button 3<br /><input type="number" id="QuickButton3-Value" class="TokenAmount" pattern="[0-9]+"/></label>
+				</div>
+			</div>
+
+			<br /><br />
+			Default <span class="Deposit-Withdrawal"></span> description:
+			<input id="DefaultDescription" type="text" />
+			<br />
+		</div>
+
+		<div data-role="footer" data-theme="c">
+			<button class="Save"
+				data-role="button"
+				data-inline="true"
+				data-theme="b" 
+				data-icon="check">Save</button>
+			<button class="Cancel"
+				data-role="button"
+				data-inline="true"
+				data-theme="b" 
+				data-icon="delete">Cancel</button>
+		</div>
+	
+	</div>
+
+	<div id="ClassGroup" 
+		data-record="true"
+		data-title="TokenTap Edit Class"
+		data-role="page">
+		<div data-role="header" data-position="fixed">
+			<a class="backButton ui-btn-left" 
+				data-rel="back"
+				data-role="button" 
+				data-icon="arrow-l"
+				>Back</a>
+			<a class="saveButton ui-btn-right ui-disabled" 
+				data-role="button" 
+				data-icon="check"
+				>Save</a>
+			<h1></h1>
+		</div>
+		<div data-role="content">
+			<br />
+			Class or Group Name:
+			<br />
+			<input type="text" />
+			<br />
+			<br />
+			<a id="DeleteClass"
+				data-role="button" 
+				data-theme="b"
+				data-icon="delete"
+				>Delete This Class</a>
+			
+		</div>
+
+	</div>
+
+
+	<div id="dlgLostPassword" 
+		class="SaveCancelDialog"
+		data-role="dialog">
+
+		<div data-role="header">
+			<h1>Lost Your Password?</h1>
+		</div>
+		<div data-role="content">
+			Click "Okay" to have a temporary 
+			password delivered to the following e-mail address.
+			<br /><br />
+			E-mail Address:
+			<div>
+				<input id="LostPassEmail" type="email" />
+			</div>
+		</div>
+		<div data-role="footer" data-theme="c">
+			<button class="Save"
+				data-role="button"
+				data-inline="true"
+				data-theme="b" 
+				data-icon="check">Okay</button>
+			<button class="Cancel"
+				data-role="button"
+				data-inline="true"
+				data-theme="b" 
+				data-icon="delete">Cancel</button>
+		</div>
+	</div>
+
+	<div id="dlgSaveSessionTokens" 
+		class="SaveCancelDialog"
+		data-title="TokenTap"
+		data-role="dialog">
+		<div data-role="header">
+			<h1>Deposit Session <span class="TokenUnit"></span>s</h1>
+		</div>
+		<div data-role="content">	
+			<div class="PartyName"></div>
+			Tokens to be Deposited: <span id="SessionDepositAmount" class="amount"></span>
+			<br />
+			<div id="WrapSessionDepositParties">
+				<span class="ParticipantAlias"></span>s: <span id="SessionDepositParties" class="amount"></span>
+			</div>
+			<hr />
+			<br />
+			Description for <span class="ParticipantAlias lowercase"></span> ledger:
+			<input id="SessionTokenDepositDescription" type="text" />
+			<br />
+
+		</div>
+
+		<div data-role="footer" data-theme="c">
+			<a class="Save"
+				data-role="button"
+				data-inline="true"
+				data-theme="b" 
+				data-icon="check">Deposit</a>
+			<a class="Cancel"
+				data-role="button"
+				data-inline="true"
+				data-theme="b" 
+				data-icon="delete">Cancel</a>
+		</div>
+	
+	</div>
+
+	<div id="dlgAdjustTokens"  
+		class="SaveCancelDialog"
+		data-title="TokenTap"
+		data-role="dialog">
+
+		<div data-role="header">
+			<h1>Set Session <span class="TokenUnit"></span>s</h1>
+		</div>
+		<div data-role="content">
+			<span class="PartyName data"></span>
+			<br /><br />
+			
+			Current Session <span class="TokenUnit"></span>s: 
+			<span class="CurrentTokens" class="data"></span>
+			<br /><br />
+			
+			Change To:
+			<input id="NewSessionTokenAmount" 
+				type="number" name="number" 
+				pattern="[0-9]*" 
+				class="TokenAmount" value=""/>
+
+			<div id="WrapEraseTokens">
+				<label for="chkEraseTokens">
+					<input id="chkEraseTokens" type="checkbox" />
+					Clear Session <span class="TokenUnit"></span>s
+				</label>
+			</div>
+
+		</div>
+		<div data-role="footer" data-theme="c">
+			<a class="Okay"
+				data-role="button"
+				data-inline="true"
+				data-theme="b" 
+				data-icon="check">Okay</a>
+			<a class="Cancel"
+				data-role="button"
+				data-inline="true"
+				data-theme="b" 
+				data-icon="delete">Cancel</a>
+		</div>
+	</div>
+
+	<div id="dlgMessage" class="noDisplay"
+		data-overlay-theme="a"
+		data-theme="c"
+		data-role="popup"
+		data-transtion="pop">
+
+		<div data-role="header" data-theme="b" class="ui-bar-b">
+			<h1 class="ui-title">Message</h1>
+		</div>
+		<div data-role="content" data-theme="d" class="ui-content">
+			<p id="message"></p>
+		</div>
+		<div class="center" data-theme="a">
+			<button id="CloseMessage"
+				data-role="button"
+				data-inline="true"
+				data-theme="b" 
+				data-icon="check">Okay</button>
+		</div>
+	</div>
+
+	<div id="dlgConfirm" class="noDisplay"
+		data-overlay-theme="a"
+		data-theme="c"
+		data-role="popup"
+		data-transtion="pop">
+		<a id="dlgConfirm-Close" href="#" 
+			data-rel="back" 
+			data-role="button" 
+			data-theme="a" 
+			data-icon="delete" 
+			data-iconpos="notext" 
+			class="ui-btn-right"></a>
+
+		<div data-role="header" data-theme="b" class="ui-bar-b">
+			<h1 class="ui-title">Message</h1>
+		</div>
+		<div data-role="content" data-theme="d" class="ui-content">
+			<p id="ConfirmMessage"></p>
+		</div>
+		<div class="center" data-theme="a">
+			<a id="ConfirmButton"
+				data-role="button"
+				data-inline="true"
+				data-theme="b" 
+				data-icon="check">Okay</a>
+			<a id="CancelButton"
+				data-role="button"
+				data-inline="true"
+				data-theme="b" 
+				data-icon="delete">Cancel</a>
+		</div>
+	</div>
+
+	<div id="popupMessage" 
+		data-role="popup" 
+		data-theme="a">
+		<div class="ui-content">Popup Message Contents</div>
+	</div>
+
+	<ul id="liPrototypes" style="display:none;">
+		<li class="liParty prototype">
+			<div class="WrapSessionTokens">
+				<div class="SessionTokens">0</div>
+				<div class="SessionTokensLabel">Session<br /><span class="TokenUnit"></span>s</div>
+			</div>
+			<div class="Inactive">
+				<div>
+					INACTIVE
+				</div>
+			</div>
+
+			<a href="#">
+				<span class="partyName"></span>
+				<br />
+				<span class="partyBalance"></span>
+				<br />
+				<span class="partyClasses"></span>
+			</a>
+		</li>
+
+		<li class="Class prototype">
+			<a href="#Participants">
+				<span class="ClassName"></span>
+				<div class="ClassStats ui-li-count">
+					<span class="ActiveCount"></span><span class="InactiveCount"></span>
+				</div>
+			</a>
+		</li>
+
+		<li class="liTrans prototype" data-icon="false">
+			<span class="amount"></span>
+
+			<span class="description"></span>
+			<br />
+			<span class="postDateTime"></span>
+		</li>
+
+	</ul>
+
+
+	<div class="ui-loader-background"></div>
+
+	<!-- alternate elapsor
+	<div id="elapsor" class="ui-corner-all ui-body-a ui-loader-verbose">
+		<span class="ui-icon ui-icon-loading"></span>
+		<h1>Loading...</h1>
+	</div>
+	-->
+
+	<audio id="TokenAudio">
+<!--
+	  <source src="audio/button-37.mp3" type="audio/mp3" />
+	  <source src="audio/button-37.wav" type="audio/wav" />
+-->
+	  <source src="audio/button-37.ogg" type="audio/ogg" />
+	  <source src="audio/button-37.wav" type="audio/wav" />
+	</audio>
+
+</body>
+</html>
+
