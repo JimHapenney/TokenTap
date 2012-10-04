@@ -5002,4 +5002,7 @@ var isTouch = {};
 */
 
 
-
+/*
+cd 'C:\Program Files (x86)\Android\android-sdk\platform-tools'
+adb install -r C:\Users\Jim\Downloads\TokenTap-debug.apk
+*/
