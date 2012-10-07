@@ -1,5 +1,6 @@
 ﻿/// <reference path="../CommonFiles/jQuery/jquery-1.8.1-vsdoc.js" />
 
+jQuery.support.cors = true;
 
 Application = {
 	domain: "",
@@ -117,12 +118,10 @@ Application = {
 	supportInfo: function () {
 		if (
 			confirm(
+				'window.isTouch: ' + window.isTouch + '\n\n' +
 				'window.outerWidth: ' + window.outerWidth + '\nwindow.outerHeight ' + window.outerHeight + '\n\n' +
 				'window.innerWidth: ' + window.innerWidth + '\nwindow.innerHeight ' + window.innerHeight + '\n\n' +
 				'window.devicePixelRatio: ' + window.devicePixelRatio + '\n\n' +
-				'document.documentElement.clientHeight: ' + document.documentElement.clientHeight + '\n\n' +
-				'screen.height: ' + screen.height + '\n\n' +
-				'screen.availHeight: ' + screen.availHeight + '\n\n' +
 				'$("body").width(): ' + $("body").width() + '\n$("body").height(): ' + $("body").height() + '\n\n' +
 				'Clear all local storage? (' + localStorage.length + ' items)'
 			)
@@ -130,10 +129,14 @@ Application = {
 			window.localStorage.clear();
 			window.location.reload();
 		}
+		/*
+		'$(window).width(): ' + $(window).width() + '\n$(window).height(): ' + $(window).height() + '\n\n' +
+		'$(".ui-page:visible").width(): ' + $(".ui-page:visible").width() + '\n$(".ui-page:visible").height(): ' + $(".ui-page:visible").height() + '\n\n'
 
-		// '$(window).width(): ' + $(window).width() + '\n$(window).height(): ' + $(window).height() + '\n\n' +
-		//	'$(".ui-page:visible").width(): ' + $(".ui-page:visible").width() + '\n$(".ui-page:visible").height(): ' + $(".ui-page:visible").height() + '\n\n'
-
+		'document.documentElement.clientHeight: ' + document.documentElement.clientHeight + '\n\n' +
+		'screen.height: ' + screen.height + '\n\n' +
+		'screen.availHeight: ' + screen.availHeight + '\n\n' +
+		*/
 	},
 
 	setZoom: function () {
@@ -201,13 +204,12 @@ Application = {
 		ching1: null
 	},
 	hideAddressBar: function (fnCallback) {
-		return;
 		if (document.height < window.outerHeight) {
 			//$('div[data-role="page"]:visible').css("height", "100%");
 			//	((window.outerHeight / window.devicePixelRatio) + (50 * window.devicePixelRatio)) +	'px');
 			//$('div[data-role="page"]:visible')
 			//	.append('<div style="height:' + (20 * window.devicePixelRatio) + 'px"></div>');
-			document.body.style.height = (window.outerHeight + 50) + 'px';
+			//document.body.style.height = (window.outerHeight + 50) + 'px';
 		}
 
 		//$.mobile.silentScroll(0);
@@ -226,8 +228,6 @@ Application = {
 			var nPage = jPage.height();
 			var nDoc = $(window).height();
 
-
-
 			if (nDoc > nPage) {
 				jPage.css("height", nDoc + "px");
 			}
@@ -238,10 +238,10 @@ Application = {
 		initailized: false,
 		init: function () {
 			var jPage = $('#dlgLostPassword');
-			$("button.Save", jPage).click(function () {
+			$("button.Save", jPage).onpress(function () {
 				Application.lostPassword.checkAccount();
 			});
-			$("button.Cancel", jPage).click(function () { jPage.dialog('close'); });
+			$("button.Cancel", jPage).onpress(function () { jPage.dialog('close'); });
 
 			$('input#LostPassEmail').keyup(function () {
 				if ($(this).val().isValidEmail()) {
@@ -269,7 +269,7 @@ Application = {
 				var multipleUsers = function () {
 					$('#dlgLostPassword').dialog('close');
 					ui.elap.off();
-					ui.showMessage({
+					ui.alert({
 						sTitle: "Multiple Accounts Found",
 						sMessage:
 							'There is more than one account associated with the e-mail address you entered.  ' +
@@ -285,7 +285,7 @@ Application = {
 				if (!data[0].USER_ID) {
 					LogEntry('Lost Password attempted for unknown e-mail address: ' + sEmail);
 					ui.elap.off();
-					ui.showMessage({
+					ui.alert({
 						sTitle: "E-Mail Not Found",
 						sMessage: "Sorry, but the e-mail address you entered is not in our system.  " +
 								"Please check the address and try again.<br/><br/>" +
@@ -330,7 +330,7 @@ Application = {
 
 					var sMessage = "You have been sent an e-mail containing a temporary " +
 					"four character password you can use to sign in."
-					ui.showMessage({
+					ui.alert({
 						sTitle: "E-Mail Delivered",
 						sMessage: sMessage
 					});
@@ -341,6 +341,7 @@ Application = {
 
 
 	ready: function () {
+
 		var sSubDomain = window.location.hostname.substring(0, window.location.hostname.indexOf(".") + 1)
 		if (sSubDomain != "jupiter.") {
 			sSubDomain = "";
@@ -364,7 +365,9 @@ Application = {
 			window.navigator.userAgent, false, false
 		);
 
-		$("#popupMessage").popup();
+		$(".back").onpress(function () {
+			window.history.back();
+		});
 
 		$('div[data-role="page"]').bind('pageinit', function (event, page) {
 			//console.log(this.id + " pageinit");
@@ -376,35 +379,29 @@ Application = {
 		});
 
 		$('div[data-role="page"]').bind('pagebeforeshow', function (event, page) {
-			//console.log(this.id + " pagebeforeshow");
 			if (typeof window[this.id] === "object"
 				&& typeof window[this.id].refresh === "function") {
-				if ($(this).has('[data-record="true"]') && page.prevPage.attr("id") == "dlgConfirm") {
+				if ($(this).has('[data-record="true"]') && page.prevPage.attr("id") == "popupConfirm") {
 					return;
 				}
 				window[this.id].refresh();
 			}
-
 		});
 
 		$('div[data-role="page"]').bind('pageshow', function (event, page) {
-			return;
-			//console.log(this.id + " pageshow");
-			var jThis = $(this);
-			if (jThis.has('[data-record="true"]') && page.prevPage.attr("id") != "dlgConfirm") {
-				//$('input', jThis).eq(0).focus();
+			//keep elaps and messages showing
+			if (ui.elap.isOn) {
+				ui.elap.on();
 			}
-		});
 
-		/* $('.backButton').onpress(function (event) {
-		event.preventDefault();
-		event.stopPropagation();
-		window.history.back()
+			if (ui.messageObject.isOn) {
+				ui.message();
+			}
+			return;
 		});
-		*/
 
 		$("#dlgTransactOptions").bind('pageinit', function () { LedgerEntry.options.init() });
-		$("#dlgTransactOptions").bind('pageshow', function () { LedgerEntry.options.refresh() });
+		$("#dlgTransactOptions").bind('pagebeforeshow', function () { LedgerEntry.options.refresh() });
 
 
 		$('div[data-role="collapsible"]').bind('expand', function (event) {
@@ -422,7 +419,6 @@ Application = {
 		});
 
 		$(window).bind('resize', function (e) {
-			//orientationchange 
 			Application.oPrefs.oGeneral.nZoomTo =
 				(window.innerWidth < window.innerHeight) ? window.innerWidth : window.innerHeight;
 			Application.savePrefs();
@@ -448,7 +444,7 @@ Application = {
 				Application.sLastHash = sHash;
 				LogEntry("Page changed to " + sHash);
 				Application.hideAddressBar();
-				$(sHash).trigger("updatelayout");
+				//$(sHash).trigger("updatelayout");
 			}
 		});
 
@@ -457,15 +453,16 @@ Application = {
 	},
 
 	pagebeforechange: function (event, data) {
-		var sToHash = (typeof data.toPage == 'string')
-				? $.mobile.path.parseUrl(data.toPage).hash
-				: "#" + data.toPage.attr("id");
+		if (typeof data.toPage == 'string') { return; }
 
-		if (!sToHash
+		var sToHash = "#" + data.toPage.attr("id");
+
+		if (!Application.oUser.CUSTOMER_ID &&
+				(!sToHash
 				|| sToHash == "#Dashboard"
 				|| sToHash == "#NewAccount"
 				|| sToHash == "#dlgLostPassword"
-				|| sToHash == "#dlgTransactOptions") return;
+				|| sToHash == "#dlgTransactOptions")) return;
 
 		//console.log(data, sToHash, data.options.fromPage[0].id);
 		if (!Application.oUser.CUSTOMER_ID) {
@@ -492,6 +489,60 @@ Application = {
 	}
 };
 
+// jQuery Mobile Initializations
+$(document).bind("mobileinit", function () {
+
+	$.extend($.mobile.zoom, { locked: true, enabled: false });
+	$.mobile.pushStateEnabled = false;
+	$.mobile.ajaxEnabled = false;
+	$.mobile.hashListeningEnabled = true;
+	$.mobile.ignoreContentEnabled = true;
+	$.mobile.defaultPageTransition = 'slide';
+	$.mobile.defaultDialogTransition = 'pop';
+	$.mobile.transitionFallbacks.slide = 'none';
+	$.mobile.transitionFallbacks.flip = 'none';
+	$.mobile.transitionFallbacks.pop = 'none';
+	$.mobile.orientationChangeEnabled = false;
+
+	$.mobile.loadingMessageTextVisible = true;
+	$.mobile.loadingMessageTheme = "a"
+
+
+	$.event.special.tap.tapholdThreshold = 1000;
+	$.event.special.swipe.durationThreshold = 500;
+	$.event.special.swipe.horizontalDistanceThreshold = 250;
+
+	// Navigation
+	$.mobile.page.prototype.options.backBtnText = "Back";
+	$.mobile.page.prototype.options.addBackBtn = false;
+	$.mobile.page.prototype.options.backBtnTheme = "b";
+
+	// Page
+	$.mobile.page.prototype.options.theme = "d";
+	$.mobile.page.prototype.options.headerTheme = "b";
+	$.mobile.page.prototype.options.contentTheme = "d";
+	$.mobile.page.prototype.options.footerTheme = "b";
+
+	// Controls
+	$.mobile.button.prototype.options.theme = "b";
+	$.mobile.selectmenu.prototype.options.theme = "b";
+
+	// List views
+	$.mobile.listview.prototype.options.headerTheme = "a";  // Header for nested lists
+	$.mobile.listview.prototype.options.theme = "d";  // List items / content
+	$.mobile.listview.prototype.options.dividerTheme = "d";  // List divider
+
+	$.mobile.listview.prototype.options.splitTheme = "c";
+	$.mobile.listview.prototype.options.countTheme = "c";
+	$.mobile.listview.prototype.options.filterTheme = "c";
+	// $.mobile.listview.prototype.options.filterPlaceholder = "Filter data...";
+	
+	$(document).ready(function () { Application.ready(); });
+
+});
+
+
+
 Dashboard = {
 	aoClasses: [],
 	oTotals: {},
@@ -502,16 +553,26 @@ Dashboard = {
 	init: function () {
 		var jPage = $("#Dashboard");
 		$(".currentYear", jPage).text((new Date()).getFullYear());
+		$(".contactUs", jPage).onpress(function () {
+			ui.alert({
+				sTitle: "Contact Us",
+				sMessage:
+					'Phone: <a data-enhance="false" href="tel:+1-800-926-9194">(800) 926-9194</a>' +
+					'<br/><br/>' +
+					'E-Mail: <a data-enhance="false" href="mailto:info@tokenrewards.com">info@tokenrewards.com</a>',
+				sButtonText: 'Close'
+			});
+		});
 
-		$(".AlphaTag, .BetaTag", jPage).bind('click', function () {
+		$(".AlphaTag, .BetaTag", jPage).onpress(function () {
 			Application.supportInfo();
 			return;
 		});
 
-		$("#btnSignIn", jPage).bind('click', function () {
+		$("#SignIn", jPage).onpress(function () {
 			Dashboard.manualLogin();
 		});
-		$("a#LostPassHelp", jPage).click(function () {
+		$("a#LostPassHelp", jPage).onpress(function () {
 			Application.lostPassword.open();
 		});
 		$("#WrapSignIn input", jPage).keyup(function () {
@@ -520,67 +581,43 @@ Dashboard = {
 			var sPass = $("#txtPassword", jPage).val();
 
 			if (sUser && sPass) {
-				$("#btnSignIn", jPage).button("enable");
+				$("#SignIn", jPage).button("enable");
 				$("#chkSavePassword", jPage).checkboxradio('enable');
 			}
 			else {
-				$("#btnSignIn", jPage).button("disable");
+				$("#SignIn", jPage).button("disable");
 				$("#chkSavePassword", jPage).checkboxradio('disable');
 			}
 		}).keyup();
 
 
+		$("#SignOut", jPage).onpress(function () {
+			Dashboard.signOut();
+		});
+		$("#GoPreferences", jPage).onpress(function () {
+			$.mobile.changePage($("#Preferences"));
+		});
+		$("#GoUserProfile", jPage).onpress(function () {
+			$.mobile.changePage($("#UserProfile"));
+		});
+		$("#GoEditProgram", jPage).onpress(function () {
+			$.mobile.changePage($("#RewardProgramSettings"));
+		});
 
-
-		$("a.DepositSession", jPage).click(function () {
+		$(".DepositSession", jPage).onpress(function () {
 			TokenSession.saveDialog.open();
 		});
 
-		$("#btnSignOut", jPage).click(function () {
-			Dashboard.signOut();
-		});
-
-		$("a.ResetSession", jPage).click(function () {
-			TokenSession.clear();
-		});
-
-		$("li#AllParties", jPage).click(function () {
+		$("#GoAllParties", jPage).onpress(function () {
 			Participants.oClass = $.extend({}, {
 				CLASS_NAME: "All " + Application.oUser.PARTICIPANT_ALIAS + "s",
 				ID: "-1"
-			},
-			Dashboard.oTotals);
-
+			}, Dashboard.oTotals);
 			if (Participants.lastClassFetched != Participants.oClass.ID) {
 				$("#Participants #partyList").empty();
 			}
+			$.mobile.changePage($("#Participants"));
 		});
-		$("a#NewParty", jPage).bind('click', function () {
-			PartyProfile.insert();
-		});
-
-		$(".SessionTokenTotal", jPage).detach().appendTo($(".WrapSessionSummary h4 a", jPage));
-
-		$("#CollapsibleClasses", jPage).bind('collapse', function () {
-			Application.oPrefs.oCollapsibles.sClasses = "collapse";
-			Application.savePrefs();
-		})
-		.bind('expand', function () {
-			Application.oPrefs.oCollapsibles.sClasses = "expand";
-			Application.savePrefs();
-		});
-
-		$("#WrapUserInfo", jPage).bind('collapse', function () {
-			Application.oPrefs.oCollapsibles.sUser = "collapse";
-			Application.savePrefs();
-		})
-		.bind('expand', function () {
-			Application.oPrefs.oCollapsibles.sUser = "expand";
-			Application.savePrefs();
-		});
-
-
-		$("a#NewClass", jPage).click(function () { ClassGroup.insert(); });
 
 		jPage.bind('swipeleft', function (event) {
 			event.preventDefault();
@@ -641,57 +678,17 @@ Dashboard = {
 
 			var jPage = $("#Dashboard");
 
-			var jUl = $("ul#WrapAllParties", jPage).toggleClass("invisible", Dashboard.oTotals.ACTIVE_PARTICIPANTS == 0);
-			var jLi = $("li#AllParties", jUl);
-
+			/*
 			$("span.ActiveCount", jLi).text(Dashboard.oTotals.ACTIVE_PARTICIPANTS);
 			$("span.InactiveCount", jLi).text("/" + Dashboard.oTotals.PARTICIPANTS.toNumber());
 			$("span.Balance", jLi).text(Dashboard.oTotals.BALANCE);
-
-			$("#WrapUserInfo", jPage).trigger(Application.oPrefs.oCollapsibles.sUser);
-
-			var jWrap = $("#WrapDashboardClasses", jPage);
-			if (aoClasses.length == 0) {
-				// move to bottom of dashboard
-				jWrap.detach();
-				$("#WrapNewParty").after(jWrap);
-				$(".ui-collapsible", jWrap).hide();
-			}
-			else {
-				// move to top (under user info) of dashboard
-				$(".ui-collapsible", jWrap).show();
-
-				jWrap.detach();
-				$("#WrapAllParties").before(jWrap);
-
-				$("#CollapsibleClasses", jWrap).trigger(Application.oPrefs.oCollapsibles.sClasses);
-				jUl = $("ul#DashboardClasses", jWrap);
-				$("li.Class", jUl).remove();
-
-				for (var nX = 0; nX < aoClasses.length; nX++) {
-					jUl.append(Dashboard.newClassLi(aoClasses[nX]));
-				}
-
-
-				jUl.trigger("create").listview("refresh");
-				jUl.trigger('updatelayout');
-
-			}
-
-
 			$(".InactiveCount, .InactiveCountNote", jPage).toggle(Application.oPrefs.oGeneral.bShowInactives);
+			*/
 
+			Application.hideAddressBar();
 			if (fnCallback) { fnCallback(); }
 			else {
 				ui.elap.off();
-
-				setTimeout(function () {
-					if (SignIn.bAutoSignedIn) {
-						ui.popupMessage("Automatically signed in<br/>using saved password.");
-						SignIn.bAutoSignedIn = false;
-					}
-				}, 500);
-				Application.hideAddressBar();
 			}
 		});
 	},
@@ -717,7 +714,7 @@ Dashboard = {
 						return;
 					}
 					else {
-						ui.showMessage({
+						ui.alert({
 							sTitle: "Not Signed In",
 							sMessage: "Unable to sign in with using the saved e-mail and password."
 						});
@@ -746,7 +743,7 @@ Dashboard = {
 				ui.elap.off();
 
 				if (!Dashboard.validateUser(aRow[0])) {
-					ui.showMessage({
+					ui.alert({
 						sTitle: "Not Signed In",
 						sMessage:
 						'<p>' +
@@ -787,12 +784,6 @@ Dashboard = {
 		$("#ProviderName", jPage).html(oUser.PROVIDER_NAME.replace(" ", "&nbsp;"));
 		$(".UserName", jPage).html(oUser.USER_NAME.replace(" ", "&nbsp;"));
 
-		sLastSignIn = (oUser.USER_LAST_LOGIN) ?
-			oUser.USER_LAST_LOGIN.toDateFormat("shortDateTime")
-			: "Initial Sign In";
-		$("#LastSignIn", jPage).text(sLastSignIn);
-
-
 		$("span.TokenUnit").text(Application.oUser.TOKENUNIT);
 		$("span.ParticipantAlias").text(Application.oUser.PARTICIPANT_ALIAS);
 
@@ -802,9 +793,14 @@ Dashboard = {
 
 		Dashboard.bRefresh = true;
 		this.refresh(function () {
+			ui.elap.off();
+			if (Dashboard.bAutoSignedIn) {
+				ui.message("Automatically signed in<br/>using saved password.");
+				SignIn.bAutoSignedIn = false;
+			}
 
 			if (Application.oUser.TEMP_PASS_USED) {
-				ui.showMessage({
+				ui.alert({
 					sTitle: "Temporary Sign In",
 					sMessage:
 						'You were successfully signed in using a temporary password.  ' +
@@ -818,14 +814,13 @@ Dashboard = {
 			}
 			if (Application.oUser.USER_LAST_LOGIN == "" && !Dashboard.bFirstTimeMessageShown) {
 				Dashboard.bFirstTimeMessageShown = true;
-				ui.showMessage({
+				ui.alert({
 					sTitle: "Getting Started",
-					sMessage: 'Get started by clicking the "New&nbsp;' +
+					sMessage: 'Get started by clicking the "All &nbsp;' +
 								Application.oUser.PARTICIPANT_ALIAS + '" button. <br/><br/>' +
 								'Once you have entered one or more ' +
-								Application.oUser.PARTICIPANT_ALIAS.toLowerCase() + 's, click ' +
-								'"View All ' + Application.oUser.PARTICIPANT_ALIAS + 's" to begin awarding ' +
-								Application.oUser.TOKENUNIT.toLowerCase() + 's!'
+								Application.oUser.PARTICIPANT_ALIAS.toLowerCase() + 's, ' +
+								'you can award them by tapping the token next to their name! '
 				});
 			}
 
@@ -851,10 +846,10 @@ Dashboard = {
 
 	signOut: function () {
 		LogEntry("Sign Out clicked");
-		ui.showConfirm({
-			sTitle: "Sign Out?",
+		ui.confirm({
+			sTitle: "Confirm Sign Out",
 			sMessage: 'Click "Okay" to clear your password and sign out.',
-			fnConfirmCallback: function () {
+			fnConfirm: function () {
 
 				Application.oPrefs.oSignIn.sPassword = "";
 				Application.savePrefs();
@@ -874,19 +869,6 @@ TokenSession = {
 	aoTokens: [],
 	oSummary: { 'aoParties': [], 'nTotal': 0, dFirst: null, dLast: null },
 
-	clear: function () {
-		ui.showConfirm({
-			sTitle: "Erase Session?",
-			sMessage: "Are you sure you want to erase all the unsaved session " +
-					Application.oUser.TOKENUNIT.toLowerCase() + "s?",
-			fnConfirmCallback: function () {
-				TokenSession.eraseTokens();
-				$("#WrapSessionSummary, #TokenSessionMore").trigger("collapse");
-				TokenSession.refresh();
-				ui.popupMessage("Session Tokens Cleared");
-			}
-		});
-	},
 	enter: function (oParty, nAmount) {
 		var oTokens = TokenSession.aoTokens;
 		var nTot = 0;
@@ -899,7 +881,7 @@ TokenSession = {
 			'sPartyCode': oParty.CODE,
 			'sPartyName': oParty.NAME,
 			'nAmount': nAmount,
-			'dTimestamp': Date()
+			'sTimestamp': Date.now().toLongTimeString()
 		});
 		TokenSession.storeTokens();
 
@@ -914,7 +896,6 @@ TokenSession = {
 	},
 	readSummary: function () {
 		var sTokens = window.localStorage.getItem("SessionTokens-" + Application.oUser.CUSTOMER_ID);
-
 
 		if (!sTokens || !$.evalJSON(sTokens)) { TokenSession.aoTokens = []; }
 		else TokenSession.aoTokens = $.evalJSON(sTokens);
@@ -937,14 +918,14 @@ TokenSession = {
 
 		for (var nX = 0; nX < aoTokens.length; nX++) {
 			nTot = nTot + aoTokens[nX].nAmount;
-			aoTokens[nX].dTimestamp = aoTokens[nX].dTimestamp.toDate();
-			if (aoTokens[nX].dTimestamp < oFirst.dTimestamp) {
-				oFirst.dTimestamp = aoTokens[nX].dTimestamp;
+			var dX = aoTokens[nX].sTimestamp.toDate();
+			if (dX < oFirst.dTimestamp) {
+				oFirst.dTimestamp = aoTokens[nX].sTimestamp.toDate();
 				oFirst.sCode = aoTokens[nX].sPartyCode;
 				oFirst.sName = aoTokens[nX].sPartyName;
 			}
-			if (aoTokens[nX].dTimestamp > oLast.dTimestamp) {
-				oLast.dTimestamp = aoTokens[nX].dTimestamp;
+			if (dX > oLast.dTimestamp) {
+				oLast.dTimestamp = aoTokens[nX].sTimestamp.toDate();
 				oLast.sCode = aoTokens[nX].sPartyCode;
 				oLast.sName = aoTokens[nX].sPartyName;
 			}
@@ -976,26 +957,16 @@ TokenSession = {
 
 		var oSummary = this.oSummary;
 
-		var jWrap = $("#Dashboard div.WrapSessionSummary");
+		var jWrap = $("#Dashboard .WrapSessionSummary");
 		jWrap.toggle(oSummary.nTotal > 0);
 		if (oSummary.nTotal > 0) {
-			Application.drawTokenAmount($(".SessionTokenTotal", jWrap), oSummary.nTotal);
-			$(".SessionParties", jWrap).text(oSummary.aoParties.length);
-			$(".SessionFirst", jWrap).text(
-				oSummary.oFirst.sName + ", " +
-				oSummary.oFirst.dTimestamp.format("shortDateTime")
-			);
-			$(".SessionLast", jWrap).text(
-				oSummary.oLast.sName + ", " +
-				oSummary.oLast.dTimestamp.format("shortDateTime")
-			);
+			Application.drawTokenAmount($("#Dashboard .SessionTokenTotal"), oSummary.nTotal);
 		}
-
-
-		if (oSummary.nTotal == 0) {
+		else {
 			$("#Participants #partyList li.liParty div.SessionTokens").text("0").removeClass("Awarded");
 			return;
 		}
+
 		var aoParties = oSummary.aoParties;
 
 		$("#Participants #partyList li.liParty").each(function () {
@@ -1017,32 +988,47 @@ TokenSession = {
 		initialized: false,
 		init: function () {
 			if (this.initialized) { return false; }
-			var jPage = $("#dlgSaveSessionTokens");
+			var jPage = $("#SessionTokens");
 
-			jPage.bind('pageinit', function () {
-
-				var jPage = $("#dlgSaveSessionTokens");
-				$("a.Save.ui-btn", jPage).on('click', function () {
-					TokenSession.saveDialog.save();
-				});
-				$(".Cancel.ui-btn", jPage).on('click', function () {
-					TokenSession.saveDialog.cancel();
-				});
+			$("#SaveSession", jPage).onpress(function () {
+				TokenSession.saveDialog.save();
 			});
+			$("#DeleteSession", jPage).onpress(function () {
+				TokenSession.saveDialog.deleteSession();
+			});
+
+			$(".SessionDepositAmount.OneParty", jPage)
+			.constrainNumeric({ absolute: true, integer: true, minValue: 1 });
+
 			this.initialized = true;
 		},
 		open: function (oParty) {
 			this.init();
-			var jPage = $("#dlgSaveSessionTokens");
+			var jPage = $("#SessionTokens");
 			$("#SessionTokenDepositDescription", jPage).val(Application.oPrefs.oTokens.sDepositDescription);
 
+			var oSummary = TokenSession.oSummary;
 			if (!oParty) {
-				$(".PartyName", jPage).hide();
-				$("#SessionDepositAmount", jPage).text(TokenSession.oSummary.nTotal);
+				this.oSaveParty = null;
+				$(".OneParty", jPage).hide();
+				$(".MultiParty", jPage).show();
+
+				$(".SessionDepositAmount.MultiParty", jPage).text(TokenSession.oSummary.nTotal);
 				$("#SessionDepositParties", jPage).text(TokenSession.oSummary.aoParties.length);
 				$("#WrapSessionDepositParties", jPage).show();
+				$(".SessionFirst", jPage).html(
+					oSummary.oFirst.sName + ", " +
+					oSummary.oFirst.dTimestamp.format("shortDateTime")
+				);
+				$(".SessionLast", jPage).html(
+					oSummary.oLast.sName + ", " +
+					oSummary.oLast.dTimestamp.format("shortDateTime")
+				);
 			}
 			else {
+				$(".OneParty", jPage).show();
+				$(".MultiParty", jPage).hide();
+
 				var aoParties = TokenSession.oSummary.aoParties
 				var oSesParty = null;
 				for (var nX = 0; nX < aoParties.length; nX++) {
@@ -1053,10 +1039,9 @@ TokenSession = {
 				}
 
 				if (oSesParty) {
-					TokenSession.saveDialog.oSaveParty = oSesParty;
+					this.oSaveParty = oSesParty;
 					$(".PartyName", jPage).text(oSesParty.aTokens[0].sPartyName).show();
-					$("#SessionDepositAmount", jPage).text(oSesParty.nTotal);
-					$("#WrapSessionDepositParties", jPage).hide();
+					$(".SessionDepositAmount.OneParty", jPage).val(oSesParty.nTotal);
 				}
 				else return false;
 
@@ -1064,22 +1049,23 @@ TokenSession = {
 			$.mobile.changePage(jPage);
 		},
 		save: function () {
-			$("#dlgSaveSessionTokens").dialog("close");
-
 			ui.elap.on("Saving");
-			Application.oPrefs.oTokens.sDepositDescription = $("#SessionTokenDepositDescription").val();
+			var jPage = $("#SessionTokens");
+			Application.oPrefs.oTokens.sDepositDescription = $("#SessionTokenDepositDescription", jPage).val();
 			Application.savePrefs();
 
 			var SQL = "";
 
-			if (TokenSession.saveDialog.oSaveParty) {
+			if (this.oSaveParty) {
+				var nTokens = $(".SessionDepositAmount.OneParty", jPage).val();
+
 				SQL =
 				"select * from ADM$PARTY_LEDGER_IUD(" +
 					"0," + //sTransID
 					Application.oUser.USER_ID.prepSQL(true) + "," +
 					this.oSaveParty.sPartyCode.prepSQL() + "," +
 					Application.oPrefs.oTokens.sDepositDescription.prepSQL() + "," +
-					this.oSaveParty.nTotal.prepSQL() + "," +
+					nTokens.prepSQL() + "," +
 					"null,null,null,null,null);\n" +
 				"select * from adm$participant(" +
 					Application.oUser.CUSTOMER_ID.prepSQL() + "," +
@@ -1098,9 +1084,12 @@ TokenSession = {
 					Participant.data = data[1][0];
 					Participant.refresh();
 					Participants.refresh(data[1][0]);
+
+					window.history.back();
 					ui.elap.off();
+					ui.message(TokenSession.saveDialog.oSaveParty.aTokens[0].sPartyName + 
+						"'s Session " + Application.oUser.TOKENUNIT + "s Deposited");
 					this.oSaveParty = null;
-					ui.popupMessage("Session " + Application.oUser.TOKENUNIT + "s Deposited");
 
 				});
 			}
@@ -1119,26 +1108,67 @@ TokenSession = {
 
 				}
 				new execQuery(SQL, function () {
-					$("#dlgSaveSessionTokens").dialog("close");
 					Participants.lastClassFetched = null;
 
 					TokenSession.eraseTokens();
 					TokenSession.refresh();
-
+					window.history.back();
 					ui.elap.off();
-					ui.popupMessage("Session " + Application.oUser.TOKENUNIT + "s Deposited");
+					ui.message("All Session " + Application.oUser.TOKENUNIT + "s Deposited");
 
 				});
 			}
 
 		},
-		cancel: function () {
-			this.oSaveParty = null;
-			$("#dlgSaveSessionTokens").dialog("close");
+		deleteSession: function () {
+			var sPartyName = "";
+			if (TokenSession.saveDialog.oSaveParty) {
+				sPartyName = TokenSession.saveDialog.oSaveParty.aTokens[0].sPartyName;
+			}
+
+			ui.confirm({
+				sTitle: "Delete Session " + Application.oUser.TOKENUNIT + "s",
+				sMessage:
+					'Select "Delete ' + Application.oUser.TOKENUNIT + 's' +
+					'" to <b>permanently erase</b> the session ' +
+					Application.oUser.TOKENUNIT.toLowerCase() + 's currently stored on this device for ' +
+					((sPartyName) ? sPartyName : '<b>all ' + Application.oUser.PARTICIPANT_ALIAS.toLowerCase() + 's</b>') +
+					'.<br/><br/>' +
+					'This is not undoable!',
+				sConfirmButtonText: 'Delete ' + Application.oUser.TOKENUNIT + 's',
+				fnConfirm: function () {
+					
+					if (TokenSession.saveDialog.oSaveParty) {
+						var aoTokens = TokenSession.aoTokens;
+						for (var nX = aoTokens.length - 1; nX >= 0; nX--) {
+							if (aoTokens[nX].sPartyCode == TokenSession.saveDialog.oSaveParty.sPartyCode) {
+								aoTokens.splice(nX, 1);
+							}
+						}
+						TokenSession.storeTokens();
+						TokenSession.refresh();
+
+						window.history.back();
+
+						ui.message(TokenSession.saveDialog.oSaveParty.aTokens[0].sPartyName +
+							"'s Session " + Application.oUser.TOKENUNIT + "s Deleted");
+						TokenSession.saveDialog.oSaveParty = null;
+
+					}
+					else {
+						TokenSession.saveDialog.oSaveParty = null;
+						TokenSession.eraseTokens();
+						TokenSession.refresh();
+						window.history.back();
+						ui.message('All Session ' + Application.oUser.TOKENUNIT + 's Deleted');
+					}
+				}
+			});
+
 		}
 	},
 
-	adjustParty: {
+	XXXadjustParty: {
 		initialized: false,
 		init: function () {
 			if (this.initialized) { return; }
@@ -1196,13 +1226,13 @@ TokenSession = {
 				TokenSession.storeTokens();
 				TokenSession.refresh();
 				Participant.refresh();
-				ui.popupMessage("Session " + Application.oUser.TOKENUNIT + "s Cleared");
+				ui.message("Session " + Application.oUser.TOKENUNIT + "s Cleared");
 
 			}
 			else {
 				TokenSession.enter(oParty, nNewTokens - nCurTokens);
 				Participant.refresh();
-				ui.popupMessage("Session " + Application.oUser.TOKENUNIT + "s Adjusted");
+				ui.message("Session " + Application.oUser.TOKENUNIT + "s Adjusted");
 			}
 			jPage.dialog("close");
 		}
@@ -1330,7 +1360,7 @@ NewAccount = {
 				else NewAccount.verifyCode();
 			}
 			else {
-				ui.showMessage({
+				ui.alert({
 					sTitle: "Accounts Exists",
 					sMessage:
 						'One or more administrator accounts for the supplied e-mail address already exists.' +
@@ -1373,7 +1403,7 @@ NewAccount = {
 				var sMessage = "You have been sent an e-mail containing the " +
 							"four character confirmation code.  <br/><br/>Please check your inbox, " +
 							"if you do not see the e-mail, check your spam folder."
-				ui.showMessage({
+				ui.alert({
 					sTitle: "E-Mail Delivered",
 					sMessage: sMessage
 				});
@@ -1401,7 +1431,7 @@ NewAccount = {
 				NewAccount.getProgramInfo();
 			}
 			else {
-				ui.showMessage({
+				ui.alert({
 					sTitle: "Wrong Confirmation Code",
 					sMessage: "The confirmation code you entered does not appear to be correct. " +
 						"<br/><br/>" +
@@ -1470,7 +1500,7 @@ NewAccount = {
 			oAccount.sParticipantAlias.prepSQL() + ");",
 		function () {
 			ui.elap.off();
-			ui.showMessage({
+			ui.alert({
 				sTitle: "Account Created!",
 				sMessage:
 					'Your new account for Token Tap and Admin.TokenRewards.com has been created!',
@@ -1538,13 +1568,37 @@ Preferences = {
 };
 
 UserProfile = {
-	init: function () { },
+	init: function () {
+		var jPage = $("#UserProfile");
+
+		$("#GoEditUser", jPage).onpress(function () {
+			$.mobile.changePage($("#ChangeUserProfile"));
+		});
+		$("#GoChangePassword", jPage).onpress(function () {
+			$.mobile.changePage($("#ChangePassword"));
+		});
+		$("#GoChangeEmail", jPage).onpress(function () {
+			$.mobile.changePage($("#ChangeEmail"));
+		});
+
+
+	},
 	bRefreshed: false,
 	refresh: function () {
 		if (this.bRefreshed) { return; }
 		this.bRefreshed = true;
+
 		var jPage = $("#UserProfile");
+
+		sLastSignIn = (Application.oUser.USER_LAST_LOGIN) ?
+			Application.oUser.USER_LAST_LOGIN.toDateFormat("shortDateTime")
+			: "Initial Sign In";
+		$("#LastSignIn", jPage).text(sLastSignIn);
+
 		ui.elap.on();
+
+		$("#LastSignIn", jPage).text(Application.oUser.USER_LAST_LOGIN.toDateFormat("shortDateTime"));
+
 		$('.UserEmail', jPage).text(Application.oPrefs.oSignIn.sUser)
 		var SQL = "select * from adm$customer_contacts(" + Application.oUser.CUSTOMER_ID.prepSQL() + ");" +
 			"select * from adm$users(" + Application.oUser.CUSTOMER_ID.prepSQL() + ") where id = " + Application.oUser.USER_ID.prepSQL() + ";"
@@ -1594,12 +1648,12 @@ ChangeEmail = {
 
 		});
 
-		$(".SendConfirmCode", jPage).click(function () {
+		$(".SendConfirmCode", jPage).onpress(function () {
 			if ($(this).hasClass('ui-disabled')) { return; }
 			ChangeEmail.submitEmailAddress(true);
 		});
 
-		$(".CheckConfirmCode", jPage).click(function () {
+		$(".CheckConfirmCode", jPage).onpress(function () {
 			if ($(this).hasClass('ui-disabled')) { return; }
 
 			ChangeEmail.submitEmailAddress(false);
@@ -1644,7 +1698,7 @@ ChangeEmail = {
 
 			}
 			else {
-				ui.showMessage({
+				ui.alert({
 					sTitle: "Accounts Exists",
 					sMessage:
 						'One or more administrator accounts for the supplied e-mail address already exists.' +
@@ -1682,7 +1736,7 @@ ChangeEmail = {
 				var sMessage = "You have been sent an e-mail containing the " +
 							"four character confirmation code.  <br/><br/>Please check your inbox, " +
 							"if you do not see the e-mail, check your spam folder."
-				ui.showMessage({
+				ui.alert({
 					sTitle: "E-Mail Delivered",
 					sMessage: sMessage
 				});
@@ -1702,7 +1756,7 @@ ChangeEmail = {
 				ChangeEmail.save();
 			}
 			else {
-				ui.showMessage({
+				ui.alert({
 					sTitle: "Wrong Confirmation Code",
 					sMessage: "The confirmation code you entered does not appear to be correct. " +
 						"<br/><br/>" +
@@ -1743,7 +1797,7 @@ ChangeEmail = {
 
 		new execQuery(SQL, function (data) {
 			ui.elap.off();
-			ui.showMessage({
+			ui.alert({
 				sTitle: "E-Mail Changed",
 				sMessage: "Your new e-mail address has been successfully confirmed and saved.",
 				fnCallback: function () {
@@ -1764,13 +1818,18 @@ ChangePassword = {
 			ChangePassword.validate();
 		});
 
-		$("#SaveNewPassword", jPage).click(function () {
+		$("#SaveNewPassword", jPage).onpress(function () {
 			if (!$(this).hasClass('ui-disabled')) {
 				ChangePassword.save();
 			}
 		});
 
 		this.initialized = true;
+	},
+	refresh: function () {
+		var jPage = $("#ChangePassword");
+		$(".Password1, .Password2", jPage).val("");
+		this.validate();
 	},
 	validate: function () {
 		var jPage = $("#ChangePassword");
@@ -1792,7 +1851,7 @@ ChangePassword = {
 				Application.oUser.USER_ID.prepSQL(true) + "," +
 				sPass1.prepSQL() + ");",
 			function (data) {
-				ui.elap.on("Sending E-Mail...");
+				ui.elap.off();
 				if (data[0].CONTACT_ID == '') {
 					ui.modalMessage({ title: "Error", message: "There was an error saving your password." });
 					return;
@@ -1815,17 +1874,15 @@ ChangePassword = {
 						ui.elap.off();
 						if (!bSuccess) { alert("Error Sending E-Mail."); return; }
 
-						ui.showMessage({
+						ui.alert({
 							sTitle: "New Password Saved.",
 							sMessage: "Your new password was successfully saved. " +
 								"An e-mail has also been delivered to you " +
-								"as a reminder that you've changed your password.",
-							fnCallback: function () { 
-								window.history.back();
-							}
+								"as a reminder that you've changed your password."
 						});
 					}
 				});
+				window.history.back();
 
 			});
 	}
@@ -1843,7 +1900,7 @@ ChangeUserProfile = {
 			ChangeUserProfile.validate();
 		});
 
-		$(".saveButton", jPage).click(function () {
+		$(".save", jPage).onpress(function () {
 			if ($(this).hasClass("ui-disabled")) { return; }
 			ChangeUserProfile.save(function () { window.history.back(); });
 		});
@@ -1872,7 +1929,7 @@ ChangeUserProfile = {
 
 		if ($(".UserName", jPage).val().length) { bReqsMet = true; }
 
-		$(".saveButton", jPage).toggleClass("ui-disabled", !bEdited || !bReqsMet);
+		$(".save", jPage).toggleClass("ui-disabled", !bEdited || !bReqsMet);
 		this.bEdited = bEdited;
 		this.bReqsMet = bReqsMet;
 
@@ -1911,11 +1968,11 @@ ChangeUserProfile = {
 
 		new execQuery(SQL, function (data) {
 			ui.elap.off();
-			ui.popupMessage("User Profile Saved.");
+			ui.message("User Profile Saved.");
 			if (fnCallback) { fnCallback(); }
 
 			return;
-			ui.showMessage({
+			ui.alert({
 				sTitle: "Edits Saved",
 				sMessage: "The edits to your user profile have been saved.",
 				fnCallback: function () {
@@ -1926,16 +1983,16 @@ ChangeUserProfile = {
 		});
 	},
 	backConfirm: function () {
-		ui.showConfirm({
+		ui.confirm({
 			sTitle: "Save?",
 			sMessage:
 				'Do you want to save your changes to your user profile before continuing?',
 			sConfirmButtonText: "Yes",
 			sCancelButtonText: "No",
-			fnConfirmCallback: function () {
+			fnConfirm: function () {
 				ChangeUserProfile.save(function () { window.history.back(); }); 
 			},
-			fnCancelCallback: function () {
+			fnCancel: function () {
 				ChangeUserProfile.bEdited = ChangeUserProfile.bReqsMet = false;
 				window.history.back();
 			}
@@ -1964,7 +2021,7 @@ RewardProgramSettings = {
 			RewardProgramSettings.validate();
 		});
 
-		$("a.saveButton", jPage).bind('click', function () {
+		$(".save", jPage).onpress('click', function () {
 			if (RewardProgramSettings.bEdited && RewardProgramSettings.bReqsMet) {
 				RewardProgramSettings.save(function () { window.history.back(); });
 			}
@@ -2013,7 +2070,7 @@ RewardProgramSettings = {
 			this.bReqsMet = true;
 		}
 
-		$('a.saveButton', jPage).toggleClass('ui-disabled', !this.bReqsMet || !this.bEdited);
+		$('.save', jPage).toggleClass('ui-disabled', !this.bReqsMet || !this.bEdited);
 	},
 	save: function (fnCallback) {
 		var jPage = $("#RewardProgramSettings");
@@ -2044,21 +2101,21 @@ RewardProgramSettings = {
 
 			if (fnCallback) { fnCallback(); }
 
-			ui.popupMessage("Edits Saved");
+			ui.message("Edits Saved");
 		});
 	},
 
 	backConfirm: function () {
-		ui.showConfirm({
+		ui.confirm({
 			sTitle: "Save?",
 			sMessage:
 				'Do you want to save your changes to your reward program settings before continuing?',
 			sConfirmButtonText: "Yes",
 			sCancelButtonText: "No",
-			fnConfirmCallback: function () {
+			fnConfirm: function () {
 				RewardProgramSettings.save(function () { window.history.back(); }); 
 			},
-			fnCancelCallback: function () {
+			fnCancel: function () {
 				RewardProgramSettings.bEdited = RewardProgramSettings.bReqsMet = false;
 				window.history.back();
 			}
@@ -2089,7 +2146,7 @@ Participants = {
 		if (this.initialized) { return; }
 		var jPage = $("#Participants");
 
-		$("a.NewParty", jPage).click(function () { PartyProfile.insert(Participants.oClass.ID); });
+		$(".NewParty", jPage).click(function () { PartyProfile.insert(Participants.oClass.ID); });
 		$("a.EditClass", jPage).click(function () { ClassGroup.update(Participants.oClass); });
 
 
@@ -2155,8 +2212,12 @@ Participants = {
 			$('#partyList li', jPage).each(function () {
 				var jThis = $(this);
 				if (jThis.data("oParty").CODE == oParty.CODE) {
-					if (Participants.oClass.ID == "-1"
-						|| $.inArray(Participants.oClass.ID, Participant.data.CLASS_IDS.split(",")) > -1) {
+					if (
+						(Participants.oClass.ID == "-1" || $.inArray(Participants.oClass.ID, Participant.data.CLASS_IDS.split(",")) > -1)
+						&&
+						(Application.oPrefs.oGeneral.bShowInactives ||
+							(!Application.oPrefs.oGeneral.bShowInactives && Participant.data.ACTIVATED == "1"))
+						) {
 
 						Participants.drawOne(jThis, oParty);
 					}
@@ -2251,43 +2312,34 @@ Participants = {
 			jUl.append(jLi);
 
 
-			$('div.WrapSessionTokens', jLi)
-			.on('tap', function (event) {
-				event.preventDefault();
-				event.stopPropagation();
-				event.stopImmediatePropagation();
-
-				var jTokenClicked = $(this);
-				var nNewTot = TokenSession.enter(jTokenClicked.parents('li').data('oParty'), 1);
-				var cAnimation = "bounceIn";
-				jTokenClicked.addClass('animated ' + cAnimation);
-				setTimeout(function () {
-					jTokenClicked.removeClass('animated ' + cAnimation);
-					//Application.drawTokenAmount($(".SessionTokens", jTokenClicked), nNewTot);
-				}, 1000);
-			}).nodoubletapzoom();
-
-			$("a", jLi).click(function (event) {
-				event.preventDefault();
-				event.stopPropagation();
-				Participants.openParty($(this).parents('li'));
+			/*jLi.on('vmousedown', function (event) {
+			//event.stopImmediatePropagation();
+			var jPartyLi = $(this);
+			jPartyLi.siblings().removeClass("ui-btn-up-e");
+			jPartyLi.removeClass('ui-btn-up-d').addClass("ui-btn-up-e");
 			});
-
-			jLi.on('vmousedown', function (event) {
-				//event.stopImmediatePropagation();
-				var jPartyLi = $(this);
-				jPartyLi.siblings().removeClass("ui-btn-up-e");
-				jPartyLi.removeClass('ui-btn-up-d').addClass("ui-btn-up-e");
-			});
-
-			jLi.on('swipeleft', function (event) {
-				event.preventDefault();
-				event.stopPropagation();
-				Participants.openParty($(this));
-			});
+			*/
 
 		}
 
+		$('.liParty', jUl).onpress(function (event) {
+			Participants.openParty($(this));
+		});
+
+		$('div.WrapSessionTokens', jUl)
+		.onpress(function (event) {
+			event.preventDefault();
+			event.stopImmediatePropagation();
+
+			var jTokenClicked = $(this);
+			var nNewTot = TokenSession.enter(jTokenClicked.parents('li').data('oParty'), 1);
+			var cAnimation = "bounceIn";
+			jTokenClicked.addClass('animated ' + cAnimation);
+			setTimeout(function () {
+				jTokenClicked.removeClass('animated ' + cAnimation);
+				//Application.drawTokenAmount($(".SessionTokens", jTokenClicked), nNewTot);
+			}, 1000);
+		});
 
 
 		jUl.trigger("create").listview("refresh");
@@ -2318,9 +2370,10 @@ Participants = {
 	},
 
 	openParty: function (jPartyLi) {
+		Participant.data = jPartyLi.data('oParty');
+		$.mobile.changePage($("#Participant"));
+		return;
 		setTimeout(function () {
-			Participant.data = jPartyLi.data('oParty');
-			$.mobile.changePage($("#Participant"));
 		}, 100);
 	},
 	highlightParty: function () {
@@ -2376,29 +2429,9 @@ Participant = {
 
 		var jPage = $("#Participant");
 
-		jPage.on('swiperight', function (event) {
-			event.preventDefault();
-			event.stopPropagation();
-
-			var goBack = function () {
-				window.history.back();
-				Participant.timer = null;
-			}
-
-			if (Participant.timer) { return; }
-			Participant.timer = setTimeout(goBack, 100);
-
-			//$("#Participant_header a.ui-btn-left", jPage).click();
-			//event.stopPropagation();
+		$("#EditProfile", jPage).onpress(function () {
+			PartyProfile.update();
 		});
-
-		jPage.on('swipeleft', function (event) {
-			event.preventDefault();
-			event.stopPropagation();
-
-			$.mobile.changePage($("#PartyTransactions"));
-		});
-
 
 		$("#WrapPartyBalances", jPage)
 		.bind('collapse', function () {
@@ -2410,30 +2443,21 @@ Participant = {
 			Application.savePrefs();
 		});
 
-
-		$(".btnDeposit", jPage).on('click', function () {
+		$(".btnDeposit", jPage).onpress(function () {
 			LedgerEntry.insert(1);
 		})
 
-		$(".btnWithdraw", jPage).on('click', function () {
+		$(".btnWithdraw", jPage).onpress(function () {
 			LedgerEntry.insert(-1);
 		})
 
-		$("a.DepositSession", jPage).on('click', function () {
+		$(".DepositSession", jPage).onpress(function () {
 			TokenSession.saveDialog.open(Participant.data);
 		})
-		$("a.AdjustSession", jPage).on('click', function () {
-			TokenSession.adjustParty.open(Participant.data);
-		})
-
-		$(".SessionTokenTotal", jPage).detach().appendTo($(".WrapSessionSummary h4 a", jPage));
 
 
 		$(".partyBalance", jPage).detach().appendTo($("h1 a", jPage));
 
-		$("a#EditProfile", jPage).on('click', function () {
-			PartyProfile.update();
-		});
 		this.initialized = true;
 	},
 
@@ -2482,7 +2506,6 @@ Participant = {
 		if (oSesParty) {
 			$("div.WrapSessionSummary", jPage).show();
 			Application.drawTokenAmount($(".SessionTokenTotal", jPage), oSesParty.nTotal);
-
 		}
 		else $("div.WrapSessionSummary", jPage).hide();
 
@@ -2559,7 +2582,7 @@ PartyProfile = {
 			PartyProfile.validate();
 		});
 
-		$("a.saveButton", jPage).bind('click', function () {
+		$(".save", jPage).bind('click', function () {
 			if (PartyProfile.bEdited && PartyProfile.bReqsMet) {
 				PartyProfile.save(function () { window.history.back(); });
 			}
@@ -2585,13 +2608,13 @@ PartyProfile = {
 		var oParty = {};
 
 		if (this.bInserting) {
-			$("#PartyProfile div h1").html("New<br/>" + Application.oUser.PARTICIPANT_ALIAS);
+			$("#PartyProfile div h1").html("New " + Application.oUser.PARTICIPANT_ALIAS);
 			oParty = $.extend({}, this.oDataPrototype);
 			oParty.CLASS_ID = oParty.CLASS_IDS = this.sDefaultClassId;
 		}
 		else {
 			oParty = Participant.data;
-			$("div h1", jPage).html("Edit<br/>" + Application.oUser.PARTICIPANT_ALIAS);
+			$("div h1", jPage).html("Edit " + Application.oUser.PARTICIPANT_ALIAS);
 		}
 
 		$("input#PartyName", jPage).val(oParty.NAME);
@@ -2810,7 +2833,7 @@ PartyProfile = {
 		PartyProfile.bEdited = bEdited;
 		PartyProfile.bReqsMet = bReqsMet;
 
-		$('a.saveButton', jPage).toggleClass('ui-disabled', !this.bReqsMet || !this.bEdited);
+		$('.save', jPage).toggleClass('ui-disabled', !this.bReqsMet || !this.bEdited);
 
 	},
 
@@ -2983,7 +3006,7 @@ PartyProfile = {
 			Dashboard.bRefresh = true;
 			Dashboard.refresh(function () {
 				ui.elap.off();
-				ui.popupMessage(sMessage);
+				ui.message(sMessage);
 				if (fnCallback) { fnCallback(); }
 			});
 		});
@@ -2991,7 +3014,7 @@ PartyProfile = {
 	},
 
 	backConfirm: function () {
-		ui.showConfirm({
+		ui.confirm({
 			sTitle: "Save?",
 			sMessage:
 				'Do you want to save ' +
@@ -2999,10 +3022,10 @@ PartyProfile = {
 				Application.oUser.PARTICIPANT_ALIAS.toLowerCase() + ' before continuing?',
 			sConfirmButtonText: "Yes",
 			sCancelButtonText: "No",
-			fnConfirmCallback: function () {
+			fnConfirm: function () {
 				PartyProfile.save(function () { window.history.back(); });
 			},
-			fnCancelCallback: function () {
+			fnCancel: function () {
 				PartyProfile.bEdited = PartyProfile.bReqsMet = false;
 				window.history.back();
 			}
@@ -3035,7 +3058,7 @@ ClassGroup = {
 		$('input', jPage).keyup(function () { ClassGroup.validate() });
 
 		$("a#DeleteClass", jPage).on('click', function () {
-			ui.showConfirm({
+			ui.confirm({
 				sTitle: "Delete Class?",
 				sMessage: 'Are you sure want to delete this class?' +
 				'<br/><br/>' +
@@ -3046,10 +3069,10 @@ ClassGroup = {
 				,
 				sConfirmButtonText: "Yes",
 				sCancelButtonText: "No",
-				fnConfirmCallback: function () {
+				fnConfirm: function () {
 					ClassGroup.deleteClass();
 				},
-				fnCancelCallback: function () { }
+				fnCancel: function () { }
 			});
 
 		});
@@ -3127,7 +3150,7 @@ ClassGroup = {
 	saveCallBack: function () {
 		window.history.back();
 		ui.elap.off();
-		ui.popupMessage("Class Saved");
+		ui.message("Class Saved");
 	},
 
 	deleteClass: function () {
@@ -3146,7 +3169,7 @@ ClassGroup = {
 
 				window.history.go(-2);
 				ui.elap.off();
-				ui.popupMessage("Class Deleted");
+				ui.message("Class Deleted");
 			});
 
 		});
@@ -3154,7 +3177,7 @@ ClassGroup = {
 	},
 
 	backConfirm: function () {
-		ui.showConfirm({
+		ui.confirm({
 			sTitle: "Save?",
 			sMessage:
 				'Do you want to save ' +
@@ -3162,10 +3185,10 @@ ClassGroup = {
 				'class/group before continuing?',
 			sConfirmButtonText: "Yes",
 			sCancelButtonText: "No",
-			fnConfirmCallback: function () {
+			fnConfirm: function () {
 				ClassGroup.save();
 			},
-			fnCancelCallback: function () {
+			fnCancel: function () {
 				ClassGroup.bEdited = ClassGroup.bReqsMet = false;
 				window.history.back();
 			}
@@ -3254,7 +3277,7 @@ LedgerEntry = {
 		.keyup(function () { LedgerEntry.validate(); })
 		.change(function () { LedgerEntry.validate(); });
 
-		$("a.QuickButton", jPage).on("click", function () {
+		$("a.QuickButton", jPage).onpress(function () {
 			var jAmt = $("#txtAmount");
 			var nAmount = $(this).text().toNumber();
 
@@ -3264,7 +3287,7 @@ LedgerEntry = {
 		//this.oLastUsed.deposit.description = Application.oPrefs.oDeposit.sDescription;
 		//this.oLastUsed.withdrawal.description = Application.oPrefs.oWithdrawal.sDescription;
 
-		$("a#ConfigQuickTokens").on("click", function () {
+		$("a#ConfigQuickTokens").onpress(function () {
 			$.mobile.changePage($("#dlgTransactOptions"));
 		});
 
@@ -3279,7 +3302,7 @@ LedgerEntry = {
 		});
 
 
-		$("a.saveButton", jPage).on('click', function () {
+		$(".save", jPage).onpress(function () {
 			if (LedgerEntry.bEdited && LedgerEntry.bReqsMet) {
 				LedgerEntry.save();
 			}
@@ -3303,7 +3326,7 @@ LedgerEntry = {
 		this.sType = sType;
 
 		$("h1", jPage).html(
-			((this.bInserting) ? "New<br/>" : "Edit<br/>") +
+			((this.bInserting) ? "New " : "Edit ") +
 			sType
 		);
 
@@ -3375,7 +3398,7 @@ LedgerEntry = {
 			this.bEdited = true;
 		}
 
-		$('a.saveButton', jPage).toggleClass('ui-disabled', !this.bReqsMet || !this.bEdited);
+		$('.save', jPage).toggleClass('ui-disabled', !this.bReqsMet || !this.bEdited);
 
 	},
 
@@ -3470,14 +3493,14 @@ LedgerEntry = {
 			Dashboard.bRefresh = true
 			Dashboard.refresh(function () {
 				ui.elap.off();
-				ui.popupMessage(((LedgerEntry.nType == 1) ? "Deposit" : "Withdrawal") + " Saved");
+				ui.message(((LedgerEntry.nType == 1) ? "Deposit" : "Withdrawal") + " Saved");
 				window.history.back();
 			});
 		});
 
 	},
-	backConfirm: function () {
-		ui.showConfirm({
+	XbackConfirm: function () {
+		ui.confirm({
 			sTitle: "Save?",
 			sMessage:
 				'Do you want to save ' +
@@ -3485,10 +3508,10 @@ LedgerEntry = {
 				LedgerEntry.sType.toLowerCase() + ' before continuing?',
 			sConfirmButtonText: "Yes",
 			sCancelButtonText: "No",
-			fnConfirmCallback: function () {
+			fnConfirm: function () {
 				LedgerEntry.save();
 			},
-			fnCancelCallback: function () {
+			fnCancel: function () {
 				LedgerEntry.bEdited = LedgerEntry.bReqsMet = false;
 				window.history.back();
 			}
@@ -3499,12 +3522,12 @@ LedgerEntry = {
 };
 
 ui = {
-	showMessage: function (options) { ui.message.open(options) },
-	message: {
+	alert: function (options) { ui.alertObject.open(options) },
+	alertObject: {
 		initialized: false,
 		init: function () {
 			if (this.initialized) return;
-			var jPage = $("#dlgMessage").popup()
+			var jPage = $("#popupAlert").popup()
 			.bind({
 				popupafterclose: function (event, ui) {
 					$(this).addClass("noDisplay");
@@ -3514,54 +3537,47 @@ ui = {
 				}
 			});
 
-			$("button#CloseMessage", jPage).button().on('click', function () {
-				ui.message.close();
+			$("#CloseMessage", jPage).button().onpress(function () {
+				ui.alertObject.close();
 			});
 
 			this.initialized = true;
 		},
 		defaultOptions: {
 			sTitle: "Message",
-			sMessage: "Note",
+			sMessage: "Message Contents",
 			sButtonText: "Okay",
 			fnCallback: false
 		},
 		options: {},
 		open: function (options) {
-			if (!this.initialized) this.init();
+			this.init();
 
-			if (typeof options.fnCallback != "function") {
-				ui.message.options.fnCallback = false;
-			}
-			else ui.message.options.fnCallback = options.fnCallback;
+			var opts = this.options = $.extend(true, {}, ui.alertObject.defaultOptions, options);
 
-			var opts = this.options = $.extend({}, ui.message.defaultOptions, options);
-			//console.log(this.options);
-
-			var jPage = $("#dlgMessage");
+			var jPage = $("#popupAlert");
 			$("h1", jPage).text(opts.sTitle);
 			$("#message", jPage).html(opts.sMessage);
-			$("#CloseMessage", jPage).text(opts.sButtonText);
+			$("#CloseMessage .ui-btn-text", jPage).text(opts.sButtonText);
 
 			jPage.popup("open", { history: false, positionTo: "window" });
 
-			//$.mobile.changePage(jPage);
 		},
 		close: function () {
 			if (this.options.fnCallback) {
 				this.options.fnCallback();
 			}
-			$("#dlgMessage").popup("close");
+			$("#popupAlert").popup("close");
 		}
 	},
 
-	showConfirm: function (options) { ui.confirm.open(options) },
-	confirm: {
+	confirm: function (options) { ui.confirmObject.open(options) },
+	confirmObject: {
 		initialized: false,
 		init: function () {
 			if (this.initialized) return;
 
-			var jPage = $("#dlgConfirm").popup()
+			var jPage = $("#popupConfirm").popup()
 			.bind({
 				popupafterclose: function (event, ui) {
 					$(this).addClass("noDisplay");
@@ -3571,96 +3587,121 @@ ui = {
 				}
 			});
 
-			$("#dlgConfirm-Close", jPage).button();
-
-			$("a#ConfirmButton", jPage).button().on('click', function () {
-				ui.confirm.confirmed();
+			$("#ConfirmButton", jPage).button().onpress(function () {
+				ui.confirmObject.confirmed();
 			});
-			$("a#CancelButton", jPage).button().on('click', function () {
-				ui.confirm.canceled();
+			$("#CancelButton", jPage).button().onpress(function () {
+				ui.confirmObject.canceled();
 			});
 
 			this.initialized = true;
 		},
 		defaultOptions: {
 			sTitle: "Confirm",
-			sMessage: "Note",
+			sMessage: "Confirmation Note",
 			sConfirmButtonText: "Okay",
 			sCancelButtonText: "Cancel",
-			fnCancelCallback: false,
-			fnConfirmCallback: false
+			fnCancel: false,
+			fnConfirm: false
 		},
 		options: {},
 		open: function (options) {
 			if (!this.initialized) this.init();
 
-			if (typeof options.fnCancelCallback != "function") {
-				ui.confirm.options.fnCancelCallback = false;
-			}
-			else ui.message.options.fnCancelCallback = options.fnCancelCallback;
+			var opts = this.options = $.extend(true, {}, ui.confirmObject.defaultOptions, options);
 
-			if (typeof options.fnConfirmCallback != "function") {
-				ui.confirm.options.fnConfirmCallback = false;
-			}
-			else ui.message.options.fnConfirmCallback = options.fnConfirmCallback;
-
-
-			var opts = this.options = $.extend({}, ui.confirm.defaultOptions, options);
-
-			var jPage = $("#dlgConfirm");
+			var jPage = $("#popupConfirm");
 			$("h1", jPage).text(opts.sTitle);
 			$("#ConfirmMessage", jPage).empty().html(opts.sMessage);
 			$("#ConfirmButton .ui-btn-text", jPage).text(opts.sConfirmButtonText);
 			$("#CancelButton .ui-btn-text", jPage).text(opts.sCancelButtonText);
 
-			jPage.popup("open", { history: false, positionTo: "window" });
+			jPage.popup("open", { history: false, positionTo: "window", overlayTheme: "b" });
 		},
 		confirmed: function () {
-			$("#dlgConfirm").popup("close");
-			if (this.options.fnConfirmCallback) {
-				this.options.fnConfirmCallback();
+			$("#popupConfirm").popup("close");
+			if (this.options.fnConfirm) {
+				this.options.fnConfirm();
 			}
 		},
 		canceled: function () {
-			$("#dlgConfirm").popup("close");
-			if (this.options.fnCancelCallback) {
-				this.options.fnCancelCallback();
+			$("#popupConfirm").popup("close");
+			if (this.options.fnCancel) {
+				this.options.fnCancel();
 			}
 		}
 	},
 
-	popupMessage: function (sContents) {
-		setTimeout(function () {
+
+	message: function (sMessage) { this.messageObject.open(sMessage); },
+	messageObject: {
+		initialized: false,
+		isOn: false,
+		sMessage: "Message",
+
+		init: function () {
+			if (this.initialized) { return; }
+
+			$("#popupMessage").popup({
+				container: $('html'),
+				history: false,
+				tolerance: "0",
+				overlayTheme: null
+			});
+
+			this.initialized = true;
+		},
+		open: function (sMessage) {
+			this.init();
+
+			if (!sMessage) {
+				sMessage = this.sMessage;
+				if (!this.isOn) {
+					sMessage = "Message";
+				}
+			}
+			this.sMessage = sMessage;
+			this.isOn = true;
+
 			var jPopup = $("div#popupMessage");
-			$(".ui-content", jPopup).html(sContents);
-			jPopup.popup({ container: $('html'), history: false, tolerance: "0" });
-			jPopup.popup('open', { y: window.innerHeight - 100 });
+
+			$(".ui-content", jPopup).html(sMessage);
+
 			setTimeout(function () {
-				jPopup.popup('close');
-			}, 1500);
-		}, 1);
+				jPopup.popup('open', { y: window.innerHeight - 100 });
+				setTimeout(function () {
+					jPopup.popup('close');
+					ui.messageObject.isOn = false;
+				}, 1500);
+			}, 100);
+
+
+		}
 	},
 
 	elap: {
+		isOn: false,
+		sMessage: "Loading..",
 		on: function (sMessage) {
-			var bNoText = true;
 			if (!sMessage) {
-				sMessage = "Loading...";
-				bNoText = false;
+				sMessage = this.sMessage;
+				if (!this.isOn) {
+					sMessage = "Loading...";
+				}
 			}
+			this.sMessage = sMessage;
+			this.isOn = true;
 			$.mobile.loadingMessage = sMessage;
 			$.mobile.loading('show');
 			//$("#elapsor").show();
 			//$.mobile.showPageLoadingMsg("a", sMessage);
 		},
 		off: function () {
-			//$("#elapsor").hide(); 
-			//$.mobile.hidePageLoadingMsg();
+			this.isOn = false;
 			$.mobile.loading('hide');
 		}
 	}
 };
-
 
 
 
@@ -3832,54 +3873,188 @@ function Run_CGI(cScript, oQueryData, callback) {
 		}
 	});
 }
+function formatCurrency(num, bHTML, bHideCents, bBlankZero) {
+	var sign = false, cents = 0, cReturn = "", nNumberValue;
 
+	if (bBlankZero && (Number(num)==0 || num==undefined || isNaN(num) || num=='' || num==0)) return "";
 
-// From: http://docs.phonegap.com/en/1.1.0/phonegap_media_media.md.html#Media
-function playAudio(src) {
-	// Create Media object from src
-	my_media = new Media(src, onSuccess, onError);
-
-	// Play audio
-	my_media.play();
-
-	// Update my_media position every second
-	if (mediaTimer == null) {
-		mediaTimer = setInterval(function () {
-			// get my_media position
-			my_media.getCurrentPosition(
-			// success callback
-function (position) {
-	if (position > -1) {
-		setAudioPosition((position) + " sec");
+	if ( num==undefined || isNaN(num) || num=='') {sign = true;  num = "0";cents = ".00", nNumberValue = 0;}
+	else {
+		num = num.toString().replace(/\$|\,/g,'');
+		sign = (num == (num = Math.abs(num)));
+		num = Math.floor(num*100+0.50000000001);
+		cents = num%100;
+		nNumberValue =  Math.floor(num/100);
+		num = Math.floor(num/100).toString();
+		if (bHideCents) cents = "";
+		else {
+		if (cents < 10) cents = "0" + cents;
+		cents = "." + cents;
+		}
+	  
+		for (var i = 0; i < Math.floor((num.length-(1+i))/3); i++)
+			num = num.substring(0,num.length-(4*i+3))+','+
+		num.substring(num.length - (4 * i + 3));
 	}
-},
-			// error callback
-function (e) {
-	console.log("Error getting pos=" + e);
-	setAudioPosition("Error: " + e);
-}
-);
-		}, 1000);
+	if (!bHTML) cReturn = (((sign) ? '' : '-') + '$' + num + cents);
+	else {
+		if (nNumberValue >= 1) {
+			cReturn = ((sign) ? '' : '-') +
+				'<span style="font-size:80%; position:relative; top:-.2em;">$</span>' + 
+				'<span style="">' + num + '</span>' +
+				((!bHideCents) ? '<span style="font-size:70%; position:relative; top:-.35em">' + cents + '</span>' : '');
+		}
+		else {
+			cReturn = ((sign) ? '' : '-') + '<span style="font-size:100%;">' + String(Math.floor((Number(cents)) * 100)) + '</span>' +
+				'<span style="position:relative; top:-.2em">&cent;</span>';
+		}
 	}
+	return cReturn
+}
+function LogEntry(cDetail, bDisableASync, fnCallBack) {
+	var SQL = "select * from COM$Web_Log_Entry(" +
+					Application.oUser.CUSTOMER_ID.prepSQL(true) + ", " +
+					Application.oUser.CODE.prepSQL(true) + ", " +
+					Application.oUser.USER_NAME.prepSQL(true) + ", " +
+					window.location.href.prepSQL() + ", " +
+					cDetail.prepSQL() + ", '<_USER_IP_ADDRESS_>');";
+
+	var cUserPass = ";;";
+	if (Application.dataKeys) {
+		cUserPass = Application.dataKeys.cUser + ";" + Application.dataKeys.cPassword + ";";
+	}
+	SQL = cUserPass + String.fromCharCode(13) + SQL;
+
+	$.ajax({
+		type: "POST",
+		cache: false,
+		async: !bDisableASync,
+		url: "http://" + Application.domain + "tokentap.com/cgi-scripts/TR_XHR_query.pl",
+		data: SQL,
+		dataType: "text",
+		success: function (sResponse) {
+			if (sResponse && sResponse.match(": '',: '',\r")) {
+				Application.sUserIP = sResponse.split(": '',: '',\r")[1].trim();
+			}
+			if (fnCallBack) fnCallBack();
+		}
+	});
 }
 
-function pauseAudio() {
-if (my_media) {
-my_media.pause();
-}
-}
+var Email = {
+	sTemplateFile: "/mobile_email_templates.html",
+	sendParams: function () {
+		this.to_name = '';
+		this.to_address = '';
 
-function stopAudio() {
-if (my_media) {
-my_media.stop();
-}
-clearInterval(mediaTimer);
-mediaTimer = null;
-}
+		this.from_name = 'Token Rewards';
+		this.from_address = 'Mail@TokenRewards.com';
+		this.subject = '';
+		this.contents = '';
+		this.email_code = '';
+	},
+	masterTemplate: '',
+	contentTemplates: {},
+	send: function (oEmail) {
+		var email = new Email.sendObject();
+		email.data.to_contact_id = (oEmail.to_contact_id) ? oEmail.to_contact_id : '';
+		email.data.to_name = oEmail.to_name;
+		email.data.to_address = oEmail.to_address;
+		email.data.bcc_address = oEmail.bcc_address;
 
-function onSuccess() {
-console.log("playAudio():Audio Success");
-}
+		email.data.from_name = (oEmail.from_name) ? oEmail.from_name : email.data.from_name;
+		email.data.from_address = (oEmail.from_address) ? oEmail.from_address : email.data.from_address;
+
+		email.data.subject = oEmail.subject;
+		email.data.contents = oEmail.contents;
+
+		email.data.template = (oEmail.template) ? oEmail.template : email.data.template;
+
+		email.send(oEmail.callback);
+	},
+	sendObject: function () {
+		var thisSendObject = this;
+		this.sendParams = new Email.sendParams();
+		this.data = {
+			to_contact_id: '',
+			to_name: '',
+			to_address: '',
+			from_name: thisSendObject.sendParams.from_name,
+			from_address: thisSendObject.sendParams.from_address,
+			subject: '',
+			contents: '',
+			template: ''
+		};
+		this.send = function (callback) {
+			var sendMail = function (emailData) {
+				var email = thisSendObject.sendParams;
+
+				email.email_code = emailData.CODE;
+				email.to_contact_id = thisSendObject.data.to_contact_id;
+				email.to_name = thisSendObject.data.to_name;
+				email.to_address = thisSendObject.data.to_address;
+				email.from_name = thisSendObject.data.from_name;
+				email.from_address = thisSendObject.data.from_address;
+				email.subject = thisSendObject.data.subject;
+
+
+				//Use contents returned from Firebird (in case email_code is in message_body)
+				email.contents = Email.masterTemplate
+					.replace(/__message_body__/, emailData.CONTENTS)
+					.replace(/__email_code__/g, email.email_code)
+					.replace(/__email_code_short__/g, email.email_code.slice(0, 4).toUpperCase())
+					.replace(/__year__/g, (new Date()).getFullYear());
+
+				new Run_CGI(
+				"http://" + Application.domain + "tokenrewards.com/Common/cgi-scripts/mail_sender.pl", email, 
+				function (cData) {
+					var bSuccess = (/Success/gim).test(cData);
+					if (bSuccess) { LogEntry("Email successfully delivered to " + email.to_address + " - " + email.subject); }
+					else LogEntry("Email UNSUCCESSFULLY delivered to " + email.to_address + " - " + email.subject);
+
+					if (callback) callback(bSuccess, email);
+				});
+			};
+
+			var jContents = $(thisSendObject.data.contents);
+			var jSubject = jContents.filter('pre');
+			if (jSubject.length) {
+				thisSendObject.data.subject = jSubject.eq(0).text().trim();
+				thisSendObject.data.contents =
+					thisSendObject.data.contents.replace(/\<pre[\s\S]+<\/pre\>/i, '');
+			}
+
+
+			var sFrom = '"' + thisSendObject.data.from_name + '" <' + thisSendObject.data.from_address + '>';
+			var cSQL = "select * from com$email_insert(" +
+					thisSendObject.data.to_contact_id.prepSQL(true) + "," +
+					thisSendObject.data.to_name.prepSQL() + "," +
+					thisSendObject.data.to_address.prepSQL() + "," +
+					sFrom.prepSQL() + "," +
+					thisSendObject.data.subject.prepSQL() + "," +
+					thisSendObject.data.contents.prepSQL() + "," +
+					thisSendObject.data.template.prepSQL() +
+				");"
+			var query = new execQuery(cSQL, function (data) { sendMail(data[0]); });
+		}
+	},
+	init: function () {
+		$.get(this.sTemplateFile, function (data) {
+			
+			var sTemplates = data.replace(/__current_domain__/gim, Application.domain);
+			var jMails = $(data);
+			Email.contentTemplates.admin_lost_password = jMails.filter("#admin_lost_password").html();
+			Email.contentTemplates.admin_confirm_email = jMails.filter("#admin_confirm_email").html();
+			Email.contentTemplates.admin_password_changed = jMails.filter("#admin_password_changed").html();
+
+			
+			Email.masterTemplate = sTemplates.replace(/TEMPLATES_BEGIN[\s\S]+TEMPLATES_END/gm, "");
+		});
+	}
+};
+
+
+
 
 // #region  Base Prototypes 
 String.prototype.trim = function () {
@@ -4282,47 +4457,59 @@ Array.prototype.searchSortedColumn = function (nsSearchVal, sSearchCol) {
 
 Date.prototype.isValidDate = function () { return isFinite(this); }
 Date.prototype.toDateFormat = function (cFormat) { return dateFormat(cFormat) }
- // #endregion
+// #endregion
 
 
-function formatCurrency(num, bHTML, bHideCents, bBlankZero) {
-	var sign = false, cents = 0, cReturn = "", nNumberValue;
+/* #region  Plug-ins */
 
-	if (bBlankZero && (Number(num)==0 || num==undefined || isNaN(num) || num=='' || num==0)) return "";
+// From: http://docs.phonegap.com/en/1.1.0/phonegap_media_media.md.html#Media
+function playAudio(src) {
+	// Create Media object from src
+	my_media = new Media(src, onSuccess, onError);
 
-	if ( num==undefined || isNaN(num) || num=='') {sign = true;  num = "0";cents = ".00", nNumberValue = 0;}
-	else {
-		num = num.toString().replace(/\$|\,/g,'');
-		sign = (num == (num = Math.abs(num)));
-		num = Math.floor(num*100+0.50000000001);
-		cents = num%100;
-		nNumberValue =  Math.floor(num/100);
-		num = Math.floor(num/100).toString();
-		if (bHideCents) cents = "";
-		else {
-		if (cents < 10) cents = "0" + cents;
-		cents = "." + cents;
-		}
-	  
-		for (var i = 0; i < Math.floor((num.length-(1+i))/3); i++)
-			num = num.substring(0,num.length-(4*i+3))+','+
-		num.substring(num.length - (4 * i + 3));
+	// Play audio
+	my_media.play();
+
+	// Update my_media position every second
+	if (mediaTimer == null) {
+		mediaTimer = setInterval(function () {
+			// get my_media position
+			my_media.getCurrentPosition(
+			// success callback
+function (position) {
+	if (position > -1) {
+		setAudioPosition((position) + " sec");
 	}
-	if (!bHTML) cReturn = (((sign) ? '' : '-') + '$' + num + cents);
-	else {
-		if (nNumberValue >= 1) {
-			cReturn = ((sign) ? '' : '-') +
-				'<span style="font-size:80%; position:relative; top:-.2em;">$</span>' + 
-				'<span style="">' + num + '</span>' +
-				((!bHideCents) ? '<span style="font-size:70%; position:relative; top:-.35em">' + cents + '</span>' : '');
-		}
-		else {
-			cReturn = ((sign) ? '' : '-') + '<span style="font-size:100%;">' + String(Math.floor((Number(cents)) * 100)) + '</span>' +
-				'<span style="position:relative; top:-.2em">&cent;</span>';
-		}
-	}
-	return cReturn
+},
+			// error callback
+function (e) {
+	console.log("Error getting pos=" + e);
+	setAudioPosition("Error: " + e);
 }
+);
+		}, 1000);
+	}
+}
+
+function pauseAudio() {
+if (my_media) {
+my_media.pause();
+}
+}
+
+function stopAudio() {
+if (my_media) {
+my_media.stop();
+}
+clearInterval(mediaTimer);
+mediaTimer = null;
+}
+
+function onSuccess() {
+console.log("playAudio():Audio Success");
+}
+
+
 
 var dateFormat = function () {
 	/*
@@ -4575,59 +4762,293 @@ jQuery.fn.constrainNumeric = function (options, callback) {
 	return this;
 }
 
+isTouch = (("createTouch" in document) || ("TouchEvent" in window));
 
-// jQuery Mobile Initializations
-$(document).bind("mobileinit", function () {
-
-	$.extend($.mobile.zoom, { locked: true, enabled: false });
-	$.mobile.pushStateEnabled = false;
-	$.mobile.ajaxEnabled = false;
-	$.mobile.hashListeningEnabled = true;
-	$.mobile.ignoreContentEnabled = true;
-	$.mobile.defaultPageTransition = 'slide';
-	$.mobile.defaultDialogTransition = 'pop';
-	$.mobile.transitionFallbacks.slide = 'none';
-	$.mobile.transitionFallbacks.flip = 'none';
-	$.mobile.transitionFallbacks.pop = 'none';
-	$.mobile.orientationChangeEnabled = false;
-
-	$.mobile.loadingMessageTextVisible = true;
-	$.mobile.loadingMessageTheme = "a"
+if (!isTouch) {
+	$('<link rel="stylesheet" type="text/css" href="no_touch.css" >')
+   .appendTo("head");
+}
 
 
-	$.event.special.tap.tapholdThreshold = 1000;
-	$.event.special.swipe.durationThreshold = 500;
-	$.event.special.swipe.horizontalDistanceThreshold = 250;
+// Prevent double-tap zoom 
+// from: http://stackoverflow.com/questions/3103842/safari-ipad-prevent-zoom-on-double-tap
+var fnNoDoubleTapZoom = function ($) {
+	$.fn.nodoubletapzoom = function () {
+		if (!isTouch) { return; }
 
-	// Navigation
-	$.mobile.page.prototype.options.backBtnText = "Back";
-	$.mobile.page.prototype.options.addBackBtn = false;
-	$.mobile.page.prototype.options.backBtnTheme = "b";
+		$(this).bind('touchstart', function preventZoom(e) {
+			var t2 = e.timeStamp;
+			var t1 = $(this).data('lastTouch') || t2;
+			var dt = t2 - t1;
+			var fingers = e.originalEvent.touches.length;
+			$(this).data('lastTouch', t2);
+			if (!dt || dt > 500 || fingers > 1) {
+				return; // not double-tap
+			}
+			e.preventDefault(); // double tap - prevent the zoom
+			// also synthesize click events we just swallowed up
+			$(this).trigger('tap');
+		});
+	};
+} (jQuery);
 
-	// Page
-	$.mobile.page.prototype.options.theme = "d";
-	$.mobile.page.prototype.options.headerTheme = "b";
-	$.mobile.page.prototype.options.contentTheme = "d";
-	$.mobile.page.prototype.options.footerTheme = "b";
+/* onpress event
 
-	// Controls
-	$.mobile.button.prototype.options.theme = "b";
-	$.mobile.selectmenu.prototype.options.theme = "b";
 
-	// List views
-	$.mobile.listview.prototype.options.headerTheme = "a";  // Header for nested lists
-	$.mobile.listview.prototype.options.theme = "d";  // List items / content
-	$.mobile.listview.prototype.options.dividerTheme = "d";  // List divider
+ Author:
+    Max Degterev @suprMax
+    Valerio Di Donato @drowne
+    
+    JQM fast buttons without nasty ghostclicks.
+    Highly inspired by http://code.google.com/mobile/articles/fast_buttons.html
+    
+    Usage
+    
+    live:
+    $('#someid').onpress(function(event){});
+    $('#someid').offpress(function(event){});
+    
+    TODO: find a way to remove handleTouchStart handler as well
 
-	$.mobile.listview.prototype.options.splitTheme = "c";
-	$.mobile.listview.prototype.options.countTheme = "c";
-	$.mobile.listview.prototype.options.filterTheme = "c";
-	// $.mobile.listview.prototype.options.filterPlaceholder = "Filter data...";
-	
-	$(document).ready(function () { Application.ready(); });
+*/
+var fnOnPress = function ($) {
 
-});
+	//(window.hasOwnProperty('ontouchstart'));
 
+	var ghostsLifeTime = 1000;
+
+	var normalizeArgs = function (args) {
+		var callback,
+            selector;
+
+		if (typeof args[0] === 'function') {
+			callback = args[0];
+		}
+		else {
+			selector = args[0];
+			callback = args[1];
+		}
+		return [selector, callback];
+	};
+
+	if (isTouch) {
+		var ghosts = [];
+
+		var touches = {},
+         $doc = $(document),
+         hasMoved = false,
+         handlers = {};
+
+		var handleTouchStart = function (e) {
+			e.stopPropagation();
+			$(this).addClass("touchStart");
+
+			touches.x = e.originalEvent.touches[0].pageX;
+			touches.y = e.originalEvent.touches[0].pageY;
+			hasMoved = false;
+		};
+
+		var handleTouchMove = function (e) {
+			if (Math.abs(e.originalEvent.touches[0].pageX - touches.x) > 10 || Math.abs(e.originalEvent.touches[0].pageX - touches.y) > 10) {
+				hasMoved = true;
+			}
+		};
+
+		var removeGhosts = function () {
+			ghosts.splice(0, 2);
+		};
+
+		var handleGhosts = function (e) {
+			var i, l;
+			for (i = 0, l = ghosts.length; i < l; i += 2) {
+				if (Math.abs(e.pageX - ghosts[i]) < 50 && Math.abs(e.pageY - ghosts[i + 1]) < 50) {
+					e.stopImmediatePropagation();
+					e.stopPropagation();
+					e.preventDefault();
+				}
+			}
+		};
+
+		$doc.live('click', handleGhosts);
+		$doc.live('touchmove', handleTouchMove);
+
+		$.fn.onpress = function () {
+			var args = normalizeArgs(arguments);
+			var handleTouchEnd = function (e) {
+				e.stopPropagation();
+				$(this).removeClass("touchStart");
+				if (!hasMoved) {
+					args[1].call(this, e);
+					ghosts.push(touches.x, touches.y);
+					window.setTimeout(removeGhosts, ghostsLifeTime);
+				}
+			};
+
+			handlers[args[1]] = handleTouchEnd;
+
+			if (args[0]) {
+				this.live('touchstart.onpress', args[0], handleTouchStart);
+				this.live('touchend.onpress', args[0], handleTouchEnd);
+				this.live('press', args[0], args[1]);
+			}
+			else {
+				this.live('touchstart.onpress', handleTouchStart);
+				this.live('touchend.onpress', handleTouchEnd);
+				this.live('press', args[1]);
+			}
+		};
+
+		$.fn.offpress = function () {
+			var args = normalizeArgs(arguments);
+			if (args[1]) {
+				if (args[0]) {
+					this.die('.onpress', args[0], handlers[args[1]]);
+					this.die('press', args[0], args[1]);
+				}
+				else {
+					this.die('.onpress', handlers[args[1]]);
+					this.die('press', args[1]);
+				}
+				delete handlers[args[1]];
+			}
+			else {
+				if (args[0]) {
+					this.die('.onpress', args[0]);
+					this.die('press', args[0]);
+				}
+				else {
+					this.die('.onpress');
+					this.die('press');
+				}
+			}
+		};
+	}
+	else {
+		$.fn.onpress = function () {
+
+			var args = normalizeArgs(arguments);
+			if (args[0]) {
+				this.live('click.onpress', args[0], args[1]);
+				this.live('press.onpress', args[0], args[1]);
+			}
+			else {
+				this.live('click.onpress', args[1]);
+				this.live('press.onpress', args[1]);
+			}
+
+		};
+		$.fn.offpress = function () {
+			var args = normalizeArgs(arguments);
+			args[0] ? this.die('.onpress', args[0], args[1]) : this.die('.onpress', args[1]);
+		};
+	}
+} (jQuery);
+
+
+/** datejs 
+ * Version: 1.0 Alpha-1 
+ * Build Date: 13-Nov-2007
+ * Copyright (c) 2006-2007, Coolite Inc. (http://www.coolite.com/). All rights reserved.
+ * License: Licensed under The MIT License. See license.txt and http://www.datejs.com/license/. 
+ * Website: http://www.datejs.com/ or http://www.coolite.com/datejs/
+ */
+Date.CultureInfo={name:"en-US",englishName:"English (United States)",nativeName:"English (United States)",dayNames:["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"],abbreviatedDayNames:["Sun","Mon","Tue","Wed","Thu","Fri","Sat"],shortestDayNames:["Su","Mo","Tu","We","Th","Fr","Sa"],firstLetterDayNames:["S","M","T","W","T","F","S"],monthNames:["January","February","March","April","May","June","July","August","September","October","November","December"],abbreviatedMonthNames:["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"],amDesignator:"AM",pmDesignator:"PM",firstDayOfWeek:0,twoDigitYearMax:2029,dateElementOrder:"mdy",formatPatterns:{shortDate:"M/d/yyyy",longDate:"dddd, MMMM dd, yyyy",shortTime:"h:mm tt",longTime:"h:mm:ss tt",fullDateTime:"dddd, MMMM dd, yyyy h:mm:ss tt",sortableDateTime:"yyyy-MM-ddTHH:mm:ss",universalSortableDateTime:"yyyy-MM-dd HH:mm:ssZ",rfc1123:"ddd, dd MMM yyyy HH:mm:ss GMT",monthDay:"MMMM dd",yearMonth:"MMMM, yyyy"},regexPatterns:{jan:/^jan(uary)?/i,feb:/^feb(ruary)?/i,mar:/^mar(ch)?/i,apr:/^apr(il)?/i,may:/^may/i,jun:/^jun(e)?/i,jul:/^jul(y)?/i,aug:/^aug(ust)?/i,sep:/^sep(t(ember)?)?/i,oct:/^oct(ober)?/i,nov:/^nov(ember)?/i,dec:/^dec(ember)?/i,sun:/^su(n(day)?)?/i,mon:/^mo(n(day)?)?/i,tue:/^tu(e(s(day)?)?)?/i,wed:/^we(d(nesday)?)?/i,thu:/^th(u(r(s(day)?)?)?)?/i,fri:/^fr(i(day)?)?/i,sat:/^sa(t(urday)?)?/i,future:/^next/i,past:/^last|past|prev(ious)?/i,add:/^(\+|after|from)/i,subtract:/^(\-|before|ago)/i,yesterday:/^yesterday/i,today:/^t(oday)?/i,tomorrow:/^tomorrow/i,now:/^n(ow)?/i,millisecond:/^ms|milli(second)?s?/i,second:/^sec(ond)?s?/i,minute:/^min(ute)?s?/i,hour:/^h(ou)?rs?/i,week:/^w(ee)?k/i,month:/^m(o(nth)?s?)?/i,day:/^d(ays?)?/i,year:/^y((ea)?rs?)?/i,shortMeridian:/^(a|p)/i,longMeridian:/^(a\.?m?\.?|p\.?m?\.?)/i,timezone:/^((e(s|d)t|c(s|d)t|m(s|d)t|p(s|d)t)|((gmt)?\s*(\+|\-)\s*\d\d\d\d?)|gmt)/i,ordinalSuffix:/^\s*(st|nd|rd|th)/i,timeContext:/^\s*(\:|a|p)/i},abbreviatedTimeZoneStandard:{GMT:"-000",EST:"-0400",CST:"-0500",MST:"-0600",PST:"-0700"},abbreviatedTimeZoneDST:{GMT:"-000",EDT:"-0500",CDT:"-0600",MDT:"-0700",PDT:"-0800"}};
+Date.getMonthNumberFromName=function(name){var n=Date.CultureInfo.monthNames,m=Date.CultureInfo.abbreviatedMonthNames,s=name.toLowerCase();for(var i=0;i<n.length;i++){if(n[i].toLowerCase()==s||m[i].toLowerCase()==s){return i;}}
+return-1;};Date.getDayNumberFromName=function(name){var n=Date.CultureInfo.dayNames,m=Date.CultureInfo.abbreviatedDayNames,o=Date.CultureInfo.shortestDayNames,s=name.toLowerCase();for(var i=0;i<n.length;i++){if(n[i].toLowerCase()==s||m[i].toLowerCase()==s){return i;}}
+return-1;};Date.isLeapYear=function(year){return(((year%4===0)&&(year%100!==0))||(year%400===0));};Date.getDaysInMonth=function(year,month){return[31,(Date.isLeapYear(year)?29:28),31,30,31,30,31,31,30,31,30,31][month];};Date.getTimezoneOffset=function(s,dst){return(dst||false)?Date.CultureInfo.abbreviatedTimeZoneDST[s.toUpperCase()]:Date.CultureInfo.abbreviatedTimeZoneStandard[s.toUpperCase()];};Date.getTimezoneAbbreviation=function(offset,dst){var n=(dst||false)?Date.CultureInfo.abbreviatedTimeZoneDST:Date.CultureInfo.abbreviatedTimeZoneStandard,p;for(p in n){if(n[p]===offset){return p;}}
+return null;};Date.prototype.clone=function(){return new Date(this.getTime());};Date.prototype.compareTo=function(date){if(isNaN(this)){throw new Error(this);}
+if(date instanceof Date&&!isNaN(date)){return(this>date)?1:(this<date)?-1:0;}else{throw new TypeError(date);}};Date.prototype.equals=function(date){return(this.compareTo(date)===0);};Date.prototype.between=function(start,end){var t=this.getTime();return t>=start.getTime()&&t<=end.getTime();};Date.prototype.addMilliseconds=function(value){this.setMilliseconds(this.getMilliseconds()+value);return this;};Date.prototype.addSeconds=function(value){return this.addMilliseconds(value*1000);};Date.prototype.addMinutes=function(value){return this.addMilliseconds(value*60000);};Date.prototype.addHours=function(value){return this.addMilliseconds(value*3600000);};Date.prototype.addDays=function(value){return this.addMilliseconds(value*86400000);};Date.prototype.addWeeks=function(value){return this.addMilliseconds(value*604800000);};Date.prototype.addMonths=function(value){var n=this.getDate();this.setDate(1);this.setMonth(this.getMonth()+value);this.setDate(Math.min(n,this.getDaysInMonth()));return this;};Date.prototype.addYears=function(value){return this.addMonths(value*12);};Date.prototype.add=function(config){if(typeof config=="number"){this._orient=config;return this;}
+var x=config;if(x.millisecond||x.milliseconds){this.addMilliseconds(x.millisecond||x.milliseconds);}
+if(x.second||x.seconds){this.addSeconds(x.second||x.seconds);}
+if(x.minute||x.minutes){this.addMinutes(x.minute||x.minutes);}
+if(x.hour||x.hours){this.addHours(x.hour||x.hours);}
+if(x.month||x.months){this.addMonths(x.month||x.months);}
+if(x.year||x.years){this.addYears(x.year||x.years);}
+if(x.day||x.days){this.addDays(x.day||x.days);}
+return this;};Date._validate=function(value,min,max,name){if(typeof value!="number"){throw new TypeError(value+" is not a Number.");}else if(value<min||value>max){throw new RangeError(value+" is not a valid value for "+name+".");}
+return true;};Date.validateMillisecond=function(n){return Date._validate(n,0,999,"milliseconds");};Date.validateSecond=function(n){return Date._validate(n,0,59,"seconds");};Date.validateMinute=function(n){return Date._validate(n,0,59,"minutes");};Date.validateHour=function(n){return Date._validate(n,0,23,"hours");};Date.validateDay=function(n,year,month){return Date._validate(n,1,Date.getDaysInMonth(year,month),"days");};Date.validateMonth=function(n){return Date._validate(n,0,11,"months");};Date.validateYear=function(n){return Date._validate(n,1,9999,"seconds");};Date.prototype.set=function(config){var x=config;if(!x.millisecond&&x.millisecond!==0){x.millisecond=-1;}
+if(!x.second&&x.second!==0){x.second=-1;}
+if(!x.minute&&x.minute!==0){x.minute=-1;}
+if(!x.hour&&x.hour!==0){x.hour=-1;}
+if(!x.day&&x.day!==0){x.day=-1;}
+if(!x.month&&x.month!==0){x.month=-1;}
+if(!x.year&&x.year!==0){x.year=-1;}
+if(x.millisecond!=-1&&Date.validateMillisecond(x.millisecond)){this.addMilliseconds(x.millisecond-this.getMilliseconds());}
+if(x.second!=-1&&Date.validateSecond(x.second)){this.addSeconds(x.second-this.getSeconds());}
+if(x.minute!=-1&&Date.validateMinute(x.minute)){this.addMinutes(x.minute-this.getMinutes());}
+if(x.hour!=-1&&Date.validateHour(x.hour)){this.addHours(x.hour-this.getHours());}
+if(x.month!==-1&&Date.validateMonth(x.month)){this.addMonths(x.month-this.getMonth());}
+if(x.year!=-1&&Date.validateYear(x.year)){this.addYears(x.year-this.getFullYear());}
+if(x.day!=-1&&Date.validateDay(x.day,this.getFullYear(),this.getMonth())){this.addDays(x.day-this.getDate());}
+if(x.timezone){this.setTimezone(x.timezone);}
+if(x.timezoneOffset){this.setTimezoneOffset(x.timezoneOffset);}
+return this;};Date.prototype.clearTime=function(){this.setHours(0);this.setMinutes(0);this.setSeconds(0);this.setMilliseconds(0);return this;};Date.prototype.isLeapYear=function(){var y=this.getFullYear();return(((y%4===0)&&(y%100!==0))||(y%400===0));};Date.prototype.isWeekday=function(){return!(this.is().sat()||this.is().sun());};Date.prototype.getDaysInMonth=function(){return Date.getDaysInMonth(this.getFullYear(),this.getMonth());};Date.prototype.moveToFirstDayOfMonth=function(){return this.set({day:1});};Date.prototype.moveToLastDayOfMonth=function(){return this.set({day:this.getDaysInMonth()});};Date.prototype.moveToDayOfWeek=function(day,orient){var diff=(day-this.getDay()+7*(orient||+1))%7;return this.addDays((diff===0)?diff+=7*(orient||+1):diff);};Date.prototype.moveToMonth=function(month,orient){var diff=(month-this.getMonth()+12*(orient||+1))%12;return this.addMonths((diff===0)?diff+=12*(orient||+1):diff);};Date.prototype.getDayOfYear=function(){return Math.floor((this-new Date(this.getFullYear(),0,1))/86400000);};Date.prototype.getWeekOfYear=function(firstDayOfWeek){var y=this.getFullYear(),m=this.getMonth(),d=this.getDate();var dow=firstDayOfWeek||Date.CultureInfo.firstDayOfWeek;var offset=7+1-new Date(y,0,1).getDay();if(offset==8){offset=1;}
+var daynum=((Date.UTC(y,m,d,0,0,0)-Date.UTC(y,0,1,0,0,0))/86400000)+1;var w=Math.floor((daynum-offset+7)/7);if(w===dow){y--;var prevOffset=7+1-new Date(y,0,1).getDay();if(prevOffset==2||prevOffset==8){w=53;}else{w=52;}}
+return w;};Date.prototype.isDST=function(){console.log('isDST');return this.toString().match(/(E|C|M|P)(S|D)T/)[2]=="D";};Date.prototype.getTimezone=function(){return Date.getTimezoneAbbreviation(this.getUTCOffset,this.isDST());};Date.prototype.setTimezoneOffset=function(s){var here=this.getTimezoneOffset(),there=Number(s)*-6/10;this.addMinutes(there-here);return this;};Date.prototype.setTimezone=function(s){return this.setTimezoneOffset(Date.getTimezoneOffset(s));};Date.prototype.getUTCOffset=function(){var n=this.getTimezoneOffset()*-10/6,r;if(n<0){r=(n-10000).toString();return r[0]+r.substr(2);}else{r=(n+10000).toString();return"+"+r.substr(1);}};Date.prototype.getDayName=function(abbrev){return abbrev?Date.CultureInfo.abbreviatedDayNames[this.getDay()]:Date.CultureInfo.dayNames[this.getDay()];};Date.prototype.getMonthName=function(abbrev){return abbrev?Date.CultureInfo.abbreviatedMonthNames[this.getMonth()]:Date.CultureInfo.monthNames[this.getMonth()];};Date.prototype._toString=Date.prototype.toString;Date.prototype.toString=function(format){var self=this;var p=function p(s){return(s.toString().length==1)?"0"+s:s;};return format?format.replace(/dd?d?d?|MM?M?M?|yy?y?y?|hh?|HH?|mm?|ss?|tt?|zz?z?/g,function(format){switch(format){case"hh":return p(self.getHours()<13?self.getHours():(self.getHours()-12));case"h":return self.getHours()<13?self.getHours():(self.getHours()-12);case"HH":return p(self.getHours());case"H":return self.getHours();case"mm":return p(self.getMinutes());case"m":return self.getMinutes();case"ss":return p(self.getSeconds());case"s":return self.getSeconds();case"yyyy":return self.getFullYear();case"yy":return self.getFullYear().toString().substring(2,4);case"dddd":return self.getDayName();case"ddd":return self.getDayName(true);case"dd":return p(self.getDate());case"d":return self.getDate().toString();case"MMMM":return self.getMonthName();case"MMM":return self.getMonthName(true);case"MM":return p((self.getMonth()+1));case"M":return self.getMonth()+1;case"t":return self.getHours()<12?Date.CultureInfo.amDesignator.substring(0,1):Date.CultureInfo.pmDesignator.substring(0,1);case"tt":return self.getHours()<12?Date.CultureInfo.amDesignator:Date.CultureInfo.pmDesignator;case"zzz":case"zz":case"z":return"";}}):this._toString();};
+Date.now=function(){return new Date();};Date.today=function(){return Date.now().clearTime();};Date.prototype._orient=+1;Date.prototype.next=function(){this._orient=+1;return this;};Date.prototype.last=Date.prototype.prev=Date.prototype.previous=function(){this._orient=-1;return this;};Date.prototype._is=false;Date.prototype.is=function(){this._is=true;return this;};Number.prototype._dateElement="day";Number.prototype.fromNow=function(){var c={};c[this._dateElement]=this;return Date.now().add(c);};Number.prototype.ago=function(){var c={};c[this._dateElement]=this*-1;return Date.now().add(c);};(function(){var $D=Date.prototype,$N=Number.prototype;var dx=("sunday monday tuesday wednesday thursday friday saturday").split(/\s/),mx=("january february march april may june july august september october november december").split(/\s/),px=("Millisecond Second Minute Hour Day Week Month Year").split(/\s/),de;var df=function(n){return function(){if(this._is){this._is=false;return this.getDay()==n;}
+return this.moveToDayOfWeek(n,this._orient);};};for(var i=0;i<dx.length;i++){$D[dx[i]]=$D[dx[i].substring(0,3)]=df(i);}
+var mf=function(n){return function(){if(this._is){this._is=false;return this.getMonth()===n;}
+return this.moveToMonth(n,this._orient);};};for(var j=0;j<mx.length;j++){$D[mx[j]]=$D[mx[j].substring(0,3)]=mf(j);}
+var ef=function(j){return function(){if(j.substring(j.length-1)!="s"){j+="s";}
+return this["add"+j](this._orient);};};var nf=function(n){return function(){this._dateElement=n;return this;};};for(var k=0;k<px.length;k++){de=px[k].toLowerCase();$D[de]=$D[de+"s"]=ef(px[k]);$N[de]=$N[de+"s"]=nf(de);}}());Date.prototype.toJSONString=function(){return this.toString("yyyy-MM-ddThh:mm:ssZ");};Date.prototype.toShortDateString=function(){return this.toString(Date.CultureInfo.formatPatterns.shortDatePattern);};Date.prototype.toLongDateString=function(){return this.toString(Date.CultureInfo.formatPatterns.longDatePattern);};Date.prototype.toShortTimeString=function(){return this.toString(Date.CultureInfo.formatPatterns.shortTimePattern);};Date.prototype.toLongTimeString=function(){return this.toString(Date.CultureInfo.formatPatterns.longTimePattern);};Date.prototype.getOrdinal=function(){switch(this.getDate()){case 1:case 21:case 31:return"st";case 2:case 22:return"nd";case 3:case 23:return"rd";default:return"th";}};
+(function(){Date.Parsing={Exception:function(s){this.message="Parse error at '"+s.substring(0,10)+" ...'";}};var $P=Date.Parsing;var _=$P.Operators={rtoken:function(r){return function(s){var mx=s.match(r);if(mx){return([mx[0],s.substring(mx[0].length)]);}else{throw new $P.Exception(s);}};},token:function(s){return function(s){return _.rtoken(new RegExp("^\s*"+s+"\s*"))(s);};},stoken:function(s){return _.rtoken(new RegExp("^"+s));},until:function(p){return function(s){var qx=[],rx=null;while(s.length){try{rx=p.call(this,s);}catch(e){qx.push(rx[0]);s=rx[1];continue;}
+break;}
+return[qx,s];};},many:function(p){return function(s){var rx=[],r=null;while(s.length){try{r=p.call(this,s);}catch(e){return[rx,s];}
+rx.push(r[0]);s=r[1];}
+return[rx,s];};},optional:function(p){return function(s){var r=null;try{r=p.call(this,s);}catch(e){return[null,s];}
+return[r[0],r[1]];};},not:function(p){return function(s){try{p.call(this,s);}catch(e){return[null,s];}
+throw new $P.Exception(s);};},ignore:function(p){return p?function(s){var r=null;r=p.call(this,s);return[null,r[1]];}:null;},product:function(){var px=arguments[0],qx=Array.prototype.slice.call(arguments,1),rx=[];for(var i=0;i<px.length;i++){rx.push(_.each(px[i],qx));}
+return rx;},cache:function(rule){var cache={},r=null;return function(s){try{r=cache[s]=(cache[s]||rule.call(this,s));}catch(e){r=cache[s]=e;}
+if(r instanceof $P.Exception){throw r;}else{return r;}};},any:function(){var px=arguments;return function(s){var r=null;for(var i=0;i<px.length;i++){if(px[i]==null){continue;}
+try{r=(px[i].call(this,s));}catch(e){r=null;}
+if(r){return r;}}
+throw new $P.Exception(s);};},each:function(){var px=arguments;return function(s){var rx=[],r=null;for(var i=0;i<px.length;i++){if(px[i]==null){continue;}
+try{r=(px[i].call(this,s));}catch(e){throw new $P.Exception(s);}
+rx.push(r[0]);s=r[1];}
+return[rx,s];};},all:function(){var px=arguments,_=_;return _.each(_.optional(px));},sequence:function(px,d,c){d=d||_.rtoken(/^\s*/);c=c||null;if(px.length==1){return px[0];}
+return function(s){var r=null,q=null;var rx=[];for(var i=0;i<px.length;i++){try{r=px[i].call(this,s);}catch(e){break;}
+rx.push(r[0]);try{q=d.call(this,r[1]);}catch(ex){q=null;break;}
+s=q[1];}
+if(!r){throw new $P.Exception(s);}
+if(q){throw new $P.Exception(q[1]);}
+if(c){try{r=c.call(this,r[1]);}catch(ey){throw new $P.Exception(r[1]);}}
+return[rx,(r?r[1]:s)];};},between:function(d1,p,d2){d2=d2||d1;var _fn=_.each(_.ignore(d1),p,_.ignore(d2));return function(s){var rx=_fn.call(this,s);return[[rx[0][0],r[0][2]],rx[1]];};},list:function(p,d,c){d=d||_.rtoken(/^\s*/);c=c||null;return(p instanceof Array?_.each(_.product(p.slice(0,-1),_.ignore(d)),p.slice(-1),_.ignore(c)):_.each(_.many(_.each(p,_.ignore(d))),px,_.ignore(c)));},set:function(px,d,c){d=d||_.rtoken(/^\s*/);c=c||null;return function(s){var r=null,p=null,q=null,rx=null,best=[[],s],last=false;for(var i=0;i<px.length;i++){q=null;p=null;r=null;last=(px.length==1);try{r=px[i].call(this,s);}catch(e){continue;}
+rx=[[r[0]],r[1]];if(r[1].length>0&&!last){try{q=d.call(this,r[1]);}catch(ex){last=true;}}else{last=true;}
+if(!last&&q[1].length===0){last=true;}
+if(!last){var qx=[];for(var j=0;j<px.length;j++){if(i!=j){qx.push(px[j]);}}
+p=_.set(qx,d).call(this,q[1]);if(p[0].length>0){rx[0]=rx[0].concat(p[0]);rx[1]=p[1];}}
+if(rx[1].length<best[1].length){best=rx;}
+if(best[1].length===0){break;}}
+if(best[0].length===0){return best;}
+if(c){try{q=c.call(this,best[1]);}catch(ey){throw new $P.Exception(best[1]);}
+best[1]=q[1];}
+return best;};},forward:function(gr,fname){return function(s){return gr[fname].call(this,s);};},replace:function(rule,repl){return function(s){var r=rule.call(this,s);return[repl,r[1]];};},process:function(rule,fn){return function(s){var r=rule.call(this,s);return[fn.call(this,r[0]),r[1]];};},min:function(min,rule){return function(s){var rx=rule.call(this,s);if(rx[0].length<min){throw new $P.Exception(s);}
+return rx;};}};var _generator=function(op){return function(){var args=null,rx=[];if(arguments.length>1){args=Array.prototype.slice.call(arguments);}else if(arguments[0]instanceof Array){args=arguments[0];}
+if(args){for(var i=0,px=args.shift();i<px.length;i++){args.unshift(px[i]);rx.push(op.apply(null,args));args.shift();return rx;}}else{return op.apply(null,arguments);}};};var gx="optional not ignore cache".split(/\s/);for(var i=0;i<gx.length;i++){_[gx[i]]=_generator(_[gx[i]]);}
+var _vector=function(op){return function(){if(arguments[0]instanceof Array){return op.apply(null,arguments[0]);}else{return op.apply(null,arguments);}};};var vx="each any all".split(/\s/);for(var j=0;j<vx.length;j++){_[vx[j]]=_vector(_[vx[j]]);}}());(function(){var flattenAndCompact=function(ax){var rx=[];for(var i=0;i<ax.length;i++){if(ax[i]instanceof Array){rx=rx.concat(flattenAndCompact(ax[i]));}else{if(ax[i]){rx.push(ax[i]);}}}
+return rx;};Date.Grammar={};Date.Translator={hour:function(s){return function(){this.hour=Number(s);};},minute:function(s){return function(){this.minute=Number(s);};},second:function(s){return function(){this.second=Number(s);};},meridian:function(s){return function(){this.meridian=s.slice(0,1).toLowerCase();};},timezone:function(s){return function(){var n=s.replace(/[^\d\+\-]/g,"");if(n.length){this.timezoneOffset=Number(n);}else{this.timezone=s.toLowerCase();}};},day:function(x){var s=x[0];return function(){this.day=Number(s.match(/\d+/)[0]);};},month:function(s){return function(){this.month=((s.length==3)?Date.getMonthNumberFromName(s):(Number(s)-1));};},year:function(s){return function(){var n=Number(s);this.year=((s.length>2)?n:(n+(((n+2000)<Date.CultureInfo.twoDigitYearMax)?2000:1900)));};},rday:function(s){return function(){switch(s){case"yesterday":this.days=-1;break;case"tomorrow":this.days=1;break;case"today":this.days=0;break;case"now":this.days=0;this.now=true;break;}};},finishExact:function(x){x=(x instanceof Array)?x:[x];var now=new Date();this.year=now.getFullYear();this.month=now.getMonth();this.day=1;this.hour=0;this.minute=0;this.second=0;for(var i=0;i<x.length;i++){if(x[i]){x[i].call(this);}}
+this.hour=(this.meridian=="p"&&this.hour<13)?this.hour+12:this.hour;if(this.day>Date.getDaysInMonth(this.year,this.month)){throw new RangeError(this.day+" is not a valid value for days.");}
+var r=new Date(this.year,this.month,this.day,this.hour,this.minute,this.second);if(this.timezone){r.set({timezone:this.timezone});}else if(this.timezoneOffset){r.set({timezoneOffset:this.timezoneOffset});}
+return r;},finish:function(x){x=(x instanceof Array)?flattenAndCompact(x):[x];if(x.length===0){return null;}
+for(var i=0;i<x.length;i++){if(typeof x[i]=="function"){x[i].call(this);}}
+if(this.now){return new Date();}
+var today=Date.today();var method=null;var expression=!!(this.days!=null||this.orient||this.operator);if(expression){var gap,mod,orient;orient=((this.orient=="past"||this.operator=="subtract")?-1:1);if(this.weekday){this.unit="day";gap=(Date.getDayNumberFromName(this.weekday)-today.getDay());mod=7;this.days=gap?((gap+(orient*mod))%mod):(orient*mod);}
+if(this.month){this.unit="month";gap=(this.month-today.getMonth());mod=12;this.months=gap?((gap+(orient*mod))%mod):(orient*mod);this.month=null;}
+if(!this.unit){this.unit="day";}
+if(this[this.unit+"s"]==null||this.operator!=null){if(!this.value){this.value=1;}
+if(this.unit=="week"){this.unit="day";this.value=this.value*7;}
+this[this.unit+"s"]=this.value*orient;}
+return today.add(this);}else{if(this.meridian&&this.hour){this.hour=(this.hour<13&&this.meridian=="p")?this.hour+12:this.hour;}
+if(this.weekday&&!this.day){this.day=(today.addDays((Date.getDayNumberFromName(this.weekday)-today.getDay()))).getDate();}
+if(this.month&&!this.day){this.day=1;}
+return today.set(this);}}};var _=Date.Parsing.Operators,g=Date.Grammar,t=Date.Translator,_fn;g.datePartDelimiter=_.rtoken(/^([\s\-\.\,\/\x27]+)/);g.timePartDelimiter=_.stoken(":");g.whiteSpace=_.rtoken(/^\s*/);g.generalDelimiter=_.rtoken(/^(([\s\,]|at|on)+)/);var _C={};g.ctoken=function(keys){var fn=_C[keys];if(!fn){var c=Date.CultureInfo.regexPatterns;var kx=keys.split(/\s+/),px=[];for(var i=0;i<kx.length;i++){px.push(_.replace(_.rtoken(c[kx[i]]),kx[i]));}
+fn=_C[keys]=_.any.apply(null,px);}
+return fn;};g.ctoken2=function(key){return _.rtoken(Date.CultureInfo.regexPatterns[key]);};g.h=_.cache(_.process(_.rtoken(/^(0[0-9]|1[0-2]|[1-9])/),t.hour));g.hh=_.cache(_.process(_.rtoken(/^(0[0-9]|1[0-2])/),t.hour));g.H=_.cache(_.process(_.rtoken(/^([0-1][0-9]|2[0-3]|[0-9])/),t.hour));g.HH=_.cache(_.process(_.rtoken(/^([0-1][0-9]|2[0-3])/),t.hour));g.m=_.cache(_.process(_.rtoken(/^([0-5][0-9]|[0-9])/),t.minute));g.mm=_.cache(_.process(_.rtoken(/^[0-5][0-9]/),t.minute));g.s=_.cache(_.process(_.rtoken(/^([0-5][0-9]|[0-9])/),t.second));g.ss=_.cache(_.process(_.rtoken(/^[0-5][0-9]/),t.second));g.hms=_.cache(_.sequence([g.H,g.mm,g.ss],g.timePartDelimiter));g.t=_.cache(_.process(g.ctoken2("shortMeridian"),t.meridian));g.tt=_.cache(_.process(g.ctoken2("longMeridian"),t.meridian));g.z=_.cache(_.process(_.rtoken(/^(\+|\-)?\s*\d\d\d\d?/),t.timezone));g.zz=_.cache(_.process(_.rtoken(/^(\+|\-)\s*\d\d\d\d/),t.timezone));g.zzz=_.cache(_.process(g.ctoken2("timezone"),t.timezone));g.timeSuffix=_.each(_.ignore(g.whiteSpace),_.set([g.tt,g.zzz]));g.time=_.each(_.optional(_.ignore(_.stoken("T"))),g.hms,g.timeSuffix);g.d=_.cache(_.process(_.each(_.rtoken(/^([0-2]\d|3[0-1]|\d)/),_.optional(g.ctoken2("ordinalSuffix"))),t.day));g.dd=_.cache(_.process(_.each(_.rtoken(/^([0-2]\d|3[0-1])/),_.optional(g.ctoken2("ordinalSuffix"))),t.day));g.ddd=g.dddd=_.cache(_.process(g.ctoken("sun mon tue wed thu fri sat"),function(s){return function(){this.weekday=s;};}));g.M=_.cache(_.process(_.rtoken(/^(1[0-2]|0\d|\d)/),t.month));g.MM=_.cache(_.process(_.rtoken(/^(1[0-2]|0\d)/),t.month));g.MMM=g.MMMM=_.cache(_.process(g.ctoken("jan feb mar apr may jun jul aug sep oct nov dec"),t.month));g.y=_.cache(_.process(_.rtoken(/^(\d\d?)/),t.year));g.yy=_.cache(_.process(_.rtoken(/^(\d\d)/),t.year));g.yyy=_.cache(_.process(_.rtoken(/^(\d\d?\d?\d?)/),t.year));g.yyyy=_.cache(_.process(_.rtoken(/^(\d\d\d\d)/),t.year));_fn=function(){return _.each(_.any.apply(null,arguments),_.not(g.ctoken2("timeContext")));};g.day=_fn(g.d,g.dd);g.month=_fn(g.M,g.MMM);g.year=_fn(g.yyyy,g.yy);g.orientation=_.process(g.ctoken("past future"),function(s){return function(){this.orient=s;};});g.operator=_.process(g.ctoken("add subtract"),function(s){return function(){this.operator=s;};});g.rday=_.process(g.ctoken("yesterday tomorrow today now"),t.rday);g.unit=_.process(g.ctoken("minute hour day week month year"),function(s){return function(){this.unit=s;};});g.value=_.process(_.rtoken(/^\d\d?(st|nd|rd|th)?/),function(s){return function(){this.value=s.replace(/\D/g,"");};});g.expression=_.set([g.rday,g.operator,g.value,g.unit,g.orientation,g.ddd,g.MMM]);_fn=function(){return _.set(arguments,g.datePartDelimiter);};g.mdy=_fn(g.ddd,g.month,g.day,g.year);g.ymd=_fn(g.ddd,g.year,g.month,g.day);g.dmy=_fn(g.ddd,g.day,g.month,g.year);g.date=function(s){return((g[Date.CultureInfo.dateElementOrder]||g.mdy).call(this,s));};g.format=_.process(_.many(_.any(_.process(_.rtoken(/^(dd?d?d?|MM?M?M?|yy?y?y?|hh?|HH?|mm?|ss?|tt?|zz?z?)/),function(fmt){if(g[fmt]){return g[fmt];}else{throw Date.Parsing.Exception(fmt);}}),_.process(_.rtoken(/^[^dMyhHmstz]+/),function(s){return _.ignore(_.stoken(s));}))),function(rules){return _.process(_.each.apply(null,rules),t.finishExact);});var _F={};var _get=function(f){return _F[f]=(_F[f]||g.format(f)[0]);};g.formats=function(fx){if(fx instanceof Array){var rx=[];for(var i=0;i<fx.length;i++){rx.push(_get(fx[i]));}
+return _.any.apply(null,rx);}else{return _get(fx);}};g._formats=g.formats(["yyyy-MM-ddTHH:mm:ss","ddd, MMM dd, yyyy H:mm:ss tt","ddd MMM d yyyy HH:mm:ss zzz","d"]);g._start=_.process(_.set([g.date,g.time,g.expression],g.generalDelimiter,g.whiteSpace),t.finish);g.start=function(s){try{var r=g._formats.call({},s);if(r[1].length===0){return r;}}catch(e){}
+return g._start.call({},s);};}());Date._parse=Date.parse;Date.parse=function(s){var r=null;if(!s){return null;}
+try{r=Date.Grammar.start.call({},s);}catch(e){return null;}
+return((r[1].length===0)?r[0]:null);};Date.getParseFunction=function(fx){var fn=Date.Grammar.formats(fx);return function(s){var r=null;try{r=fn.call({},s);}catch(e){return null;}
+return((r[1].length===0)?r[0]:null);};};Date.parseExact=function(s,fx){return Date.getParseFunction(fx)(s);};
 
 // JSON Plug-in
 (function ($) {
@@ -4662,337 +5083,7 @@ throw new SyntaxError("Error parsing JSON, source is not valid.");};$.quoteStrin
 {var c=_meta[a];if(typeof c==='string')return c;c=a.charCodeAt();return'\\u00'+Math.floor(c/16).toString(16)+(c%16).toString(16);})+'"';}
 return'"'+string+'"';};var _escapeable=/["\\\x00-\x1f\x7f-\x9f]/g;var _meta={'\b':'\\b','\t':'\\t','\n':'\\n','\f':'\\f','\r':'\\r','"':'\\"','\\':'\\\\'};})(jQuery);
 
-
-if (typeof PhoneGap != "undefined") {
-document.addEventListener("deviceready", function () {
-// PhoneGap API is ready
-}, false);
-}
-else PhoneGap = false;
-
-function LogEntry(cDetail, bDisableASync, fnCallBack) {
-	var SQL = "select * from COM$Web_Log_Entry(" +
-					Application.oUser.CUSTOMER_ID.prepSQL(true) + ", " +
-					Application.oUser.CODE.prepSQL(true) + ", " +
-					Application.oUser.USER_NAME.prepSQL(true) + ", " +
-					window.location.href.prepSQL() + ", " +
-					cDetail.prepSQL() + ", '<_USER_IP_ADDRESS_>');";
-
-	var cUserPass = ";;";
-	if (Application.dataKeys) {
-		cUserPass = Application.dataKeys.cUser + ";" + Application.dataKeys.cPassword + ";";
-	}
-	SQL = cUserPass + String.fromCharCode(13) + SQL;
-
-	$.ajax({
-		type: "POST",
-		cache: false,
-		async: !bDisableASync,
-		url: "http://" + Application.domain + "tokentap.com/cgi-scripts/TR_XHR_query.pl",
-		data: SQL,
-		dataType: "text",
-		success: function (sResponse) {
-			if (sResponse && sResponse.match(": '',: '',\r")) {
-				Application.sUserIP = sResponse.split(": '',: '',\r")[1].trim();
-			}
-			if (fnCallBack) fnCallBack();
-		}
-	});
-}
-
-var Email = {
-	sTemplateFile: "/mobile_email_templates.html",
-	sendParams: function () {
-		this.to_name = '';
-		this.to_address = '';
-
-		this.from_name = 'Token Rewards';
-		this.from_address = 'Mail@TokenRewards.com';
-		this.subject = '';
-		this.contents = '';
-		this.email_code = '';
-	},
-	masterTemplate: '',
-	contentTemplates: {},
-	send: function (oEmail) {
-		var email = new Email.sendObject();
-		email.data.to_contact_id = (oEmail.to_contact_id) ? oEmail.to_contact_id : '';
-		email.data.to_name = oEmail.to_name;
-		email.data.to_address = oEmail.to_address;
-		email.data.bcc_address = oEmail.bcc_address;
-
-		email.data.from_name = (oEmail.from_name) ? oEmail.from_name : email.data.from_name;
-		email.data.from_address = (oEmail.from_address) ? oEmail.from_address : email.data.from_address;
-
-		email.data.subject = oEmail.subject;
-		email.data.contents = oEmail.contents;
-
-		email.data.template = (oEmail.template) ? oEmail.template : email.data.template;
-
-		email.send(oEmail.callback);
-	},
-	sendObject: function () {
-		var thisSendObject = this;
-		this.sendParams = new Email.sendParams();
-		this.data = {
-			to_contact_id: '',
-			to_name: '',
-			to_address: '',
-			from_name: thisSendObject.sendParams.from_name,
-			from_address: thisSendObject.sendParams.from_address,
-			subject: '',
-			contents: '',
-			template: ''
-		};
-		this.send = function (callback) {
-			var sendMail = function (emailData) {
-				var email = thisSendObject.sendParams;
-
-				email.email_code = emailData.CODE;
-				email.to_contact_id = thisSendObject.data.to_contact_id;
-				email.to_name = thisSendObject.data.to_name;
-				email.to_address = thisSendObject.data.to_address;
-				email.from_name = thisSendObject.data.from_name;
-				email.from_address = thisSendObject.data.from_address;
-				email.subject = thisSendObject.data.subject;
-
-
-				//Use contents returned from Firebird (in case email_code is in message_body)
-				email.contents = Email.masterTemplate
-					.replace(/__message_body__/, emailData.CONTENTS)
-					.replace(/__email_code__/g, email.email_code)
-					.replace(/__email_code_short__/g, email.email_code.slice(0, 4).toUpperCase())
-					.replace(/__year__/g, (new Date()).getFullYear());
-
-				new Run_CGI(
-				"http://" + Application.domain + "tokenrewards.com/Common/cgi-scripts/mail_sender.pl", email, 
-				function (cData) {
-					var bSuccess = (/Success/gim).test(cData);
-					if (bSuccess) { LogEntry("Email successfully delivered to " + email.to_address + " - " + email.subject); }
-					else LogEntry("Email UNSUCCESSFULLY delivered to " + email.to_address + " - " + email.subject);
-
-					if (callback) callback(bSuccess, email);
-				});
-			};
-
-			var jContents = $(thisSendObject.data.contents);
-			var jSubject = jContents.filter('pre');
-			if (jSubject.length) {
-				thisSendObject.data.subject = jSubject.eq(0).text().trim();
-				thisSendObject.data.contents =
-					thisSendObject.data.contents.replace(/\<pre[\s\S]+<\/pre\>/i, '');
-			}
-
-
-			var sFrom = '"' + thisSendObject.data.from_name + '" <' + thisSendObject.data.from_address + '>';
-			var cSQL = "select * from com$email_insert(" +
-					thisSendObject.data.to_contact_id.prepSQL(true) + "," +
-					thisSendObject.data.to_name.prepSQL() + "," +
-					thisSendObject.data.to_address.prepSQL() + "," +
-					sFrom.prepSQL() + "," +
-					thisSendObject.data.subject.prepSQL() + "," +
-					thisSendObject.data.contents.prepSQL() + "," +
-					thisSendObject.data.template.prepSQL() +
-				");"
-			var query = new execQuery(cSQL, function (data) { sendMail(data[0]); });
-		}
-	},
-	init: function () {
-		$.get(this.sTemplateFile, function (data) {
-			
-			var sTemplates = data.replace(/__current_domain__/gim, Application.domain);
-			var jMails = $(data);
-			Email.contentTemplates.admin_lost_password = jMails.filter("#admin_lost_password").html();
-			Email.contentTemplates.admin_confirm_email = jMails.filter("#admin_confirm_email").html();
-			Email.contentTemplates.admin_password_changed = jMails.filter("#admin_password_changed").html();
-
-			
-			Email.masterTemplate = sTemplates.replace(/TEMPLATES_BEGIN[\s\S]+TEMPLATES_END/gm, "");
-		});
-	}
-};
-
-
-/* Modernizr 2.6.2 (Custom Build) | MIT & BSD
- * Build: http://modernizr.com/download/#-touch-teststyles-prefixes
- */
-window.Modernizr = function (a, b, c) { function v(a) { i.cssText = a } function w(a, b) { return v(l.join(a + ";") + (b || "")) } function x(a, b) { return typeof a === b } function y(a, b) { return !! ~("" + a).indexOf(b) } function z(a, b, d) { for (var e in a) { var f = b[a[e]]; if (f !== c) return d === !1 ? a[e] : x(f, "function") ? f.bind(d || b) : f } return !1 } var d = "2.6.2", e = {}, f = b.documentElement, g = "modernizr", h = b.createElement(g), i = h.style, j, k = {}.toString, l = " -webkit- -moz- -o- -ms- ".split(" "), m = {}, n = {}, o = {}, p = [], q = p.slice, r, s = function (a, c, d, e) { var h, i, j, k, l = b.createElement("div"), m = b.body, n = m || b.createElement("body"); if (parseInt(d, 10)) while (d--) j = b.createElement("div"), j.id = e ? e[d] : g + (d + 1), l.appendChild(j); return h = ["&#173;", '<style id="s', g, '">', a, "</style>"].join(""), l.id = g, (m ? l : n).innerHTML += h, n.appendChild(l), m || (n.style.background = "", n.style.overflow = "hidden", k = f.style.overflow, f.style.overflow = "hidden", f.appendChild(n)), i = c(l, a), m ? l.parentNode.removeChild(l) : (n.parentNode.removeChild(n), f.style.overflow = k), !!i }, t = {}.hasOwnProperty, u; !x(t, "undefined") && !x(t.call, "undefined") ? u = function (a, b) { return t.call(a, b) } : u = function (a, b) { return b in a && x(a.constructor.prototype[b], "undefined") }, Function.prototype.bind || (Function.prototype.bind = function (b) { var c = this; if (typeof c != "function") throw new TypeError; var d = q.call(arguments, 1), e = function () { if (this instanceof e) { var a = function () { }; a.prototype = c.prototype; var f = new a, g = c.apply(f, d.concat(q.call(arguments))); return Object(g) === g ? g : f } return c.apply(b, d.concat(q.call(arguments))) }; return e }), m.touch = function () { var c; return "ontouchstart" in a || a.DocumentTouch && b instanceof DocumentTouch ? c = !0 : s(["@media (", l.join("touch-enabled),("), g, ")", "{#modernizr{top:9px;position:absolute}}"].join(""), function (a) { c = a.offsetTop === 9 }), c }; for (var A in m) u(m, A) && (r = A.toLowerCase(), e[r] = m[A](), p.push((e[r] ? "" : "no-") + r)); return e.addTest = function (a, b) { if (typeof a == "object") for (var d in a) u(a, d) && e.addTest(d, a[d]); else { a = a.toLowerCase(); if (e[a] !== c) return e; b = typeof b == "function" ? b() : b, typeof enableClasses != "undefined" && enableClasses && (f.className += " " + (b ? "" : "no-") + a), e[a] = b } return e }, v(""), h = j = null, e._version = d, e._prefixes = l, e.testStyles = s, e } (this, this.document);
-
-
-// Prevent double-tap zoom 
-// from: http://stackoverflow.com/questions/3103842/safari-ipad-prevent-zoom-on-double-tap
-(function($) {
-    $.fn.nodoubletapzoom = function() {
-        //if($("html.touch").length == 0) return;
-
-        $(this).bind('touchstart', function preventZoom(e){
-            var t2 = e.timeStamp;
-            var t1 = $(this).data('lastTouch') || t2;
-            var dt = t2 - t1;
-            var fingers = e.originalEvent.touches.length;
-            $(this).data('lastTouch', t2);
-            if (!dt || dt > 500 || fingers > 1){
-                return; // not double-tap
-            }
-            e.preventDefault(); // double tap - prevent the zoom
-            // also synthesize click events we just swallowed up
-            $(this).trigger('tap');
-        });
-    };
-         })(jQuery);
-
-
-/* onpress event
-
-
-/* Author:
-    Max Degterev @suprMax
-    Valerio Di Donato @drowne
-    
-    JQM fast buttons without nasty ghostclicks.
-    Highly inspired by http://code.google.com/mobile/articles/fast_buttons.html
-    
-    Usage
-    
-    live:
-    $('#someid').onpress(function(event){});
-    $('#someid').offpress(function(event){});
-    
-    TODO: find a way to remove handleTouchStart handler as well
-var isTouch = {};
-
-(function($) {
-    isTouch = (window.hasOwnProperty('ontouchstart'));
-
-    var ghostsLifeTime = 1000;
-    
-    var normalizeArgs = function(args) {
-        var callback,
-            selector;
-            
-        if (typeof args[0] === 'function') {
-            callback = args[0];
-        }
-        else {
-            selector = args[0];
-            callback = args[1];
-        }
-        return [selector, callback];
-    };
-
-    if (isTouch) {
-        var ghosts = [];
-
-        var touches = {},
-            $doc = $(document),
-            hasMoved = false,
-            handlers = {};
-            
-        var handleTouchStart = function(e) {
-            e.stopPropagation();
-            touches.x = e.originalEvent.touches[0].pageX;
-            touches.y = e.originalEvent.touches[0].pageY;
-            hasMoved = false;
-        };
-
-        var handleTouchMove = function(e) {
-            if (Math.abs(e.originalEvent.touches[0].pageX - touches.x) > 10 || Math.abs(e.originalEvent.touches[0].pageX - touches.y) > 10) {
-                hasMoved = true;
-            }
-        };
-
-        var removeGhosts = function() {
-            ghosts.splice(0, 2);
-        };
-
-        var handleGhosts = function(e) {
-            var i, l;
-            for (i = 0, l = ghosts.length; i < l; i += 2) {
-                if (Math.abs(e.pageX - ghosts[i]) < 25 && Math.abs(e.pageY - ghosts[i + 1]) < 25) {
-                    e.stopPropagation();
-                    e.preventDefault();
-                }
-            }
-        };
-
-        $doc.live('click', handleGhosts);
-        $doc.live('touchmove', handleTouchMove);
-
-        $.fn.onpress = function() {
-            var args = normalizeArgs(arguments);
-            $(this).addClass("touchStart");
-            var handleTouchEnd = function(e) {
-                e.stopPropagation();
-
-                if (!hasMoved) {
-                    args[1].call(this, e);
-                    ghosts.push(touches.x, touches.y);
-                    window.setTimeout(removeGhosts, ghostsLifeTime);
-                }
-            };
-            
-            handlers[args[1]] = handleTouchEnd;
-
-            if (args[0]) {
-                this.live('touchstart.onpress', args[0], handleTouchStart);
-                this.live('touchend.onpress', args[0], handleTouchEnd);
-                this.live('press', args[0], args[1]);
-            }
-            else {
-                this.live('touchstart.onpress', handleTouchStart);
-                this.live('touchend.onpress', handleTouchEnd);
-                this.live('press', args[1]);
-            }
-        };
-        
-        $.fn.offpress = function() {
-            var args = normalizeArgs(arguments);
-            if (args[1]) {
-                if (args[0]) {
-                    this.die('.onpress', args[0], handlers[args[1]]);
-                    this.die('press', args[0], args[1]);
-                }
-                else {
-                    this.die('.onpress', handlers[args[1]]);
-                    this.die('press', args[1]);
-                }
-                delete handlers[args[1]];
-            }
-            else {
-                if (args[0]) {
-                    this.die('.onpress', args[0]);
-                    this.die('press', args[0]);
-                }
-                else {
-                    this.die('.onpress');
-                    this.die('press');
-                }
-            }
-        };
-    }
-    else {
-        $.fn.onpress = function() {
-			
-            var args = normalizeArgs(arguments);
-            if (args[0]) {
-                this.live('click.onpress', args[0], args[1]);
-                this.live('press.onpress', args[0], args[1]);
-            }
-            else {
-                this.live('click.onpress', args[1]);
-                this.live('press.onpress', args[1]);
-            }
-            
-        };
-        $.fn.offpress = function() {
-            var args = normalizeArgs(arguments);
-            args[0] ? this.die('.onpress', args[0], args[1]) : this.die('.onpress', args[1]);
-        };
-    }
-})(jQuery);
-
-*/
-
+/* #endregion */
 
 /*
 cd 'C:\Program Files (x86)\Android\android-sdk\platform-tools'

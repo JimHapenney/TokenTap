@@ -1,0 +1,113 @@
+﻿
+/* #region  MS Buttons */
+.m-btn:hover,
+.m-btn:focus,
+.m-btn:active {
+  text-decoration: none;  
+  background-color: #f5f5f5;
+  background-image: -moz-linear-gradient(top, #eeeeee, #dddddd);
+  background-image: -ms-linear-gradient(top, #eeeeee, #dddddd);
+  background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#eeeeee), to(#dddddd));
+  background-image: -webkit-linear-gradient(top, #eeeeee, #dddddd);
+  background-image: -o-linear-gradient(top, #eeeeee, #dddddd);
+  background-image: linear-gradient(top, #eeeeee, #dddddd);
+  background-repeat: repeat-x;
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#eeeeee', endColorstr='#dddddd', GradientType=0); 
+  outline: none;
+}
+.m-btn:active{
+  background-color: #c6c6c6;
+  background-image: -moz-linear-gradient(top, #eeeeee, #dddddd);
+  background-image: -ms-linear-gradient(top, #eeeeee, #dddddd);
+  background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#eeeeee), to(#dddddd));
+  background-image: -webkit-linear-gradient(top, #eeeeee, #dddddd);
+  background-image: -o-linear-gradient(top, #eeeeee, #dddddd);
+  background-image: linear-gradient(top, #eeeeee, #dddddd);
+  background-repeat: repeat-x;
+   -webkit-box-shadow: inset 0 1px 5px rgba(0, 0, 0, 0.1);
+  -moz-box-shadow: inset 0 1px 5px rgba(0, 0, 0, 0.1);
+  box-shadow: inset 0 1px 5px rgba(0, 0, 0, 0.1);
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#eeeeee', endColorstr='#dddddd', GradientType=0); 
+}
+.m-btn:focus {
+  /* Blue border on button focus. */
+  border-color: #4D90FE;
+}
+/* overrides extra padding on button elements in Firefox */
+.m-btn::-moz-focus-inner {
+  padding: 0;
+  border: 0;
+}
+
+ 
+.m-btn.blue:hover, 
+.m-btn.blue:focus, 
+.m-btn.blue:active { 
+  background-color: #0072bb;
+  background-image: -moz-linear-gradient(top, #4d90fe, #0072bb);
+  background-image: -ms-linear-gradient(top, #4d90fe, #0072bb);
+  background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#4d90fe), to(#0072bb));
+  background-image: -webkit-linear-gradient(top, #4d90fe, #0072bb);
+  background-image: -o-linear-gradient(top, #4d90fe, #0072bb);
+  background-image: linear-gradient(top, #4d90fe, #0072bb);
+  background-repeat: repeat-x;
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#4d90fe', endColorstr='#0072bb', GradientType=0);
+}
+
+
+/*  Red */
+.m-btn.red:hover, 
+.m-btn.red:focus, 
+.m-btn.red:active {    
+  background-color: #d34332;
+  background-image: -moz-linear-gradient(top, #dd4b39, #c53727);
+  background-image: -ms-linear-gradient(top, #dd4b39, #c53727);
+  background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#dd4b39), to(#c53727));
+  background-image: -webkit-linear-gradient(top, #dd4b39, #c53727);
+  background-image: -o-linear-gradient(top, #dd4b39, #c53727);
+  background-image: linear-gradient(top, #dd4b39, #c53727);
+  background-repeat: repeat-x;
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#dd4b39', endColorstr='#c53727', GradientType=0); 
+}
+
+
+/*  Green */
+.m-btn.green:hover, 
+.m-btn.green:focus, 
+.m-btn.green:active {
+ 
+  background-color: #1d943b;
+  background-image: -moz-linear-gradient(top, #35aa47, #1d943b);
+  background-image: -ms-linear-gradient(top, #35aa47, #1d943b);
+  background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#35aa47), to(#1d943b));
+  background-image: -webkit-linear-gradient(top, #35aa47, #1d943b);
+  background-image: -o-linear-gradient(top, #35aa47, #1d943b);
+  background-image: linear-gradient(top, #35aa47, #1d943b);
+  background-repeat: repeat-x;
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#35aa47', endColorstr='#1d943b', GradientType=0);
+}
+/*  Purple */
+.m-btn.purple:hover, 
+.m-btn.purple:focus, 
+.m-btn.purple:active { 
+  background-color: #6d1b81;
+  background-image: -moz-linear-gradient(top, #852b99, #6d1b81);
+  background-image: -ms-linear-gradient(top, #852b99, #6d1b81);
+  background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#852b99), to(#6d1b81));
+  background-image: -webkit-linear-gradient(top, #852b99, #6d1b81);
+  background-image: -o-linear-gradient(top, #852b99, #6d1b81);
+  background-image: linear-gradient(top, #852b99, #6d1b81);
+  background-repeat: repeat-x;
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#852b99', endColorstr='#6d1b81', GradientType=0);
+}
+
+/* #endregion */
+
+/* #region  MS btn customizations */
+.portrait-btn:hover,
+.m-btn.touchStart,
+.m-btn:hover {
+	opacity:.6
+}
+
+/* #endregion */
