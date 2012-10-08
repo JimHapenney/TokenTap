@@ -1,6 +1,22 @@
 ﻿/// <reference path="../CommonFiles/jQuery/jquery-1.8.1-vsdoc.js" />
 
-jQuery.support.cors = true;
+
+isPhoneGap = (typeof window.PhoneGap === "object");
+isPhoneGapReady = false;
+isMobileReady = false;
+
+if (isPhoneGap) {
+	document.addEventListener("deviceready", function () {
+		isPhoneGapReady = true;
+		Application.checkReadyState();
+	}, false);
+}
+else isPhoneGapReady = true;
+
+$(document).bind("mobileinit", function () {
+	isMobileReady = true;
+	Application.checkReadyState();
+});
 
 Application = {
 	domain: "",
@@ -88,6 +104,64 @@ Application = {
 			nTokenTappedAmount: 1
 		}
 	},
+
+	checkReadyState: function () {
+		if (isMobileReady && isPhoneGapReady) {
+			Application.init();
+		}
+	},
+	init: function () {
+		$.extend($.mobile.zoom, { locked: true, enabled: false });
+		$.mobile.pushStateEnabled = false;
+		$.mobile.ajaxEnabled = false;
+		$.mobile.hashListeningEnabled = true;
+		$.mobile.ignoreContentEnabled = true;
+		$.mobile.defaultPageTransition = 'slide';
+		$.mobile.defaultDialogTransition = 'pop';
+		$.mobile.transitionFallbacks.slide = 'none';
+		$.mobile.transitionFallbacks.flip = 'none';
+		$.mobile.transitionFallbacks.pop = 'none';
+		$.mobile.orientationChangeEnabled = false;
+
+		$.mobile.loadingMessageTextVisible = true;
+		$.mobile.loadingMessageTheme = "a"
+
+
+		$.event.special.tap.tapholdThreshold = 1000;
+		$.event.special.swipe.durationThreshold = 500;
+		$.event.special.swipe.horizontalDistanceThreshold = 250;
+
+		// Navigation
+		$.mobile.page.prototype.options.backBtnText = "Back";
+		$.mobile.page.prototype.options.addBackBtn = false;
+		$.mobile.page.prototype.options.backBtnTheme = "b";
+
+		// Page
+		$.mobile.page.prototype.options.theme = "b";
+		$.mobile.page.prototype.options.headerTheme = "b";
+		$.mobile.page.prototype.options.contentTheme = "b";
+		$.mobile.page.prototype.options.footerTheme = "b";
+
+		// Controls
+		$.mobile.button.prototype.options.theme = "b";
+		$.mobile.selectmenu.prototype.options.theme = "b";
+
+		// List views
+		$.mobile.listview.prototype.options.headerTheme = "a";  // Header for nested lists
+		$.mobile.listview.prototype.options.theme = "d";  // List items / content
+		$.mobile.listview.prototype.options.dividerTheme = "d";  // List divider
+
+		$.mobile.listview.prototype.options.splitTheme = "c";
+		$.mobile.listview.prototype.options.countTheme = "c";
+		$.mobile.listview.prototype.options.filterTheme = "c";
+
+		$(document).one("pageinit", "#Dashboard", function () {
+			Application.ready();
+		});
+
+	},
+
+
 
 	getPrefs: function () {
 		var sData = window.localStorage.getItem("Preferences");
@@ -448,8 +522,9 @@ Application = {
 			}
 		});
 
-		window.location.hash = "#Dashboard";
+		window.location.replace("#Dashboard");
 
+		Dashboard.init();
 	},
 
 	pagebeforechange: function (event, data) {
@@ -489,65 +564,7 @@ Application = {
 	}
 };
 
-// jQuery Mobile Initializations
-$(document).bind("mobileinit", function () {
 
-	$.extend($.mobile.zoom, { locked: true, enabled: false });
-	$.mobile.pushStateEnabled = false;
-	$.mobile.ajaxEnabled = false;
-	$.mobile.hashListeningEnabled = true;
-	$.mobile.ignoreContentEnabled = true;
-	$.mobile.defaultPageTransition = 'slide';
-	$.mobile.defaultDialogTransition = 'pop';
-	$.mobile.transitionFallbacks.slide = 'none';
-	$.mobile.transitionFallbacks.flip = 'none';
-	$.mobile.transitionFallbacks.pop = 'none';
-	$.mobile.orientationChangeEnabled = false;
-
-	$.mobile.loadingMessageTextVisible = true;
-	$.mobile.loadingMessageTheme = "a"
-
-
-	$.event.special.tap.tapholdThreshold = 1000;
-	$.event.special.swipe.durationThreshold = 500;
-	$.event.special.swipe.horizontalDistanceThreshold = 250;
-
-	// Navigation
-	$.mobile.page.prototype.options.backBtnText = "Back";
-	$.mobile.page.prototype.options.addBackBtn = false;
-	$.mobile.page.prototype.options.backBtnTheme = "b";
-
-	// Page
-	$.mobile.page.prototype.options.theme = "b";
-	$.mobile.page.prototype.options.headerTheme = "b";
-	$.mobile.page.prototype.options.contentTheme = "b";
-	$.mobile.page.prototype.options.footerTheme = "b";
-
-	// Controls
-	$.mobile.button.prototype.options.theme = "b";
-	$.mobile.selectmenu.prototype.options.theme = "b";
-
-	// List views
-	$.mobile.listview.prototype.options.headerTheme = "a";  // Header for nested lists
-	$.mobile.listview.prototype.options.theme = "d";  // List items / content
-	$.mobile.listview.prototype.options.dividerTheme = "d";  // List divider
-
-	$.mobile.listview.prototype.options.splitTheme = "c";
-	$.mobile.listview.prototype.options.countTheme = "c";
-	$.mobile.listview.prototype.options.filterTheme = "c";
-	// $.mobile.listview.prototype.options.filterPlaceholder = "Filter data...";
-
-	$(document).ready(function () {
-		isPhoneGap = (typeof PhoneGap === "object");
-		if (isPhoneGap) {
-			document.addEventListener("deviceready", Application.ready, false);
-		}
-		else {
-			Application.ready(); //this is the browser
-		}
-	});
-
-});
 
 
 Dashboard = {
