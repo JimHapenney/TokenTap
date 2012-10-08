@@ -1,20 +1,23 @@
 ﻿/// <reference path="../CommonFiles/jQuery/jquery-1.8.1-vsdoc.js" />
 
 
-isPhoneGap = (typeof window.PhoneGap === "object");
 isPhoneGapReady = false;
 isMobileReady = false;
 
-if (isPhoneGap) {
-	document.addEventListener("deviceready", function () {
-		isPhoneGapReady = true;
-		Application.checkReadyState();
-	}, false);
-}
-else isPhoneGapReady = true;
 
 $(document).bind("mobileinit", function () {
+	isPhoneGap = (typeof window.PhoneGap === "object");
 	isMobileReady = true;
+
+	if (isPhoneGap) {
+		document.addEventListener("deviceready", function () {
+			isPhoneGapReady = true;
+			Application.checkReadyState();
+		}, false);
+	}
+	else isPhoneGapReady = true;
+	
+	
 	Application.checkReadyState();
 });
 
@@ -161,8 +164,6 @@ Application = {
 
 	},
 
-
-
 	getPrefs: function () {
 		var sData = window.localStorage.getItem("Preferences");
 
@@ -193,6 +194,7 @@ Application = {
 		if (
 			confirm(
 				'window.isTouch: ' + window.isTouch + '\n\n' +
+				'window.isPhoneGap: ' + window.isPhoneGap + '\n\n' +
 				'window.outerWidth: ' + window.outerWidth + '\nwindow.outerHeight ' + window.outerHeight + '\n\n' +
 				'window.innerWidth: ' + window.innerWidth + '\nwindow.innerHeight ' + window.innerHeight + '\n\n' +
 				'window.devicePixelRatio: ' + window.devicePixelRatio + '\n\n' +
