@@ -24,4 +24,11 @@
 	<preference name="show-splash-screen-spinner" value="true" />
 	<preference name="auto-hide-splash-screen" value="true" />
 	<preference name="exit-on-suspend" value="false" />
+
+	<preference name="permissions" value="none"/>
+
+	<feature name="http://api.phonegap.com/1.0/media"/>
+	<feature name="http://api.phonegap.com/1.0/network"/>
+	<feature name="http://api.phonegap.com/1.0/notification"/>
+
 </widget>

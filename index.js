@@ -547,7 +547,7 @@ var app = {
     // denotes whether we are within a mobile device (otherwise we're in a browser)
     iAmPhoneGap: false,
     // how long should we wait for PhoneGap to say the device is ready.
-    howPatientAreWe: 1000,
+    howPatientAreWe: 5000,
     // id of the 'too_impatient' timeout
     timeoutID: null,
     // id of the 'impatience_remaining' interval reporting.
