@@ -45,6 +45,7 @@
 	<div id="Dashboard"
 		data-title="TokenTap"
 		data-role="page">
+
 		<div class="SignIn-Dashboard-Header" 
 			data-role="header">
 			<img class="BlueMan" src="images/blueman_pointing_left_arm.png" alt=""/>
@@ -57,9 +58,9 @@
 			
 			<br />
 			
-			<span class="BetaTag">BETA 1.0</span>
+			<span class="BetaTag">BETA <span class="AppVersion"></span></span>
 
-			<span class="AlphaTag">ALPHA 1.0</span>
+			<span class="AlphaTag">ALPHA <span class="AppVersion"></span></span>
 			<div class="AlphaZoom">
 				<span class="zoomState 240">240</span>
 				<span class="zoomState 320">320</span>
@@ -84,7 +85,6 @@
 					<label for="txtPassword">Password:</label>
 					<input type="password" name="password" id="txtPassword" value="" />
 
-				</form>
 				<button type="submit" 
 					id="SignIn" 
 					data-role="button" 
@@ -92,8 +92,10 @@
 					data-inline="true" 
 					disabled>Sign In</button>
 					
-				<input type="checkbox" name="checkbox-1" id="chkSavePassword" data-inline="true" disabled />
-				<label for="chkSavePassword">Save</label>
+					<input type="checkbox" name="checkbox-1" id="chkSavePassword" data-inline="true" disabled />
+					<label for="chkSavePassword">Save</label>
+
+				</form>
 
 				<div class="center">
 					Check "Save" to save password.
@@ -103,11 +105,9 @@
 
 				<br />
 				<div style="position:relative;">
-					<a href="#NewAccount" 
-						data-theme="b"
-						data-role="button"
-						data-inline="false"
-					>Start New Reward Program</a>
+					<div id="GoNewAccount" class="m-btn green">
+						Start New Reward Program
+					</div>
 					<!--<img id="imgFree" src="images/FreeRotated.png" alt="" />-->
 				</div>
 				<br /><br />

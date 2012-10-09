@@ -37,7 +37,7 @@ $(document).bind("mobileinit", function () {
 Application = {
 	domain: "",
 	sLastHash: "",
-	timer: null,
+	sVersion: "0.1",
 
 	oUser: {
 		NAME: '',
@@ -120,6 +120,7 @@ Application = {
 			nTokenTappedAmount: 1
 		}
 	},
+
 
 	checkReadyState: function () {
 		console.log(isMobileReady, isPhoneGapReady);
@@ -632,6 +633,9 @@ Dashboard = {
 			}
 		}).keyup();
 
+		$("#GoNewAccount", jPage).onpress(function () {
+			$.mobile.changePage($("#NewAccount"));
+		});
 
 		$("#SignOut", jPage).onpress(function () {
 			Dashboard.signOut();
@@ -661,6 +665,9 @@ Dashboard = {
 			$.mobile.changePage($("#Participants"));
 		});
 
+		$(".AppVersion", jPage).text(Application.sVersion);
+
+		$("#WrapSignIn .ui-submit", jPage).addClass
 		this.refresh();
 	},
 	refresh: function (fnCallback) {
@@ -4042,9 +4049,12 @@ var Email = {
 					.replace(/__email_code_short__/g, email.email_code.slice(0, 4).toUpperCase())
 					.replace(/__year__/g, (new Date()).getFullYear());
 
+				console.log("Mail Sender Started");
+
 				new Run_CGI(
-				"http://" + Application.domain + "tokenrewards.com/Common/cgi-scripts/mail_sender.pl", email, 
+				"http://" + Application.domain + "tokenrewards.com/Common/cgi-scripts/mail_sender.pl", email,
 				function (cData) {
+					console.log("Mail Sender Response: " + cData);
 					var bSuccess = (/Success/gim).test(cData);
 					if (bSuccess) { LogEntry("Email successfully delivered to " + email.to_address + " - " + email.subject); }
 					else LogEntry("Email UNSUCCESSFULLY delivered to " + email.to_address + " - " + email.subject);
@@ -4072,7 +4082,10 @@ var Email = {
 					thisSendObject.data.contents.prepSQL() + "," +
 					thisSendObject.data.template.prepSQL() +
 				");"
-			var query = new execQuery(cSQL, function (data) { sendMail(data[0]); });
+			var query = new execQuery(cSQL, function (data) {
+				console.log("Email inserted - " + data[0].CODE);
+				sendMail(data[0]); 
+			});
 		}
 	},
 	init: function () {
