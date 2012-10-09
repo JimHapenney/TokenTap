@@ -813,6 +813,9 @@ div.ui-slider-switch .ui-slider-handle {
 /* #region  Dashboard */
 
 #Dashboard {}
+.SignedIn,.NotSignedIn {
+	display:none;
+}
 
 /* #region  header */
 .SignIn-Dashboard-Header {

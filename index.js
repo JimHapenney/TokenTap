@@ -1,25 +1,38 @@
 ﻿/// <reference path="../CommonFiles/jQuery/jquery-1.8.1-vsdoc.js" />
 
 
-isPhoneGapReady = false;
-isMobileReady = false;
+
+
+window.isPhoneGap = false;
+window.isPhoneGapReady = false;
+window.isMobileReady = false;
+
+$.getScript("phonegap.js")
+.done(function (script, textStatus) {
+	isPhoneGap = true;
+	document.addEventListener("deviceready", function () {
+		console.log("phonegap ready - device/app mode");
+		window.isPhoneGapReady = true;
+		Application.checkReadyState();
+	}, false);
+})
+.fail(function (jqxhr, settings, exception) {
+	console.log("phonegap load failed - browser only");
+	window.isPhoneGapReady = true;
+	Application.checkReadyState();
+});
 
 
 $(document).bind("mobileinit", function () {
-	isPhoneGap = (typeof window.PhoneGap === "object");
-	isMobileReady = true;
-
-	if (isPhoneGap) {
-		document.addEventListener("deviceready", function () {
-			isPhoneGapReady = true;
-			Application.checkReadyState();
-		}, false);
-	}
-	else isPhoneGapReady = true;
-	
-	
-	Application.checkReadyState();
+	console.log("mobileinit");
+	Application.init();
+	$(document).one("pageinit", "#Dashboard", function () {
+		console.log("first pageinit");
+		window.isMobileReady = true;
+		Application.checkReadyState();
+	});
 });
+
 
 Application = {
 	domain: "",
@@ -109,12 +122,16 @@ Application = {
 	},
 
 	checkReadyState: function () {
+		console.log(isMobileReady, isPhoneGapReady);
 		if (isMobileReady && isPhoneGapReady) {
-			Application.init();
+			Application.ready();
 		}
 	},
 	init: function () {
 		$.extend($.mobile.zoom, { locked: true, enabled: false });
+
+		//$.mobile.page.pageContainer = $("body");
+
 		$.mobile.pushStateEnabled = false;
 		$.mobile.ajaxEnabled = false;
 		$.mobile.hashListeningEnabled = true;
@@ -131,8 +148,8 @@ Application = {
 
 
 		$.event.special.tap.tapholdThreshold = 1000;
-		$.event.special.swipe.durationThreshold = 500;
-		$.event.special.swipe.horizontalDistanceThreshold = 250;
+		$.event.special.swipe.durationThreshold = 2000;
+		$.event.special.swipe.horizontalDistanceThreshold = 500;
 
 		// Navigation
 		$.mobile.page.prototype.options.backBtnText = "Back";
@@ -157,11 +174,6 @@ Application = {
 		$.mobile.listview.prototype.options.splitTheme = "c";
 		$.mobile.listview.prototype.options.countTheme = "c";
 		$.mobile.listview.prototype.options.filterTheme = "c";
-
-		$(document).one("pageinit", "#Dashboard", function () {
-			Application.ready();
-		});
-
 	},
 
 	getPrefs: function () {
@@ -417,7 +429,7 @@ Application = {
 
 
 	ready: function () {
-
+		console.log("App.ready");
 		var sSubDomain = window.location.hostname.substring(0, window.location.hostname.indexOf(".") + 1)
 		if (sSubDomain != "jupiter.") {
 			sSubDomain = "";
@@ -445,26 +457,28 @@ Application = {
 			window.history.back();
 		});
 
-		$('div[data-role="page"]').bind('pageinit', function (event, page) {
-			//console.log(this.id + " pageinit");
-
-			if (typeof window[this.id] === "object"
-				&& typeof window[this.id].init === "function") {
-				window[this.id].init();
+		$(document).bind('pageinit', function (event, page) {
+			console.log("pageinit", page);
+			var sId = $(event.target).attr("id");
+			if (typeof window[sId] === "object"
+				&& typeof window[sId].init === "function") {
+				window[sId].init();
 			}
 		});
 
-		$('div[data-role="page"]').bind('pagebeforeshow', function (event, page) {
-			if (typeof window[this.id] === "object"
-				&& typeof window[this.id].refresh === "function") {
-				if ($(this).has('[data-record="true"]') && page.prevPage.attr("id") == "popupConfirm") {
-					return;
-				}
-				window[this.id].refresh();
+		$(document).bind('pagebeforeshow', function (event, page) {
+			console.log("pagebeforeshow", page);
+
+			var sId = $(event.target).attr("id");
+
+			if (typeof window[sId] === "object"
+				&& typeof window[sId].refresh === "function") {
+				window[sId].refresh();
 			}
 		});
 
-		$('div[data-role="page"]').bind('pageshow', function (event, page) {
+		$(document).bind('pageshow', function (event, page) {
+			console.log("pageshow", page);
 			//keep elaps and messages showing
 			if (ui.elap.isOn) {
 				ui.elap.on();
@@ -505,10 +519,12 @@ Application = {
 		});
 
 		$(document).bind('pagebeforechange', function (event, data) {
+			console.log("pagebeforechange", data.toPage);
 			Application.pagebeforechange(event, data);
 		});
 
 		$(document).bind('pagechange', function (event, data) {
+			console.log("pagechange", data.toPage);
 
 			var sHash = (typeof data.toPage == 'string')
 				? $.mobile.path.parseUrl(data.toPage).hash
@@ -524,8 +540,8 @@ Application = {
 			}
 		});
 
-		window.location.replace("#Dashboard");
-
+		//$.mobile.changePage($("#Dashboard"), { pageContainer: $('body') });
+		//window.location.hash = "#Dashboard";
 		Dashboard.init();
 	},
 
@@ -572,7 +588,7 @@ Application = {
 Dashboard = {
 	aoClasses: [],
 	oTotals: {},
-	bRefresh: false,
+	bRefresh: true,
 	bAutoSignedIn: false,
 	bFirstTimeMessageShown: false,
 
@@ -645,19 +661,7 @@ Dashboard = {
 			$.mobile.changePage($("#Participants"));
 		});
 
-		jPage.bind('swipeleft', function (event) {
-			event.preventDefault();
-			event.stopPropagation();
-			if (Application.oUser.CUSTOMER_ID) {
-
-				Participants.oClass = $.extend({}, {
-					CLASS_NAME: "All " + Application.oUser.PARTICIPANT_ALIAS + "s",
-					ID: "-1"
-				}, Dashboard.oTotals);
-				$.mobile.changePage($("#Participants"));
-			}
-		});
-
+		this.refresh();
 	},
 	refresh: function (fnCallback) {
 
@@ -665,6 +669,9 @@ Dashboard = {
 			this.refreshSignIn();
 			return;
 		}
+		if (!this.bRefresh) { return; }
+		this.bRefresh = false;
+
 
 		var jPage = $("#Dashboard");
 		$(".NotSignedIn", jPage).hide();
@@ -674,8 +681,6 @@ Dashboard = {
 		$("span.TokenUnit").text(Application.oUser.TOKENUNIT);
 		$("span.ParticipantAlias").text(Application.oUser.PARTICIPANT_ALIAS);
 
-		if (!this.bRefresh) { return; }
-		this.bRefresh = false;
 
 		TokenSession.refresh();
 
@@ -722,9 +727,6 @@ Dashboard = {
 	refreshSignIn: function () {
 		var jPage = $("#Dashboard");
 
-		$(".SignedIn", jPage).hide();
-		$(".NotSignedIn", jPage).show();
-
 		var oData = Application.oPrefs.oSignIn;
 
 		$("#txtUser", jPage).val(oData.sUser).keyup().focus();
@@ -740,14 +742,20 @@ Dashboard = {
 						return;
 					}
 					else {
+						$(".SignedIn", jPage).hide();
+						$(".NotSignedIn", jPage).show();
 						ui.alert({
 							sTitle: "Not Signed In",
-							sMessage: "Unable to sign in with using the saved e-mail and password."
+							sMessage: "Unable to sign in using the saved e-mail and password."
 						});
 					}
 
 				}
 			);
+		}
+		else {
+			$(".SignedIn", jPage).hide();
+			$(".NotSignedIn", jPage).show();
 		}
 
 
@@ -807,6 +815,8 @@ Dashboard = {
 		Application.oUser = oUser;
 
 		var jPage = $("#Dashboard");
+
+
 		$("#ProviderName", jPage).html(oUser.PROVIDER_NAME.replace(" ", "&nbsp;"));
 		$(".UserName", jPage).html(oUser.USER_NAME.replace(" ", "&nbsp;"));
 
@@ -879,11 +889,12 @@ Dashboard = {
 
 				Application.oPrefs.oSignIn.sPassword = "";
 				Application.savePrefs();
-				$("#txtPassword").val("");
-				for (var sX in Application.oUser) {
-					Application.oUser[sX] = "";
-				}
-				window.location.hash = "#SignIn";
+
+				//				$("#txtPassword").val("");
+				//				for (var sX in Application.oUser) {
+				//					Application.oUser[sX] = "";
+				//				}
+				$("#Dashboard").hide();
 				window.location.reload();
 			}
 		});
