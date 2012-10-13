@@ -3,12 +3,14 @@
 	xmlns			= "http://www.w3.org/ns/widgets"
 	xmlns:gap	= "http://phonegap.com/ns/1.0"
 	id				= "com.tokenrewards.tokentap"
-	version 		= "1.0.0">
+	version 		= "0.0.2"
+	versionCode = "1">
 
 	<name>Token Tap</name>
 
 	<description>
-		Description
+		Tap tokens to award your students, patients, or participants.  
+		Tokens can be spent at your own on-line reward store!
 	</description>
 
 	<author 
@@ -17,8 +19,27 @@
 		Jim Hapenney
 	</author>
 
-	<icon src="icon.png" gap:role="default" />
+	<icon src="images/device-icons/hdpi.png" gap:role="default" />
+	
+	<icon src="images/device-icons/ldpi.png" gap:platform="android" gap:density="ldpi" />
+	<icon src="images/device-icons/mdpi.png" gap:platform="android" gap:density="mdpi" />
+	<icon src="images/device-icons/hdpi.png" gap:platform="android" gap:density="hdpi" />
+	<icon src="images/device-icons/xhdpi.png" gap:platform="android" gap:density="xhdpi" />
 
+	<icon src="images/device-icons/wp-62.png" gap:platform="winphone" />
+	<icon src="images/device-icons/wp-173.png" gap:platform="winphone" gap:role="background" />
+
+
+	<gap:splash src="images/splash-screens/ldpi.png" gap:platform="android" gap:density="ldpi" />
+	<gap:splash src="images/splash-screens/mdpi.png" gap:platform="android" gap:density="mdpi" />
+	<gap:splash src="images/splash-screens/hdpi.png" gap:platform="android" gap:density="hdpi" />
+	<gap:splash src="images/splash-screens/xhdpi.png" gap:platform="android" gap:density="xhdpi" />	
+	
+	<gap:splash src="splash.png" />
+	<gap:splash src="images/splash-screens/wp.jpg" gap:platform="winphone" />
+
+	
+	
 	<preference name="orientation" value="portrait" />
 	<preference name="fullscreen" value="true" />
 	<preference name="show-splash-screen-spinner" value="true" />

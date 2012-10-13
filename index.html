@@ -1,11 +1,12 @@
 <!DOCTYPE html> 
 <html> 
 <head>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
 	<meta charset="utf-8" />
 	<meta name="apple-mobile-web-app-capable" content="yes" />
 	<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-	<meta http-equiv="X-UA-Compatible" content="IE=9" />
 	<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+	<title>Token Tap</title>
 
 	<link rel="shortcut icon" href="images/favicon.png?10.08.12" />
 	
@@ -19,25 +20,24 @@
 					target-densityDpi=device-dpi" />
 	-->
 
-	<title>Token Tap</title>
 
-	<!--<script src="phonegap.js" type="text/javascript"></script>-->
+	<!--<script src="phonegap.js"></script>-->
 	
 	<link rel="stylesheet" href="libs/jquery.mobile-1.2.0.css" />
 	<link rel="stylesheet" href="libs/BlackA-BlueB-WhiteC.css" />
-	<link href="libs/jqm-icon-pack-2.0-original.css" rel="stylesheet" type="text/css" />
 	<link href="libs/animate.css" rel="stylesheet" type="text/css" />
 	<link rel="stylesheet" href="index.css" type="text/css" />
 
-	<script type="text/javascript">window.location.replace("#Dashboard");</script>
+
+
+	<!--<script type="text/javascript">window.location.hash = "#Dashboard";</script>-->
+	<!--<script src="http://jsconsole.com/remote.js?551F90E3-76AF-4226-9269-7489763FE5B9"></script>-->
 
 	<script src="libs/jquery-1.8.2.min.js" type="text/javascript"></script>
-
 	<script type="text/javascript" src="index.js"></script>
-
 	<script type="text/javascript" src="libs/jquery.mobile-1.2.0.js"></script>
 
-	
+	<!--<script src="libs/jquery-ui-1.9.0.custom.js" type="text/javascript"></script>-->
 </head>
 
 <body>
@@ -48,9 +48,9 @@
 
 		<div class="SignIn-Dashboard-Header" 
 			data-role="header">
-			<img class="BlueMan" src="images/blueman_pointing_left_arm.png" alt=""/>
+			<!--<img class="BlueMan" src="images/blueman_pointing_left_arm.png" alt=""/>-->
 			<div class="AppTitle">
-				token tap
+				TokenTap
 				<span class="trademark">&trade;</span>
 			</div>
 			<div id="ProviderName" class="SignedIn"></div>
@@ -58,7 +58,7 @@
 			
 			<br />
 			
-			<span class="BetaTag">BETA <span class="AppVersion"></span></span>
+			<span class="BetaTag">BETA</span>
 
 			<span class="AlphaTag">ALPHA <span class="AppVersion"></span></span>
 			<div class="AlphaZoom">
@@ -85,12 +85,12 @@
 					<label for="txtPassword">Password:</label>
 					<input type="password" name="password" id="txtPassword" value="" />
 
-				<button type="submit" 
-					id="SignIn" 
-					data-role="button" 
-					data-theme="b" 
-					data-inline="true" 
-					disabled>Sign In</button>
+					<button type="submit" 
+						id="SignIn" 
+						data-role="button" 
+						data-theme="b" 
+						data-inline="true"
+						disabled>Sign In</button>
 					
 					<input type="checkbox" name="checkbox-1" id="chkSavePassword" data-inline="true" disabled />
 					<label for="chkSavePassword">Save</label>
@@ -100,7 +100,7 @@
 				<div class="center">
 					Check "Save" to save password.
 					<br />
-					<a id="LostPassHelp" href="#">Lost Password?</a>
+					<a id="GoLostPassword" href="#">Lost Password?</a>
 				</div>
 
 				<br />
@@ -121,14 +121,14 @@
 				</span>
 				<br />
 				<div class="UserName"></div>
-
+				
 				<div class="UserCommandGroup">
 					<div id="GoUserProfile" class="m-btn blue portrait-btn">
-						<img src="images/edit.png" alt=""/>
+						<img src="images/User.png" alt=""/>
 						<span class="btn-text">User</span>
 					</div>
 					<div id="GoEditProgram" class="m-btn blue portrait-btn">
-						<img src="images/share.png" alt=""/>
+						<img src="images/School.png" alt=""/>
 						<span class="btn-text">Program</span>
 					</div>
 					<div id="GoPreferences" class="m-btn blue portrait-btn">
@@ -136,7 +136,7 @@
 						<span class="btn-text">Settings</span>
 					</div>
 					<div id="SignOut" class="m-btn purple portrait-btn">
-						<img src="images/cancel.png" alt=""/>
+						<img src="images/SignOut.png" alt=""/>
 						<span class="btn-text">Sign Out</span>
 					</div>
 				</div>
@@ -152,10 +152,10 @@
 
 				<div id="GoAllParties" class="m-btn blue landscape-btn img-right bottomMargin">
 					<div class="imgWrap"><img src="images/next.png" alt=""/></div>
-					<span class="btn-text">All <span class="ParticipantAlias"></span>s</span>
+					<span class="btn-text"><span class="ParticipantAlias"></span>s</span>
 				</div>
 
-				<div id="GoClassList" class="m-btn blue landscape-btn img-right bottomMargin">
+				<div id="GoClassList" class="noDisplay m-btn blue landscape-btn img-right bottomMargin">
 					<div class="imgWrap"><img src="images/next.png" alt=""/></div>
 					<span class="btn-text">Classes &amp; Groups</span>
 				</div>
@@ -224,7 +224,7 @@
 		
 		<div data-role="header">
 			<div class="back portrait-btn">
-				<img src="images/back.png" alt=""/>
+				<img src="images/Previous.png" alt=""/>
 				<span class="btn-text">Back</span>
 			</div>
 			<h1>New Reward Program</h1>
@@ -234,13 +234,16 @@
 			<div id="ContactInfo">
 
 				Enter Your Name:<br />
-				<input class="UserData UserName" type="text"/>
+				<input class="UserData UserName" type="text" x-autocompletetype="name"/>
 
 				<div class="WrapEmail">
 					<span class="user_data_label">E-Mail Address:</span>
 					<br />
-					<input class="UserEmail" type="email" />
-					<span class="invalid note">invalid</span>
+					<input class="UserEmail" type="email" x-autocompletetype="email" />
+					<span class="invalid note">
+						<img src="images/Check-Mark.png" alt=""/>
+						invalid
+					</span>
 					<span class="valid note">
 						<img src="images/Check-Mark.png" alt=""/>
 						valid
@@ -255,11 +258,10 @@
 
 				<br />
 
-				<a class="SendConfirmCode ui-disabled"
-					data-role="button"
-					data-icon="email"
-					data-theme="b"
-				>Send Confirmation Code</a>
+				<div class="SendConfirmCode m-btn blue landscape-btn img-left ui-disabled">
+					<div class="imgWrap"><img src="images/Send.png" alt=""/></div>
+					<span class="btn-text">Send Confirmation</span>
+				</div>
 
 				<br />
 				<div class="center">
@@ -268,11 +270,10 @@
 				</div>
 			
 				<br />
-				<a class="CheckConfirmCode ui-disabled"
-					data-role="button"
-					data-icon="check"
-					data-theme="b"
-				>Confirm Code & Continue</a>
+				<div class="CheckConfirmCode m-btn blue landscape-btn img-left ui-disabled">
+					<div class="imgWrap"><img src="images/ID_Correct.png" alt=""/></div>
+					<span class="btn-text">Verify Code...</span>
+				</div>
 
 			</div>
 
@@ -308,28 +309,32 @@
 					</select>
 				</div>
 
-				<div class="bottomMargin">
+				<div class="bottomMargin" style="position:relative;">
 					<label for="NewTokenRate">
 						How many <span class="TokenUnit lowercase"></span>s equal $1?<br />
 					</label>
 					<input id="NewTokenRate" data-inline="true" type="number" />
 					(1 <span class="TokenUnit lowercase"></span> ~= <span class="DollarsPerToken"></span>)
-					<div class="signUpNote">
-						Needed for Shop.TokenRewards.com, where your 
+
+					<div class="TokenRateHelp btn">
+						<img src="images/Help.png" alt=""/>
+					</div>
+
+
+					<div class="tokenrate signUpNote noDisplay">
+						This is needed for Shop.TokenRewards.com, where your 
 						<span class="ParticipantAlias lowercase"></span>s
-						will be spending their <span class="TokenUnit lowercase"></span>s.
-						Must be at least 1 <span class="TokenUnit lowercase"></span> per dollar.
+						can spend their <span class="TokenUnit lowercase"></span>s
+						on optionally displayed Token Rewards warehouse merchandise.<br />
 					</div>
 
 				</div>
 			
 
-				<a class="GetPassword ui-disabled"
-					data-role="button"
-					data-icon="arrow-r"
-					data-iconpos="right"
-					data-theme="b"
-				>Continue...</a>
+				<div class="GetPassword m-btn blue landscape-btn img-right ui-disabled">
+					<div class="imgWrap"><img src="images/next.png" alt=""/></div>
+					<span class="btn-text">Set Password</span>
+				</div>
 
 			</div>
 
@@ -357,15 +362,9 @@
 
 
 				<br />
-				<a id="CreateAccount"
-					class="ui-disabled"
-					data-role="button"
-					data-theme="b"
-					data-icon="check"
-					data-iconpos="left"
-				>Okay, Create My Account!</a>
-
-
+				<div class="CreateAccount m-btn blue landscape-btn ui-disabled">
+					<span class="btn-text">Okay, Create My Account!</span>
+				</div>
 			</div>
 
 			<!-- OptionalInfo
@@ -396,16 +395,15 @@
 		
 		<div data-role="header">
 			<div class="back portrait-btn">
-				<img src="images/back.png" alt=""/>
+				<img src="images/Previous.png" alt=""/>
 				<span class="btn-text">Back</span>
 			</div>
 			<h1 class="">Token Tap Settings</h1>
 		</div>
 
 		<div data-role="content">
-			<div data-role="fieldcontain">
+			<div class="fieldcontain">
 				<span class="flipswitchlabel">Play Sounds?</span>
-				<br />
 				<select id="AudioOnOff"
 					data-role="slider"
 					data-inline="true">
@@ -413,22 +411,19 @@
 					<option value="on">Yes</option>
 				</select>
 			</div>
-			<br />
-			<div data-role="fieldcontain">
-				<span class="flipswitchlabel">Show Inactive <span class="ParticipantAlias"></span>s?</span>
-				<br />
+			<div class="fieldcontain">
+				<span class="flipswitchlabel">Inactive <span class="ParticipantAlias"></span>s:</span>
 				<select id="ShowInactives"
 					data-role="slider">
-					<option value="hide">No</option>
-					<option value="show">Yes</option>
+					<option value="hide">Hide</option>
+					<option value="show">Show</option>
 				</select>
 			</div>
-			<br />
 			<div>
-				<label for="SortParties" class="select">Show <span class="ParticipantAlias"></span>s Sorted By:</label>
+				<label for="SortParties" class="select">Sort <span class="ParticipantAlias"></span>s By:</label>
 				<select id="SortParties"
 					data-native-menu="true">
-					<option value="">First Last Name</option>
+					<option value="0">First Last Name</option>
 					<option value="1">Last, First Name</option>
 					<option value="2">Balance, High to Low</option>
 					<option value="3">Balance, Low to High</option>
@@ -445,7 +440,7 @@
 		
 		<div data-role="header">
 			<div class="back portrait-btn">
-				<img src="images/back.png" alt=""/>
+				<img src="images/Previous.png" alt=""/>
 				<span class="btn-text">Back</span>
 			</div>
 			<div id="GoEditUser" class="save portrait-btn">
@@ -457,22 +452,22 @@
 		</div>
 
 		<div data-role="content">
-			<div data-role="fieldcontain">
+			<div class="fieldcontain">
 				<div class="UserDataLabel">E-Mail Address (Sign In With):</div>
 				<div class="UserData UserEmail"></div>
 				<span style="font-weight:normal; font-size:.7em;">
 					Last Signed In: <span id="LastSignIn"></span>
 				</span>
 			</div>
-			<div data-role="fieldcontain">
+			<div class="fieldcontain">
 				<div class="UserDataLabel">User Name:</div>
 				<div class="UserData UserName"></div>
 			</div>
-			<div data-role="fieldcontain">
+			<div class="fieldcontain">
 				<div class="UserDataLabel">Title/Position:</div>
 				<div class="UserData UserTitle"></div>
 			</div>
-			<div data-role="fieldcontain">
+			<div class="fieldcontain">
 				<div class="UserDataLabel">Phone/Messaging Number:</div>
 				<div class="UserData UserPhone"></div>
 			</div>
@@ -499,7 +494,7 @@
 		
 		<div data-role="header">
 			<div class="back portrait-btn">
-				<img src="images/back.png" alt=""/>
+				<img src="images/Previous.png" alt=""/>
 				<span class="btn-text">Back</span>
 			</div>
 			<div class="save portrait-btn ui-disabled">
@@ -535,7 +530,7 @@
 		data-role="page">
 		<div data-role="header">
 			<div class="back portrait-btn">
-				<img src="images/back.png" alt=""/>
+				<img src="images/Previous.png" alt=""/>
 				<span class="btn-text">Back</span>
 			</div>
 			<h1>Change E-Mail</h1>
@@ -590,7 +585,7 @@
 		
 		<div data-role="header">
 			<div class="back portrait-btn">
-				<img src="images/back.png" alt=""/>
+				<img src="images/Previous.png" alt=""/>
 				<span class="btn-text">Back</span>
 			</div>
 			<h1>Change Password</h1>
@@ -626,7 +621,7 @@
 		
 		<div data-role="header">
 			<div class="back portrait-btn">
-				<img src="images/back.png" alt=""/>
+				<img src="images/Previous.png" alt=""/>
 				<span class="btn-text">Back</span>
 			</div>
 			<div class="save portrait-btn ui-disabled">
@@ -646,7 +641,8 @@
 
 			<div class="ui-br bottomMargin">
 				<label for="EditTokenUnit">Your program uses:</label>
-				<select id="EditTokenUnit">
+				<select id="EditTokenUnit" 
+					data-native-menu="true">
 					<option value="Token">Tokens</option>
 					<option value="Point">Points</option>
 					<option value="Star">Stars</option>
@@ -656,7 +652,8 @@
 
 			<div class="ui-br bottomMargin">
 				<label for="EditParticipantAlias"><span class="TokenUnit"></span>s are awarded to:</label>
-				<select id="EditParticipantAlias">
+				<select id="EditParticipantAlias"
+					data-native-menu="true">
 					<option value="Student">Students</option>
 					<option value="Patient">Patients</option>
 					<option value="Member">Members</option>
@@ -693,13 +690,14 @@
 		data-title="TokenTap Participants"		
 		data-role="page">
 
-		<div data-role="header" data-position="fixed">
+		<div data-role="header" 
+			data-position="fixed">
 			<div class="back portrait-btn">
-				<img src="images/back.png" alt=""/>
+				<img src="images/Previous.png" alt=""/>
 				<span class="btn-text">Back</span>
 			</div>
 			<div class="NewParty save portrait-btn">
-				<img src="images/add.png" alt=""/>
+				<img src="images/Add.png" alt=""/>
 				<span class="btn-text"><span class="ParticipantAlias"></span></span>
 			</div>
 
@@ -770,7 +768,7 @@
 		data-role="page">
 		<div id="Participant_header" data-role="header">
 			<div class="back portrait-btn">
-				<img src="images/back.png" alt=""/>
+				<img src="images/Previous.png" alt=""/>
 				<span class="btn-text">Back</span>
 			</div>
 			<div id="EditProfile" class="save portrait-btn">
@@ -797,12 +795,43 @@
 				</div>
 			</div>
 
+			<div class="fieldcontain">
+				<span class="user_data_label"><span class="TokenUnit"></span> Balance:</span>
+				<span class="user_data partyBalance"></span>
+				<div class="ui-grid-a">
+					<div class="ui-block-a">
+						<div class="btnDeposit m-btn mini green landscape-btn">
+							<!--<div class="imgWrap"><img src="images/Add.png" alt=""/></div>-->
+							<span class="btn-text">New Deposit</span>
+						</div>
+					</div>
+					<div class="ui-block-b">
+						<div class="btnWithdraw m-btn mini red landscape-btn">
+							<!--<div class="imgWrap"><img src="images/Minus.png" alt=""/></div>-->
+							<span class="btn-text">New Withdrawal</span>
+						</div>
+					</div>	   
+				</div>	
+				<div class="GoTransactions m-btn blue landscape-btn img-right">
+					<div class="imgWrap"><img src="images/next.png" alt=""/></div>
+					<span class="btn-text">View Transactions</span>
+				</div>
+
+			</div>
+
+			<div class="fieldcontain">
+				<span class="user_data_label">Shop Login Code:</span>
+				<span id="partyCode" class="user_data"></span>
+			</div>
 
 			<div class="WrapEmail fieldcontain">
 				<span class="user_data_label">E-Mail Address:</span>
 				<br />
 				<span id="partyEmail" class="user_data"></span>
-				<span class="invalid note">invalid</span>
+				<span class="invalid note">
+					<img src="images/Check-Mark.png" alt=""/>
+					invalid
+				</span>
 				<span class="valid note">
 					<img src="images/Check-Mark.png" alt=""/>
 					valid <span style="color:#888; font-weight:normal;">(not verified)</span>
@@ -819,72 +848,7 @@
 				<div id="partyClasses" class="user_data"></div>
 			</div>
 
-			<div class="bottomMargin">
-				<span class="user_data_label">Shop Login Code:</span>
-				<span id="partyCode" class="user_data"></span>
-			</div>
 
-
-
-			<div id="WrapPartyBalances"
-					data-role="collapsible"
-					data-iconpos="left"
-					data-collapsed-icon="arrow-d"
-					data-expanded-icon="arrow-u"
-					data-theme="c" 
-					data-content-theme="b"
-			>
-				<h1>
-					<span class="TokenUnit"></span> Balance
-					<span class="partyBalance">0</span>
-				</h1>
-				
-				<div class="ui-grid-a">
-					<div class="ui-block-a">
-							<span>Deposits:</span>
-				
-					</div>
-					<div class="ui-block-b">
-						<span id="partyEarned">0</span>
-					</div>	   
-				</div>	
-
-				<div class="ui-grid-a">
-					<div class="ui-block-a">
-						<span>Withdrawals:</span>
-					</div>
-					<div class="ui-block-b">
-						<span id="partySpent">0</span>
-					</div>	   
-				</div>	
-
-				<div class="ui-grid-a">
-					<div class="ui-block-a">
-						<span>Pending Withdrawals:</span>
-					</div>
-					<div class="ui-block-b">
-						<span id="partyPending">0</span>
-					</div>	   
-				</div>	
-
-				<a href="#PartyTransactions"
-					data-role="button"
-					data-icon="arrow-r"
-					data-iconpos="right"
-					data-theme="c"
-					style="margin-top:1em;"
-				>View Transactions</a>
-
-			</div>
-
-			<a class="btnDeposit" 
-				data-role="button" 
-				data-theme="b" 
-			>New Deposit</a>
-			<a class="btnWithdraw" 
-				data-role="button" 
-				data-theme="b" 
-			>New Withdrawal</a>
 
 
 		</div>
@@ -892,22 +856,60 @@
 	</div>
 
 	<div id="PartyTransactions"
-		data-title="TokenTap Particpant Transactions"
 		data-role="page">
-		<div data-role="header" data-position="fixed">
+		<div data-role="header" 
+			data-position="fixed">
 			<div class="back portrait-btn">
-				<img src="images/back.png" alt=""/>
+				<img src="images/Previous.png" alt=""/>
 				<span class="btn-text">Back</span>
 			</div>
-			<h1>
+			<h1 class="twoLine">
 				<span class="PartyName">Name</span>
 				<span class="SubHeader">
-					<span class="ParticipantAlias"></span> Transactions
+					Transaction Ledger
 				</span>
 			</h1>
 		</div>
 			
 		<div data-role="content">
+			<div id="WrapPartyBalances">
+				<div class="ui-grid-a">
+					<div class="ui-block-a">
+						<span class="TokenUnit"></span>s Deposited:
+					</div>
+					<div class="ui-block-b">
+						<span class="partyEarned">0</span>
+					</div>	   
+				</div>	
+
+				<div class="ui-grid-a">
+					<div class="ui-block-a">
+						<span class="TokenUnit"></span>s Withdrawn:
+					</div>
+					<div class="ui-block-b">
+						<span class="partySpent">0</span>
+					</div>	   
+				</div>	
+
+				<div class="ui-grid-a">
+					<div class="ui-block-a">
+						<span>Pending Purchases:</span>
+					</div>
+					<div class="ui-block-b">
+						<span class="partyPending">0</span>
+					</div>	   
+				</div>
+				<div class="balanceBreak"></div>
+				<div class="ui-grid-a balanceBlock">
+					<div class="ui-block-a">
+						<span>Current Balance:</span>
+					</div>
+					<div class="ui-block-b">
+						<span class="partyBalance">0</span>
+					</div>	   
+				</div>
+			</div>
+			
 			<ul data-role="listview"></ul>
 		</div>
 
@@ -917,13 +919,12 @@
 
 	</div>
 
-	<div id="PartyProfile" 
+	<div id="EditParticipant" 
 		data-record="true"
-		data-title="TokenTap Edit Profile"
 		data-role="page">
 		<div data-role="header" data-position="fixed">
 			<div class="back portrait-btn">
-				<img src="images/back.png" alt=""/>
+				<img src="images/Previous.png" alt=""/>
 				<span class="btn-text">Back</span>
 			</div>
 			<div class="save portrait-btn ui-disabled">
@@ -962,7 +963,7 @@
 			</div>
 
 
-			<div id="wrapPartyStatus" data-role="fieldcontain" style="padding-top:0">
+			<div id="wrapPartyStatus" style="padding-top:0">
 				<span style="position:relative; top:-.5em; margin-right:1em;">Status:</span>
 				<select id="selPartyStatus" data-role="slider">
 					<option value="0">Inactive</option>
@@ -974,8 +975,8 @@
 				<div id="WrapAssignedClassList"
 					data-role="collapsible" 
 					data-theme="b"
-					data-collapsed-icon="arrow-d"
-					data-expanded-icon="arrow-u"
+					data-collapsed-icon="down-white"
+					data-expanded-icon="up-white"
 					data-collapsed="false"
 					data-content-theme="c">
 					<h2>
@@ -984,18 +985,20 @@
 				
 					<ul id="AssignedClassList" data-role="listview" ></ul>
 					<div class="legend" style="display:none;">
-						<span class="PartyClassHomeIcon Home Legend ui-icon .ui-icon-shadow ui-icon-tag ui-icon-inline"></span>
-						 Home button selects the <span class="ParticipantAlias lowercase"></span>'s "Delivery" home class.
+						<span class="PartyClassHomeIcon Home Legend"></span>
+						 Optionally sets the 
+						 <span class="ParticipantAlias lowercase"></span>'s 
+						 delivery/home class.
 						 <br />
-						 See Help for more info.
+						 See the Admin Help file for more info.
 					</div>
 				</div>
 
 				<div id="WrapUnassignedClasses" 
 					data-role="collapsible" 
 					data-theme="b"
-					data-collapsed-icon="arrow-d"
-					data-expanded-icon="arrow-u"
+					data-collapsed-icon="down-white"
+					data-expanded-icon="up-white"
 					data-collapsed="true"
 					data-content-theme="c">
 					<h3>
@@ -1009,23 +1012,13 @@
 
 			<ul id="LiClasses" class="prototype">
 				<li class="AssignedClass prototype">
-					<span class="PartyClassHomeIcon ui-icon ui-icon-shadow ui-icon-inline"></span>
+					<span class="PartyClassHomeIcon metroIcon"></span>
 					<span class="ClassName"></span>
-					<button class="RemoveClass"
-						data-icon="arrow-d" 
-						data-iconpos="notext" 
-						data-mini="true" 
-						data-enhance="false"
-						data-inline="true">Delete</button>
+					<div class="RemoveClass metroIcon"></div>
 				</li>
 				<li class="UnassignedClass prototype">
 					<span class="ClassName"></span>
-					<button class="AssignClass"
-						data-icon="arrow-u" 
-						data-iconpos="notext" 
-						data-mini="true" 
-						data-enhance="false"
-						data-inline="true">Add</button>
+					<div class="AssignClass metroIcon"></div>
 				</li>
 			</ul>
 
@@ -1033,7 +1026,8 @@
 			<div id="wrapOptional" 
 				data-role="collapsible" 
 				data-theme="b"
-				data-mini="true"
+				data-collapsed-icon="down-white"
+				data-expanded-icon="up-white"
 				data-collapsed="true"
 				data-content-theme="c">
 				<h4>Optional Info</h4>
@@ -1085,9 +1079,10 @@
 		data-record="true"
 		data-title="TokenTap Ledger Entry"
 		data-role="page">
-		<div data-role="header" data-position="fixed">
+		<div data-role="header" 
+			data-position="fixed">
 			<div class="back portrait-btn">
-				<img src="images/back.png" alt=""/>
+				<img src="images/Previous.png" alt=""/>
 				<span class="btn-text">Back</span>
 			</div>
 			<div class="save portrait-btn ui-disabled">
@@ -1095,15 +1090,14 @@
 				<span class="btn-text">Save</span>
 			</div>
 			<h1></h1>
-			<div id="wrapTransactBalances">
-				<div id="balanceBefore">Current Balance: <span class="amount"></span></div>
-				<div id="balanceAfter">Balance After Save: <span class="amount"></span></div>
-			</div>
-
 		</div>
 	
 		<div data-role="content">
 			<div class="PartyName"></div>
+			<div id="wrapTransactBalances">
+				<div id="balanceBefore">Current Balance: <span class="amount"></span></div>
+				<div id="balanceAfter">Balance After Save: <span class="amount"></span></div>
+			</div>
 			<hr />
 
 			<label for="txtAmount" style="display:inline">Tokens To Deposit:</label>
@@ -1132,44 +1126,36 @@
 					data-theme="b"></a>
 			</div>
 
-			<!--<input type="range" name="slider" id="txtAmount" value="1" min="1" max="100" data-highlight="true"  />-->
-
-		
 			<div style="clear:both; overflow:auto;">
 	         <label for="txtTransactDescript">Reason for Award:</label>
 	         <input type="text" id="txtTransactDescript" value="" />
 				<div style="float:right">
 					<label data-inline="true" data-mini="true">
-						<input id="chkAddToAutoComplete" type="checkbox" checked />Make Reusable</label>
+						<input id="chkAddToAutoComplete" type="checkbox" checked />Remember</label>
 				</div>
 			</div>
 			<hr />
 			<div style="clear:both; margin-top:1em;">
-				<!--multiple="multiple"-->
-				<label for="selRememberedDeposits">Or select a "Reusable <span>Transaction</span>":</label>
-				<select id="selRememberedDeposits" 
-					data-theme="b" 
-					data-native-menu="true">
-				</select>
+				<a id="OpenRemembered" href="#RememberedTransanctions" data-rel="popup" 
+					data-enhance="false"
+					class="m-btn mini green landscape-btn img-right">
+					<div class="imgWrap">
+						<img src="images/ArrowHead-Down.png" />
+					</div>
+					
+					<span class="btn-text">Use Remembered <span class="TransactionType">Deposit</span></span>
+				</a>
 			</div>
+			<div data-role="popup" id="RememberedTransanctions" data-theme="b">
+				<ul data-role="listview" data-inset="true" style="min-width:210px;" data-theme="b">
+				</ul>				
+			</div>
+
 			<br /><br />
 		</div>
 
-		<div data-role="footer" data-position="fixed">
-
-			<!--
-			<div data-role="navbar">
-				<ul>
-					<li><a id="cmdSaveTransact" href="#" data-icon="check">Save</a></li>
-					<li><a href="#" data-icon="delete" data-rel="back">Cancel</a></li>
-				</ul>
-			</div>
-			-->
-
-		</div>
 	</div>
-	<div id="dlgTransactOptions" 
-		class="SaveCancelDialog"
+	<div id="LedgerEntryOptions" 
 		data-title="TokenTap"
 		data-role="dialog">
 		<div data-role="header">
@@ -1202,30 +1188,62 @@
 				data-role="button"
 				data-inline="true"
 				data-theme="b" 
-				data-icon="check">Save</button>
+				>Save</button>
 			<button class="Cancel"
 				data-role="button"
 				data-inline="true"
 				data-theme="b" 
-				data-icon="delete">Cancel</button>
+				>Cancel</button>
 		</div>
 	
 	</div>
 
-	<div id="ClassGroup" 
+
+	<div id="ClassList" 
+		data-title="TokenTap Classes"		
+		data-role="page">
+
+		<div data-role="header" data-position="fixed">
+			<div class="back portrait-btn">
+				<img src="images/Previous.png" alt=""/>
+				<span class="btn-text">Back</span>
+			</div>
+			<div class="NewClass save portrait-btn">
+				<img src="images/Add.png" alt=""/>
+				<span class="btn-text">Class</span>
+			</div>
+
+
+			<h1>Classes & Groups</h1>
+		</div>
+
+		<div data-role="content">
+			<div id="NoClasses" class="ui-body ui-body-e ui-corner-all">
+				You have not created any classes to group your 
+				<span class="ParticipantAlias lowercase"></span>s.
+				<br /><br />
+				Create a new class or group
+				by clicking "Add Class" button above.
+			</div>
+
+			<ul data-role="listview">
+			</ul>
+		</div>
+
+	</div>
+
+	<div id="EditClass" 
 		data-record="true"
-		data-title="TokenTap Edit Class"
 		data-role="page">
 		<div data-role="header" data-position="fixed">
-			<a class="backButton ui-btn-left" 
-				data-rel="back"
-				data-role="button" 
-				data-icon="arrow-l"
-				>Back</a>
-			<a class="saveButton ui-btn-right ui-disabled" 
-				data-role="button" 
-				data-icon="check"
-				>Save</a>
+			<div class="back portrait-btn">
+				<img src="images/Previous.png" alt=""/>
+				<span class="btn-text">Back</span>
+			</div>
+			<div class="save portrait-btn ui-disabled">
+				<img src="images/save.png" alt=""/>
+				<span class="btn-text">Save</span>
+			</div>
 			<h1></h1>
 		</div>
 		<div data-role="content">
@@ -1235,53 +1253,23 @@
 			<input type="text" />
 			<br />
 			<br />
-			<a id="DeleteClass"
-				data-role="button" 
-				data-theme="b"
-				data-icon="delete"
-				>Delete This Class</a>
-			
-		</div>
 
-	</div>
-
-
-	<div id="dlgLostPassword" 
-		class="SaveCancelDialog"
-		data-role="dialog">
-
-		<div data-role="header">
-			<h1>Lost Your Password?</h1>
-		</div>
-		<div data-role="content">
-			Click "Okay" to have a temporary 
-			password delivered to the following e-mail address.
-			<br /><br />
-			E-mail Address:
-			<div>
-				<input id="LostPassEmail" type="email" />
+			<div id="DeleteClass" class="m-btn red landscape-btn img-right mini">
+				<div class="imgWrap"><img src="images/delete.png" alt=""/></div>
+				<span class="btn-text">Delete Class/Group</span>
 			</div>
 		</div>
-		<div data-role="footer" data-theme="c">
-			<button class="Save"
-				data-role="button"
-				data-inline="true"
-				data-theme="b" 
-				data-icon="check">Okay</button>
-			<button class="Cancel"
-				data-role="button"
-				data-inline="true"
-				data-theme="b" 
-				data-icon="delete">Cancel</button>
-		</div>
+
 	</div>
+
+
 
 	<div id="SessionTokens" 
 		data-title="TokenTap"
 		data-role="page">
 		<div data-role="header">
 			<div class="back portrait-btn">
-				<img src="images/back.png" alt=""/>
+				<img src="images/Previous.png" alt=""/>
 				<span class="btn-text">Back</span>
 			</div>
 
@@ -1331,49 +1319,32 @@
 
 	</div>
 
-	<div id="dlgAdjustTokens"  
-		class="SaveCancelDialog"
-		data-title="TokenTap"
-		data-role="dialog">
+	<div id="LostPassword" data-role="page">
 
 		<div data-role="header">
-			<h1>Set Session <span class="TokenUnit"></span>s</h1>
+			<h1>Lost Your Password?</h1>
 		</div>
 		<div data-role="content">
-			<span class="PartyName data"></span>
+			Click the button below to have a temporary 
+			password delivered to the following e-mail address.
 			<br /><br />
-			
-			Current Session <span class="TokenUnit"></span>s: 
-			<span class="CurrentTokens" class="data"></span>
-			<br /><br />
-			
-			Change To:
-			<input id="NewSessionTokenAmount" 
-				type="number" name="number" 
-				pattern="[0-9]*" 
-				class="TokenAmount" value=""/>
-
-			<div id="WrapEraseTokens">
-				<label for="chkEraseTokens">
-					<input id="chkEraseTokens" type="checkbox" />
-					Clear Session <span class="TokenUnit"></span>s
-				</label>
+			E-mail Address:
+			<div>
+				<input id="LostPassEmail" type="email" />
+			</div>
+			<br />
+			<br />
+			<div class="SendPassword m-btn blue landscape-btn img-left ui-disabled mini">
+				<div class="imgWrap"><img src="images/Send.png" alt=""/></div>
+				<span class="btn-text">Send Temporary Password</span>
 			</div>
 
-		</div>
-		<div data-role="footer" data-theme="c">
-			<a class="Okay"
-				data-role="button"
-				data-inline="true"
-				data-theme="b" 
-				data-icon="check">Okay</a>
-			<a class="Cancel"
-				data-role="button"
-				data-inline="true"
-				data-theme="b" 
-				data-icon="delete">Cancel</a>
+
 		</div>
 	</div>
+
+
+
 
 	<div id="popupAlert" class="noDisplay"
 		data-overlay-theme="a"
@@ -1388,36 +1359,21 @@
 			<p id="message"></p>
 		</div>
 		<div class="right" data-theme="a">
-			<a id="CloseMessage"
-				data-role="button"
-				data-inline="true"
-				data-theme="b" 
-				>Okay</a>
+			<div id="CloseMessage"	class="m-btn blue">Okay</div>
 		</div>
 	</div>
 
 	<div id="popupConfirm" class="noDisplay"
-		data-overlay-theme="a"
-		data-theme="c"
-		data-role="popup"
-		data-transtion="pop">
+		data-role="popup">
 		<div data-role="header" data-theme="b" class="ui-bar-b">
 			<h1 class="ui-title">Message</h1>
 		</div>
 		<div data-role="content" data-theme="d" class="ui-content">
 			<p id="ConfirmMessage"></p>
 		</div>
-		<div class="right" data-theme="a">
-			<a id="ConfirmButton"
-				data-role="button"
-				data-inline="true"
-				data-theme="b" 
-				>Okay</a>
-			<a id="CancelButton"
-				data-role="button"
-				data-inline="true"
-				data-theme="b" 
-				>Cancel</a>
+		<div class="right">
+			<div id="ConfirmButton"	class="m-btn blue">Okay</div>
+			<div id="CancelButton"	class="m-btn blue">Cancel</div>
 		</div>
 	</div>
 
@@ -1452,12 +1408,29 @@
 		</li>
 
 		<li class="Class prototype">
-			<a href="#Participants">
-				<span class="ClassName"></span>
-				<div class="ClassStats ui-li-count">
-					<span class="ActiveCount"></span><span class="InactiveCount"></span>
+			<div class="GoEditClass btn">
+				<img src="images/Edit-Blue.png" alt=""/>
+				<br />
+				Edit
+			</div>
+			<div class="ClassName"></div>
+			<div class="ClassStats">
+				Active <span class="ParticipantAlias"></span>s: 
+				<span class="ActiveCount stat"></span>
+				<span class="ShowInactive leftMargin">Inactive: <span class="InactiveCount"></span></span>
+				<br />
+				<span class="TokenUnit"></span>s Outstanding: <span class="Balance stat"></span>
+				<div class="substats">
+					<span class="">Earned: <span class="Earned stat"></span></span>
+					<span class="leftMargin">Spent: <span class="Spent stat"></span></span>
+					<span class="PendingStat leftMargin">Pending: <span class="Pending stat"></span></span>
 				</div>
-			</a>
+			</div>
+
+
+			<div class="next-arrow">
+				<img src="images/next-black.png" />
+			</div>
 		</li>
 
 		<li class="liTrans prototype" data-icon="false">
@@ -1491,4 +1464,8 @@
 
 </body>
 </html>
+
+
+
+
 
